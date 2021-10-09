@@ -133,4 +133,8 @@ public class Room implements Interfaces.IDescriptable, Interfaces.IName{
         }
         return null;
     }
+
+    public Doorway getDoorway(Directions direction) {
+        return doorways[direction.ordinal()];
+    }
 }

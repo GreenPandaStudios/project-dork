@@ -62,4 +62,6 @@ public class Doorway implements IDescriptable {
     public void setToRoom(Room toRoom) {
         this.toRoom = toRoom;
     }
+
+
 }

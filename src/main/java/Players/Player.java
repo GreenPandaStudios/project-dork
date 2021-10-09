@@ -6,7 +6,7 @@ import org.javacord.api.entity.user.User;
 
 public class Player {
 
-    public Player( User user){
+    public Player(User user){
         setDiscordUser(user);
     }
 
@@ -40,7 +40,7 @@ public class Player {
         this.inventory = inventory;
     }
     //The player's inventory
-    private  Inventory inventory;
+    private  Inventory inventory = new Inventory(100);
 
 
 

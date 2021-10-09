@@ -32,6 +32,8 @@ public class Item implements Interfaces.IName, Interfaces.IDescriptable {
     }
 
     public void setName(String name) {
+        //don't let a name contain spaces
+        name.replaceAll(" ", "-");
         this.name = name;
     }
 

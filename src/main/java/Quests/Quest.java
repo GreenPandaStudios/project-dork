@@ -34,4 +34,6 @@ public class Quest {
             p.setRoom(map.startingRoom);
         }
     }
+
+
 }
