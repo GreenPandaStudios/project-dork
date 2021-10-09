@@ -1,16 +1,37 @@
 package Quests;
 import java.util.HashMap;
+import java.util.List;
+
 import Misc.Vector3;
+import Players.Player;
+
 public class Map {
 
     public  Map(Room startingRoom, Room endingRoom){
-        this.startingRoom = startingRoom;
-        this.endingRoom = endingRoom;
+        setStartingRoom(startingRoom);
+        setEndingRoom(endingRoom);
         addRooom(startingRoom);
         addRooom(endingRoom);
     }
 
+    public Room getStartingRoom() {
+        return startingRoom;
+    }
+
+    public void setStartingRoom(Room startingRoom) {
+        this.startingRoom = startingRoom;
+    }
+
     Room startingRoom;
+
+    public Room getEndingRoom() {
+        return endingRoom;
+    }
+
+    public void setEndingRoom(Room endingRoom) {
+        this.endingRoom = endingRoom;
+    }
+
     Room endingRoom;
 
     HashMap<Vector3, Room> rooms = new HashMap<>();

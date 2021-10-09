@@ -51,9 +51,9 @@ public class Main {
 
 
             //create a message parser for the bot
-            MessageParser parser = new MessageParser(api, botTextChannel);
+            MessageParser parser = new MessageParser(api, botTextChannel, server);
 
-        }
+    }
 
 
     }

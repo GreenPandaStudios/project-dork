@@ -5,15 +5,33 @@ import java.util.ArrayList;
 
 public class Quest {
 
-    ArrayList<Player> players = new ArrayList<>();
-    private int turnIndex;
+    public Quest(Map map, TurnManager turnManager){
+        this.map = map;
+        this.turnManager = turnManager;
+    }
+    private TurnManager turnManager;
 
-    public int nextTurn(){
-        return turnIndex = (turnIndex + 1) % players.size();
+    public Map getMap() {
+        return map;
     }
 
+    private Map map;
 
-    public  Player currentTurn(){
-        return  players.get(turnIndex);
+    /**
+     * Returns the room of the players who's turn it currently is.
+     * @return
+     */
+    public Room currentRoom(){
+        return turnManager.currentTurn().getRoom();
+    }
+
+    /**
+     * Starts the quest by initializing players stats and other things
+     */
+    public void startQuest(){
+        //put all the players in the starting room
+        for (Player p: turnManager.getPlayers()){
+            p.setRoom(map.startingRoom);
+        }
     }
 }
