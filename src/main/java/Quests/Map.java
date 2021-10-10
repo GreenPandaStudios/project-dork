@@ -7,11 +7,14 @@ import Players.Player;
 
 public class Map {
 
+
+    public Map(){
+
+    };
+
     public  Map(Room startingRoom, Room endingRoom){
         setStartingRoom(startingRoom);
         setEndingRoom(endingRoom);
-        addRooom(startingRoom);
-        addRooom(endingRoom);
     }
 
     public Room getStartingRoom() {
@@ -20,6 +23,7 @@ public class Map {
 
     public void setStartingRoom(Room startingRoom) {
         this.startingRoom = startingRoom;
+        addRooom(startingRoom);
     }
 
     Room startingRoom;
@@ -29,7 +33,9 @@ public class Map {
     }
 
     public void setEndingRoom(Room endingRoom) {
+
         this.endingRoom = endingRoom;
+        addRooom(endingRoom);
     }
 
     Room endingRoom;

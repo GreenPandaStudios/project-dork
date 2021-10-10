@@ -13,6 +13,7 @@ public class Doorway implements IDescriptable {
         setLocked(locked);
         setToRoom(toRoom);
     }
+    public  Doorway(){locked = false;};
 
 
     private Room toRoom;

@@ -9,6 +9,10 @@ public class Item implements Interfaces.IName, Interfaces.IDescriptable {
         setWeight(weight);
         setName(name);
     }
+    public Item(){
+        weight = value = 0;
+        name = description = "";
+    }
 
     private double weight;
     private double value;

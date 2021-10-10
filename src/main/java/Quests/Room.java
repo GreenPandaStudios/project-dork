@@ -10,7 +10,7 @@ public class Room implements Interfaces.IDescriptable, Interfaces.IName{
 
 
 
-
+    public Room(){setLocation(Vector3.Zero);}
     public Room(Vector3 location){
         setLocation(location);
     }

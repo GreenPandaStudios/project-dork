@@ -20,7 +20,7 @@ public class Vector3 {
     public static Vector3 Left = negate(Right);
     public static Vector3 Forward = new Vector3(0,0,1);
     public static Vector3 Backward = negate(Forward);
-
+    public static Vector3 Zero = new Vector3(0,0,0);
 
     /**
      * Subtracts v1 from v2 and returns the resulting vector
