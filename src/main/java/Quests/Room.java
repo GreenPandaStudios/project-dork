@@ -76,10 +76,25 @@ public class Room implements Interfaces.IDescriptable, Interfaces.IName{
 
         //print items
         if (!items.isEmpty()){
-            descr += "\n\n\nYou also see the following items:\n";
-            for (Item i :items.values()){
-                descr += "\t-" + i.getName() + "\n";
+            //see if we have anything other than scenery
+            boolean onlyScenery = true;
+            for (Item i : items.values()){
+                if (!i.isScenery()){
+                    onlyScenery = false;
+                    break;
+                }
             }
+
+            if (!onlyScenery){
+                descr += "\n\n\nYou also see the following items:\n";
+                for (Item i :items.values()){
+                    if(!i.isScenery()){
+                        descr += "\t-" + i.getName() + "\n";
+                    }
+
+                }
+            }
+
         }
 
         return descr;

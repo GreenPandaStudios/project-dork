@@ -95,7 +95,7 @@ public class MessageParser {
         else{
             //if it is this player's turn
             if (event.getMessageAuthor().asUser().get().equals(turnManager.currentTurn().getDiscordUser())){
-                parseValidMessage(event.getMessageContent().toLowerCase().split(" "));
+                parseValidMessage(packageMessage(event.getMessageContent()));
             }
             else{
                 sendMessage(event.getMessageAuthor().asUser().get().getDisplayName(server) + ", it is not your turn.");
@@ -105,16 +105,35 @@ public class MessageParser {
 
     }
 
+    /**
+     * Packages a message to be valid and be able to be parsed by the
+     * parseValidMessage Method
+     * @param message
+     * @return
+     */
+    private  String[] packageMessage(String message){
+        message = message.toLowerCase();
+
+        message = message.replaceAll(" the "," ");
+        message = message.replaceAll(" a "," ");
+        message = message.replaceAll(" an "," ");
+
+
+
+
+        return message.split("\\s+");
+    }
     private Quest createDefaultQuest(){
         Room startingRoom = new Room( new Vector3(0,0,0) ).addItem(new Item("Sword",
                 "A heavy well-made sword",
                 10.5,
-                10));
+                10, false));
         Room endingRoom = new Room(
                 new Vector3(0,1,0)
         );
+        startingRoom.addItem(new Item("torch", "A flickering torch cemented firmly into the wall.", 0,0,true));
 
-        endingRoom.addItem(new Item("Golden-Apple", "A curious golden apple.", 50, 1000));
+        endingRoom.addItem(new Item("Golden-Apple", "A curious golden apple.", 50, 1000, false));
         endingRoom.setDescription("You are in a very dark room.");
         Doorway backUp = new Doorway(startingRoom, false);
         Doorway d = new Doorway(endingRoom, false);
@@ -232,6 +251,13 @@ public class MessageParser {
             if (currentQuest.currentRoom().peekItem(takeWhat)!=null){
 
                 Item i = currentQuest.currentRoom().peekItem(takeWhat);
+
+                //make sure it is not scenery
+                if (i.isScenery()){
+                    sendMessage("You can't take the " + i.getName());
+                    return;
+                }
+
                 //try to put the item in the current player's inventory
                 if (turnManager.currentTurn().getInventory().addItem(i)){
                     //remove it from the room
