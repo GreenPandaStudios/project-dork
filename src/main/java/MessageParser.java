@@ -1,5 +1,4 @@
 import Items.Item;
-import Misc.Vector3;
 import Players.Player;
 import Quests.*;
 import org.javacord.api.DiscordApi;
@@ -8,7 +7,6 @@ import org.javacord.api.entity.channel.ServerTextChannelBuilder;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.event.message.MessageCreateEvent;
-import  Misc.Vector3;
 
 import java.util.Iterator;
 
@@ -124,12 +122,12 @@ public class MessageParser {
         return message.split("\\s+");
     }
     private Quest createDefaultQuest(){
-        Room startingRoom = new Room( new Vector3(0,0,0) ).addItem(new Item("Sword",
+        Room startingRoom = new Room( "Starting Room").addItem(new Item("Sword",
                 "A heavy well-made sword",
                 10.5,
                 10, false));
         Room endingRoom = new Room(
-                new Vector3(0,1,0)
+                "Ending Room"
         );
         startingRoom.addItem(new Item("torch", "A flickering torch cemented firmly into the wall.", 0,0,true));
 
