@@ -25,35 +25,10 @@ public class Main {
 
 
 
-        //for each server we are attached to, do the following
+        //for each server we are attached to, create a bot
         for (Server server : api.getServers()){
-
-
-            if (!server.hasPermission(api.getYourself(), PermissionType.ADMINISTRATOR)){
-                System.out.println("The Bot requires Administrator permission.");
-                //give the bot all permissions, this is the link to use
-                System.out.println(api.createBotInvite(Permissions.fromBitmask(8)));
-                continue;
-            }
-
-
-            //see if the channel already exists
-            ServerTextChannel botTextChannel;
-            if (server.getTextChannelsByName(BotChannelName).size() > 0){
-               botTextChannel = server.getTextChannelsByName(BotChannelName).get(0);
-            }
-            else {
-                //create a text channel for the bot
-                botTextChannel = new ServerTextChannelBuilder(server).
-                        setName(BotChannelName).create().join();
-            }
-
-
-
-            //create a message parser for the bot
-            MessageParser parser = new MessageParser(api, botTextChannel, server);
-
-    }
+            new Bot(server, api, BotChannelName);
+        }
 
 
     }
