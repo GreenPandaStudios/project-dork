@@ -1,7 +1,5 @@
 package Quests;
 import Items.Item;
-import  Misc.Vector3;
-
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -10,9 +8,9 @@ public class Room implements Interfaces.IDescriptable, Interfaces.IName{
 
 
 
-    public Room(){setLocation(Vector3.Zero);}
-    public Room(Vector3 location){
-        setLocation(location);
+    public Room(){setName("");}
+    public Room(String name){
+        setName(name);
     }
 
     /**
@@ -35,15 +33,6 @@ public class Room implements Interfaces.IDescriptable, Interfaces.IName{
     }
 
 
-    public Vector3 getLocation() {
-        return location;
-    }
-
-    public void setLocation(Vector3 location) {
-        this.location = location;
-    }
-
-    private  Vector3 location;
     private  String description;
     private String name;
 

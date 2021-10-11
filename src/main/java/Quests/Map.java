@@ -2,7 +2,6 @@ package Quests;
 import java.util.HashMap;
 import java.util.List;
 
-import Misc.Vector3;
 import Players.Player;
 
 public class Map {
@@ -40,18 +39,17 @@ public class Map {
 
     Room endingRoom;
 
-    HashMap<Vector3, Room> rooms = new HashMap<>();
+    HashMap<String, Room> rooms = new HashMap<>();
 
     public Map addRooom(Room room){
 
         //exception if this location is already taken
-        if (rooms.containsKey(room.getLocation())){
+        if (rooms.containsKey(room.getName())){
             throw new UnsupportedOperationException();
         }
 
         //update this room's location and add it to the hashmap
-        room.setLocation(room.getLocation());
-        rooms.put(room.getLocation(), room);
+        rooms.put(room.getName(), room);
         return  this;
     }
 
