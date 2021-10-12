@@ -5,8 +5,20 @@ import org.javacord.api.entity.user.User;
 
 public class Player {
 
+    // player's current and maximum health, respectively
+    private double health;
+    private double maxHealth;
+
     public Player(User user){
         setDiscordUser(user);
+        this.maxHealth=20;
+        setHealth(maxHealth);
+    }
+
+    // testing constructor that doesn't require a discord user
+    public Player(){
+        this.maxHealth=20;
+        setHealth(maxHealth);
     }
 
     public User getDiscordUser() {
@@ -41,6 +53,19 @@ public class Player {
     //The player's inventory
     private  Inventory inventory = new Inventory(100);
 
+    public double getHealth() {
+        return health;
+    }
 
+    public void setHealth(double health) {
+        if(health<0){
+            this.health=0;
+        } else {
+            this.health = Math.min(health, maxHealth);
+        }
+    }
 
+    public double getMaxHealth() {
+        return maxHealth;
+    }
 }
