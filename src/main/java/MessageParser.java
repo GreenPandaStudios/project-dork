@@ -330,7 +330,7 @@ public class MessageParser {
      * Must be done before the quest begins
      */
     public void preQuestPartyManagement(String messageInput, User discordUser) {
-        if (messageInput.equalsIgnoreCase("new quest")) {
+        if (messageInput.equalsIgnoreCase("start quest")) {
 
 
             //check if anyone has joined to play
@@ -363,11 +363,25 @@ public class MessageParser {
             } else {
                 sendMessage("You are not a member of this party.\n");
             }
-            sendMessage("The current party members are:\n" + getPartyMembers());
+
+            if (turnManager.numberOfPlayers() == 0) {
+                sendMessage("Nobody is in the current party. Type \"join\" to join");
+            }
+            else{
+                sendMessage("The current party members are:\n" + getPartyMembers());
+            }
+
 
 
         } else {
-            sendMessage("No active quest!\nPlease create a new quest with 'New Quest'");
+            if (turnManager.getByUser(discordUser) == null) {
+                sendMessage("You must join before starting a quest. Type \"join\" to join.");
+            }
+            else{
+                sendMessage("No active quest!\nBegin the default quest with 'Start Quest'" +
+                        "\nBegin a custom Quest with 'Load Quest' and a valid quest file");
+            }
+
         }
     }
 }
