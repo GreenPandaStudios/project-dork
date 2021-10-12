@@ -9,15 +9,15 @@ public class Player {
     private double health;
     private double maxHealth;
 
-    public Player(User user){
+    public Player(User user) {
         setDiscordUser(user);
-        this.maxHealth=20;
+        this.maxHealth = 20;
         setHealth(maxHealth);
     }
 
     // testing constructor that doesn't require a discord user
-    public Player(){
-        this.maxHealth=20;
+    public Player() {
+        this.maxHealth = 20;
         setHealth(maxHealth);
     }
 
@@ -50,16 +50,17 @@ public class Player {
     public void setInventory(Inventory inventory) {
         this.inventory = inventory;
     }
+
     //The player's inventory
-    private  Inventory inventory = new Inventory(100);
+    private Inventory inventory = new Inventory(100);
 
     public double getHealth() {
         return health;
     }
 
     public void setHealth(double health) {
-        if(health<0){
-            this.health=0;
+        if (health < 0) {
+            this.health = 0;
         } else {
             this.health = Math.min(health, maxHealth);
         }
