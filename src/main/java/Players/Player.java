@@ -37,7 +37,9 @@ public class Player {
     }
 
     public void setRoom(Room room) {
-        this.room.setPlayerCount(this.room.getPlayerCount()-1);
+        if (this.room != null) {
+            this.room.setPlayerCount(this.room.getPlayerCount()-1);
+        }
         this.room = room;
         this.room.setPlayerCount(this.room.getPlayerCount()+1);
     }

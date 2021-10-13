@@ -26,6 +26,14 @@ public class TurnManager {
         }
     }
 
+    public void purgePlayers() {
+        players = new ArrayList<>();
+    }
+
+    public boolean canAct(Player player) {
+        return player.getHealth()!=0;
+    }
+
 
     public Player currentTurn(){
         return players.get(turnIndex);

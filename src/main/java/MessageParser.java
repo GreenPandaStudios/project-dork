@@ -9,6 +9,8 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.event.message.MessageCreateEvent;
 
 import java.util.Iterator;
+import java.util.Locale;
+import java.util.Objects;
 
 public class MessageParser {
 
@@ -51,7 +53,7 @@ public class MessageParser {
                 if (turnManager.numberOfPlayers() == 0) {
                     sendMessage("You must join before starting a quest. Type \"join\" to join.");
                 } else {
-                    sendMessage("Starting a new Quest with the following players: ");
+                    sendMessage("Starting a new Quest with the following players:\n" + getPartyMembers());
 
                     currentQuest = createDefaultQuest();
                     currentQuest.startQuest();
@@ -117,7 +119,11 @@ public class MessageParser {
         Room startingRoom = new Room("Starting Room").addItem(new Item("Sword",
                 "A heavy well-made sword",
                 10.5,
-                10, false));
+                10, false))
+                .addItem(new Item("Amulet",
+                "A scary looking amulet",
+                2,
+                20, false));
         Room endingRoom = new Room(
                 "Ending Room"
         );
@@ -239,7 +245,7 @@ public class MessageParser {
 
                 //make sure it is not scenery
                 if (i.isScenery()) {
-                    sendMessage("You can't take the " + i.getName());
+                    sendMessage("You can't take the " + i.getName() + ". ");
                     return;
                 }
 
@@ -247,7 +253,11 @@ public class MessageParser {
                 if (turnManager.currentTurn().getInventory().addItem(i)) {
                     //remove it from the room
                     currentQuest.currentRoom().removeItem(takeWhat);
-                    sendMessage("You take the " + i.getName());
+                    sendMessage("You take the " + i.getName() + ". ");
+                    if(Objects.equals(i.getName(), "Amulet")){
+                        sendMessage("You take 20 damage.");
+                        turnManager.currentTurn().setHealth(turnManager.currentTurn().getHealth()-20);
+                    }
                 } else {
                     sendMessage("You can not fit " + i.getName() + " in your inventory.");
                 }
@@ -256,7 +266,13 @@ public class MessageParser {
                 sendMessage("You see no " + takeWhat + " here.");
             }
         }
+        if(!turnManager.canAct(turnManager.currentTurn())){
+            endTurn();
+        }
+
     }
+
+
 
     private void moveAction(String direction) {
 
@@ -308,7 +324,6 @@ public class MessageParser {
         } else {
             sendMessage("There is nothing that way.");
         }
-
     }
 
     private void removeAction(String item) {
@@ -340,7 +355,11 @@ public class MessageParser {
      */
     private void endTurn() {
 
-        sendMessage(turnManager.currentTurn().getDiscordUser().getDisplayName(server) + " ends their turn.");
+        if(turnManager.canAct(turnManager.currentTurn())) {
+            sendMessage(turnManager.currentTurn().getDiscordUser().getDisplayName(server) + " ends their turn.");
+        } else {
+            sendMessage(turnManager.currentTurn().getDiscordUser().getDisplayName(server) + " is incapacitated.");
+        }
 
         if(currentQuest.getMap().getEndingRoom().equals(turnManager.currentTurn().getRoom())){
             if(turnManager.currentTurn().getRoom().getPlayerCount()==turnManager.numberOfPlayers()) {
@@ -350,16 +369,13 @@ public class MessageParser {
             } else {
                 sendMessage(turnManager.currentTurn().getDiscordUser().getDisplayName(server) + " is waiting at the exit.");
             }
-        }
-
-        if (turnManager.nextTurn() == -1) {
-            sendMessage(turnManager.currentTurn().getDiscordUser().getDisplayName(server) + " has fallen. The dungeon closes...");
+        } else if (turnManager.nextTurn() == -1) {
+            sendMessage("A player has fallen. The dungeon closes...");
             currentQuest.failQuest();
             currentQuest=null;
+        } else {
+            sendMessage("It is now " + turnManager.currentTurn().getDiscordUser().getDisplayName(server) + "'s turn.");
         }
-
-        sendMessage("It is now " + turnManager.currentTurn().getDiscordUser().getDisplayName(server) + "'s turn.");
-
     }
 
     /**

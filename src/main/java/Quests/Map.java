@@ -1,8 +1,5 @@
 package Quests;
 import java.util.HashMap;
-import java.util.List;
-
-import Players.Player;
 
 public class Map {
 
@@ -22,7 +19,7 @@ public class Map {
 
     public void setStartingRoom(Room startingRoom) {
         this.startingRoom = startingRoom;
-        addRooom(startingRoom);
+        addRoom(startingRoom);
     }
 
     Room startingRoom;
@@ -34,14 +31,14 @@ public class Map {
     public void setEndingRoom(Room endingRoom) {
 
         this.endingRoom = endingRoom;
-        addRooom(endingRoom);
+        addRoom(endingRoom);
     }
 
     Room endingRoom;
 
     HashMap<String, Room> rooms = new HashMap<>();
 
-    public Map addRooom(Room room){
+    public Map addRoom(Room room){
 
         //exception if this location is already taken
         if (rooms.containsKey(room.getName())){

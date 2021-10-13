@@ -44,8 +44,7 @@ public class Quest {
     }
 
     private void endQuest() {
-        for(Player p: turnManager.getPlayers()) turnManager.removePlayer(p);
-        this.map=null;
+        turnManager.purgePlayers();
     }
 
 }

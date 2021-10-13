@@ -4,14 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="21e12942-95f0-4143-86d6-e399e0cda36f" name="Default Changelist" comment="Created test module, implemented Player health, and made test class for health (passes all)">
+    <list default="true" id="21e12942-95f0-4143-86d6-e399e0cda36f" name="Default Changelist" comment="Created win/lose conditions (not tested yet)">
+      <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/javaCompile.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/MessageParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MessageParser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Players/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Players/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Quests/Map.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Quests/Map.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Quests/Quest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Quests/Quest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Quests/Room.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Quests/Room.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Quests/TurnManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Quests/TurnManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/HealthTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/HealthTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,8 +85,10 @@
       <recent name="E:\School\Fall21\CS3141\dork\project-dork\src\main\java" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.HealthTest.testHealth">
+  <component name="RunManager" selected="Application.Main">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="ALTERNATIVE_JRE_PATH" value="11" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="MAIN_CLASS_NAME" value="Main" />
       <module name="dork.main" />
       <method v="2">
@@ -171,6 +179,13 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Application.Main" />
+      <item itemvalue="Gradle.HealthTest" />
+      <item itemvalue="Gradle.HealthTest.testGetHealth" />
+      <item itemvalue="Gradle.HealthTest.testHealth" />
+      <item itemvalue="Gradle.HealthTest.testSetHealth" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Gradle.HealthTest.testHealth" />
