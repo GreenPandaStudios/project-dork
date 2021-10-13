@@ -132,7 +132,12 @@ public class MessageParser {
                 case "steal":
                 case "take":
                     if (words.length > 1) {
-                        takeAction(words[1]);
+                        if(words[1].equalsIgnoreCase("inventory")){
+                            displayInventory();
+                        }
+                        else{
+                            takeAction(words[1]);
+                        }
                     } else {
                         sendMessage("What would you like to take?");
                     }
@@ -165,6 +170,12 @@ public class MessageParser {
                 case "next":
                 case "finish":
                     endTurn();
+                    break;
+                case "inventory":
+                case "i":
+                case "items":
+                case "show":
+                    displayInventory();
                     break;
                 default:
                     sendMessage("I don't understand \"" + words[0] + "\"");
@@ -383,5 +394,10 @@ public class MessageParser {
             }
 
         }
+    }
+
+    //Display the current player's inventory.
+    void displayInventory(){
+        sendMessage(turnManager.currentTurn().getInventory().displayItems());
     }
 }

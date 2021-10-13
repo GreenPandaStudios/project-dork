@@ -70,4 +70,17 @@ public class Inventory {
         return null;
     }
 
+    /**
+     * Returns a string of the inventory's contents
+     * TODO formatting, empty case
+     * @return A string of the inventory's content
+     */
+    public String displayItems() {
+        String listOfItems = "";
+        for (Item i : items.values()) {
+            listOfItems += "\t-" + i.getName() + "\n";
+        }
+        return listOfItems;
+    }
+
 }
