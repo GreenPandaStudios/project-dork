@@ -72,11 +72,13 @@ public class Inventory {
 
     /**
      * Returns a string of the inventory's contents
-     * TODO formatting, empty case
      * @return A string of the inventory's content
      */
     public String displayItems() {
-        String listOfItems = "";
+        if(items.isEmpty()){
+            return "Your inventory is empty!\n";
+        }
+        String listOfItems = "Your inventory contains:\n";
         for (Item i : items.values()) {
             listOfItems += "\t-" + i.getName() + "\n";
         }
