@@ -35,5 +35,17 @@ public class Quest {
         }
     }
 
+    public void winQuest() {
+        endQuest();
+    }
+
+    public void failQuest() {
+        endQuest();
+    }
+
+    private void endQuest() {
+        for(Player p: turnManager.getPlayers()) turnManager.removePlayer(p);
+        this.map=null;
+    }
 
 }

@@ -7,7 +7,7 @@ public class Player {
 
     // player's current and maximum health, respectively
     private double health;
-    private double maxHealth;
+    private final double maxHealth;
 
     public Player(User user){
         setDiscordUser(user);
@@ -37,7 +37,9 @@ public class Player {
     }
 
     public void setRoom(Room room) {
+        this.room.setPlayerCount(this.room.getPlayerCount()-1);
         this.room = room;
+        this.room.setPlayerCount(this.room.getPlayerCount()+1);
     }
 
     //the Current room the player is in

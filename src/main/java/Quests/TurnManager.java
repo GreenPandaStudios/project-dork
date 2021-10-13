@@ -17,12 +17,18 @@ public class TurnManager {
     private int turnIndex = 0;
 
     public int nextTurn(){
-        return turnIndex = (turnIndex + 1) % players.size();
+        int turnIndexTemp = (turnIndex + 1) % players.size();
+        turnIndex=turnIndexTemp;
+        if(players.get(turnIndexTemp).getHealth()==0){
+            return -1; //return -1 to signal to the message parser that this player is incapacitated
+        } else {
+            return turnIndex;
+        }
     }
 
 
     public Player currentTurn(){
-        return  players.get(turnIndex);
+        return players.get(turnIndex);
     }
 
     /**
@@ -42,7 +48,9 @@ public class TurnManager {
     public void removePlayer(Player player){
         players.remove(player);
         //refactor the turn index
-        turnIndex = (turnIndex) % players.size();
+        turnIndex = players.size()>0 ?
+                (turnIndex) % players.size() : 0;
+
     }
 
     public int numberOfPlayers(){
