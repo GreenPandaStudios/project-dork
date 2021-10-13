@@ -1,0 +1,14 @@
+<changelist name="Uncommitted_changes_before_Update_at_10_13_21,_3_22_PM_[Default_Changelist]" date="1634152969907" recycled="false" toDelete="true">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_10_13_21,_3_22_PM_[Default_Changelist]/shelved.patch" />
+  <option name="DESCRIPTION" value="Uncommitted changes before Update at 10/13/21, 3:22 PM [Default Changelist]" />
+  <binary>
+    <option name="BEFORE_PATH" value=".gradle/5.2.1/javaCompile/classAnalysis.bin" />
+    <option name="AFTER_PATH" value=".gradle/5.2.1/javaCompile/classAnalysis.bin" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_10_13_21,_3_22_PM_[Default_Changelist]/classAnalysis.bin" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value=".gradle/5.2.1/javaCompile/taskHistory.bin" />
+    <option name="AFTER_PATH" value=".gradle/5.2.1/javaCompile/taskHistory.bin" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_10_13_21,_3_22_PM_[Default_Changelist]/taskHistory.bin" />
+  </binary>
+</changelist>
