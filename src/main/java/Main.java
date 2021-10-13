@@ -23,10 +23,8 @@ public class Main {
                 .login().join();
 
 
-
-
         //for each server we are attached to, create a bot
-        for (Server server : api.getServers()){
+        for (Server server : api.getServers()) {
             new Bot(server, api, BotChannelName);
         }
 

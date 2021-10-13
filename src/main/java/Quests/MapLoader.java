@@ -6,20 +6,20 @@ import java.util.Hashtable;
 
 public class MapLoader {
     Hashtable<String, Room> declaredRooms;
-    Hashtable<String, Doorway> declaredDoorways ;
-    Hashtable<String, Item> declaredItems ;
+    Hashtable<String, Doorway> declaredDoorways;
+    Hashtable<String, Item> declaredItems;
     private Map map;
 
-    public MapLoader(){
+    public MapLoader() {
         map = new Map();
         declaredRooms = new Hashtable<>();
         declaredDoorways = new Hashtable<>();
         declaredItems = new Hashtable<>();
     }
 
-    private void createCommand(String createWhat, String name){
-        switch (createWhat.toLowerCase()){
-            case  "room":
+    private void createCommand(String createWhat, String name) {
+        switch (createWhat.toLowerCase()) {
+            case "room":
                 Room r = new Room();
                 r.setName(name);
                 declaredRooms.put(name, r);
