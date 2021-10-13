@@ -119,7 +119,12 @@ public class MessageParser {
                 case "peek":
                 case "inspect":
                     if (words.length > 1) {
-                        inspectAction(words[1]);
+                        if(words[1].equalsIgnoreCase("inventory")){
+                            displayInventory();
+                        }
+                        else{
+                            inspectAction(words[1]);
+                        }
                     } else {
                         //assume we are talking about the room
                         sendMessage("You take in your surroundings. " + currentQuest.currentRoom().Description());
@@ -132,12 +137,7 @@ public class MessageParser {
                 case "steal":
                 case "take":
                     if (words.length > 1) {
-                        if(words[1].equalsIgnoreCase("inventory")){
-                            displayInventory();
-                        }
-                        else{
-                            takeAction(words[1]);
-                        }
+                        takeAction(words[1]);
                     } else {
                         sendMessage("What would you like to take?");
                     }
