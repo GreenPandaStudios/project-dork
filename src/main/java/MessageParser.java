@@ -145,7 +145,11 @@ public class MessageParser {
                 case "peek":
                 case "inspect":
                     if (words.length > 1) {
-                        inspectAction(words[1]);
+                        if(words[1].equals("inventory")){
+                            displayInventory();
+                        } else {
+                            inspectAction(words[1]);
+                        }
                     } else {
                         //assume we are talking about the room
                         sendMessage("You take in your surroundings. " + currentQuest.currentRoom().Description());
