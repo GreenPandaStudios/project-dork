@@ -85,7 +85,7 @@ public class MessageParser {
     private String[] packageMessage(String message) {
         message = message.toLowerCase();
 
-        message = message.replaceAll("//s+(the|an|a)+//s+", " ");
+        message = message.replaceAll("\\s+(the|an|a)+\\s+", " ");
 
 
         return message.split("\\s+");
