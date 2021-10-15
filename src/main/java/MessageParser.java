@@ -370,6 +370,7 @@ public class MessageParser {
             currentQuest.failQuest();
             currentQuest = null;
         } else {
+            sendMessage("You take in the new room. " + currentQuest.currentRoom().Description());
             sendMessage("It is now " + turnManager.currentTurn().getDiscordUser().getDisplayName(server) + "'s turn.");
         }
     }
