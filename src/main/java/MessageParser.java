@@ -4,7 +4,9 @@ import Quests.*;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.server.Server;
+import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
+import java.util.regex.*;
 
 import java.util.Objects;
 
@@ -15,6 +17,21 @@ public class MessageParser {
     private final TurnManager turnManager = new TurnManager();
     DiscordApi api;
     private Quest currentQuest = null;
+
+    //////////////////////////////REGEX constants
+
+    private final Pattern inspectObjectPattern = Pattern.compile("(look|examine|study|inspect|peek)(\\s+)");
+
+    private final Pattern takePattern = Pattern.compile("(grab|collect|store|steal|take)(\\s+)");
+    private final Pattern movePattern = Pattern.compile("(run|walk|go|travel|move)(\\s+)");
+    private final Pattern dropPattern = Pattern.compile("(drop|throw|remove|leave)(\\s+)");
+    private final Pattern endTurnPattern = Pattern.compile("(end|done|next|finish)(\\s*)(turn|my turn|move|my move)");
+
+    /////////////////////////////////////////
+
+
+
+
 
 
     public MessageParser(DiscordApi api, TextChannel validTextChannel, Server server) {
@@ -41,40 +58,8 @@ public class MessageParser {
 
         // There is no active quest
         if (currentQuest == null) {
-            if (event.getMessageContent().equalsIgnoreCase("new quest")) {
-                // Check if anyone has joined to play
-                if (turnManager.numberOfPlayers() == 0) {
-                    sendMessage("You must join before starting a quest. Type \"join\" to join.");
-                } else {
-                    sendMessage("Starting a new Quest with the following players:\n" + getPartyMembers());
+            preQuestPartyManagement(event.getMessageContent(), event.getMessageAuthor().asUser().get());
 
-                    currentQuest = createDefaultQuest();
-                    currentQuest.startQuest();
-                    event.getChannel().sendMessage(currentQuest.getMap().getStartingRoom().Description());
-                }
-            } else if (event.getMessageContent().equalsIgnoreCase("join")) {
-                // Add this user to the list of users
-                if (turnManager.getByUser(event.getMessageAuthor().asUser().get()) == null) {
-                    turnManager.addPlayer(new Player(event.getMessageAuthor().asUser().get()));
-                    sendMessage(event.getMessageAuthor().asUser().get().getDisplayName(server) + " has joined the party.");
-                } else {
-                    sendMessage("You have already joined the party.");
-                }
-                sendMessage("The current party members are:\n" + getPartyMembers());
-            } else if (event.getMessageContent().equalsIgnoreCase("leave")) {
-                // Add this user to the list of users
-                if (turnManager.getByUser(event.getMessageAuthor().asUser().get()) != null) {
-                    sendMessage(event.getMessageAuthor().asUser().get().getDisplayName(server) + " has left the party.");
-                    turnManager.removePlayer(turnManager.getByUser(event.getMessageAuthor().asUser().get()));
-
-                } else {
-                    sendMessage("You are not a member of this party.\n");
-                }
-                sendMessage("The current party members are:\n" + getPartyMembers());
-
-            } else {
-                event.getChannel().sendMessage("No active quest!\nPlease create a new quest with 'New Quest'");
-            }
         } else {
             // If it is this player's turn
             if (event.getMessageAuthor().asUser().get().equals(turnManager.currentTurn().getDiscordUser())) {
@@ -103,7 +88,6 @@ public class MessageParser {
         message = message.replaceAll(" the ", " ");
         message = message.replaceAll(" a ", " ");
         message = message.replaceAll(" an ", " ");
-
 
         return message.split("\\s+");
     }
@@ -381,5 +365,54 @@ public class MessageParser {
             s += "\t" + p.getDiscordUser().getDisplayName(server) + "\n";
         }
         return s;
+    }
+
+    /**
+     * provides the interface to add and
+     * removes players on a party and to load
+     * a quest, and start a quest
+     * <p>
+     * Must be done before the quest begins
+     */
+    public void preQuestPartyManagement(String messageInput, User discordUser) {
+        if (messageInput.equalsIgnoreCase("start quest")) {
+
+
+            //check if anyone has joined to play
+            if (turnManager.numberOfPlayers() == 0) {
+                sendMessage("You must join before starting a quest. Type \"join\" to join.");
+            } else {
+                sendMessage("Starting a new Quest with the following players: ");
+
+                currentQuest = createDefaultQuest();
+                currentQuest.startQuest();
+                sendMessage(currentQuest.getMap().getStartingRoom().Description());
+            }
+
+
+        } else if (messageInput.equalsIgnoreCase("join")) {
+            //add this user to the list of users
+            if (turnManager.getByUser(discordUser) == null) {
+                turnManager.addPlayer(new Player(discordUser));
+                sendMessage(discordUser.getDisplayName(server) + " has joined the party.");
+            } else {
+                sendMessage("You have already joined the party.");
+            }
+            sendMessage("The current party members are:\n" + getPartyMembers());
+        } else if (messageInput.equalsIgnoreCase("leave")) {
+            //add this user to the list of users
+            if (turnManager.getByUser(discordUser) != null) {
+                sendMessage(discordUser.getDisplayName(server) + " has left the party.");
+                turnManager.removePlayer(turnManager.getByUser(discordUser));
+
+            } else {
+                sendMessage("You are not a member of this party.\n");
+            }
+            sendMessage("The current party members are:\n" + getPartyMembers());
+
+
+        } else {
+            sendMessage("No active quest!\nPlease create a new quest with \"Start Quest\"");
+        }
     }
 }
