@@ -192,6 +192,11 @@ public class MessageParser {
                 case "finish":
                     endTurn();
                     break;
+                case "inventory":
+                case "i":
+                case "items":
+                    displayInventory();
+                    break;
                 default:
                     sendMessage("I don't understand \"" + words[0] + "\"");
                     break;
@@ -420,5 +425,9 @@ public class MessageParser {
         } else {
             sendMessage("No active quest!\nPlease create a new quest with \"Start Quest\"");
         }
+    }
+
+    void displayInventory(){
+        sendMessage(turnManager.currentTurn().getInventory().displayItems());
     }
 }
