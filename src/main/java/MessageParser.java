@@ -20,7 +20,7 @@ public class MessageParser {
 
     //////////////////////////////REGEX constants
 
-    private final Pattern inspectObjectPattern = Pattern.compile("(look|examine|study|inspect|peek)(\\s+)");
+    private final Pattern inspectObjectPattern = Pattern.compile("(look|examine|study|inspect|peek)(\\s+).+");
 
     private final Pattern takePattern = Pattern.compile("(grab|collect|store|steal|take)(\\s+)");
     private final Pattern movePattern = Pattern.compile("(run|walk|go|travel|move)(\\s+)");
@@ -85,11 +85,17 @@ public class MessageParser {
     private String[] packageMessage(String message) {
         message = message.toLowerCase();
 
-        message = message.replaceAll(" the ", " ");
-        message = message.replaceAll(" a ", " ");
-        message = message.replaceAll(" an ", " ");
+        message = message.replaceAll("//s+(the|an|a)+//s+", " ");
+
 
         return message.split("\\s+");
+    }
+
+
+
+    private String remove(String str, String regexToRemove){
+        return str.replaceAll(regexToRemove, "");
+
     }
 
     private Quest createDefaultQuest() {

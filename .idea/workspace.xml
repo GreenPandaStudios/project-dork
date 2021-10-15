@@ -11,9 +11,7 @@
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/classAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/classAnalysis.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/javaCompile.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/taskHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/MessageParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MessageParser.java" afterDir="false" />
     </list>
@@ -263,22 +261,26 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="574" y="123" key="#com.intellij.ide.util.MemberChooser/0.0.1536.824/-1840.-213.1840.1080@0.0.1536.824" timestamp="1634155334214" />
-    <state width="1493" height="216" key="GridCell.Tab.0.bottom" timestamp="1634303200290">
+    <state x="253" y="8" key="CommitChangelistDialog2" timestamp="1634303525864">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="216" key="GridCell.Tab.0.bottom/0.0.1536.824/-1840.-213.1840.1080@0.0.1536.824" timestamp="1634303200290" />
-    <state width="1493" height="216" key="GridCell.Tab.0.center" timestamp="1634303200290">
+    <state x="253" y="8" key="CommitChangelistDialog2/0.0.1536.824/-1840.-213.1840.1080@0.0.1536.824" timestamp="1634303525864" />
+    <state width="1493" height="216" key="GridCell.Tab.0.bottom" timestamp="1634304216548">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="216" key="GridCell.Tab.0.center/0.0.1536.824/-1840.-213.1840.1080@0.0.1536.824" timestamp="1634303200290" />
-    <state width="1493" height="216" key="GridCell.Tab.0.left" timestamp="1634303200290">
+    <state width="1493" height="216" key="GridCell.Tab.0.bottom/0.0.1536.824/-1840.-213.1840.1080@0.0.1536.824" timestamp="1634304216548" />
+    <state width="1493" height="216" key="GridCell.Tab.0.center" timestamp="1634304216548">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="216" key="GridCell.Tab.0.left/0.0.1536.824/-1840.-213.1840.1080@0.0.1536.824" timestamp="1634303200290" />
-    <state width="1493" height="216" key="GridCell.Tab.0.right" timestamp="1634303200290">
+    <state width="1493" height="216" key="GridCell.Tab.0.center/0.0.1536.824/-1840.-213.1840.1080@0.0.1536.824" timestamp="1634304216548" />
+    <state width="1493" height="216" key="GridCell.Tab.0.left" timestamp="1634304216548">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="216" key="GridCell.Tab.0.right/0.0.1536.824/-1840.-213.1840.1080@0.0.1536.824" timestamp="1634303200290" />
+    <state width="1493" height="216" key="GridCell.Tab.0.left/0.0.1536.824/-1840.-213.1840.1080@0.0.1536.824" timestamp="1634304216548" />
+    <state width="1493" height="216" key="GridCell.Tab.0.right" timestamp="1634304216548">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="216" key="GridCell.Tab.0.right/0.0.1536.824/-1840.-213.1840.1080@0.0.1536.824" timestamp="1634304216548" />
     <state x="249" y="0" key="SettingsEditor" timestamp="1634302147793">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
