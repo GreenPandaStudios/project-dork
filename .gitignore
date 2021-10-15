@@ -44,3 +44,7 @@ hs_err_pid*
 # Gradle:
 .idea/gradle.xml
 .idea/libraries
+.idea/workspace.xml
+.idea/project-dork.iml
+.idea/modules.xml
+.idea/misc.xml
