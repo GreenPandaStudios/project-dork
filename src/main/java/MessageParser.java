@@ -110,13 +110,33 @@ public class MessageParser {
         Room endingRoom = new Room(
                 "Ending Room"
         );
+
+
+        Room hallway = new Room ("Hallway");
+        hallway.setDescription("A long expanding hallway covered in paintings");
+        Item paintings = new Item();
+        paintings.setScenery(true);
+        paintings.setDescription("They are paintings of people. Their eyes seem to follow you as you move.");
+
+        Doorway hallDoorway1 = new Doorway();
+        hallDoorway1.setUnlockedDesc("it is open.");
+        hallDoorway1.setToRoom(endingRoom);
+
+        Doorway hallDoorway2 = new Doorway();
+        hallDoorway2.setToRoom(startingRoom);
+        hallDoorway2.setUnlockedDesc("nothing blocks your way.");
+
+        hallway.setDoorway(hallDoorway1, Directions.South);
+        hallway.setDoorway(hallDoorway2, Directions.North);
+
+
         startingRoom.addItem(new Item("torch", "A flickering torch cemented firmly into the wall.", 0, 0, true));
 
         endingRoom.addItem(new Item("Golden-Apple", "A curious golden apple.", 50, 1000, false));
         endingRoom.setDescription("You are in a very dark room.");
         Doorway backUp = new Doorway(startingRoom, false);
-        Doorway d = new Doorway(endingRoom, false);
-        Doorway d1 = new Doorway(endingRoom, false);
+        Doorway d = new Doorway(hallway, false);
+        Doorway d1 = new Doorway(hallway, false);
         backUp.setUnlockedDesc("A stair-case winds its way upwards.");
         d.setLockedDesc("an old rusty and heavy looking door with a large padlock.");
         d.setUnlockedDesc("an old heavy door leaning open. There is a padlock on the ground beside it.");
@@ -124,7 +144,7 @@ public class MessageParser {
 
         startingRoom.setDoorway(d, Directions.South);
         startingRoom.setDoorway(d1, Directions.Down);
-        endingRoom.setDoorway(backUp, Directions.Up);
+        endingRoom.setDoorway(backUp, Directions.North);
 
 
         startingRoom.setDescription("You are standing in a dark stone chamber. There is a single torch on the wall beside you.");
