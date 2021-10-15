@@ -116,6 +116,7 @@ public class MessageParser {
         hallway.setDescription("A long expanding hallway covered in paintings");
         Item paintings = new Item();
         paintings.setName("paintings");
+        hallway.addItem(paintings);
         paintings.setScenery(true);
         paintings.setDescription("They are paintings of people. Their eyes seem to follow you as you move.");
 
