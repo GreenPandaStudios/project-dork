@@ -461,5 +461,6 @@ public class MessageParser {
 
     void displayInventory(){
         sendMessage(turnManager.currentTurn().getInventory().displayItems());
+        sendMessage(turnManager.currentTurn().getInventory().displayWeight());
     }
 }

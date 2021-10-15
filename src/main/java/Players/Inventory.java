@@ -85,6 +85,10 @@ public class Inventory {
         return listOfItems;
     }
 
+    public String displayWeight(){
+        return "Current Weight: " + getCurrentWeight() + " / " + getMaxWeight() + "\n";
+    }
+
     public Item peekItem(String itemName) {
         if (items.containsKey(itemName.toLowerCase())) {
             return items.get(itemName.toLowerCase());
