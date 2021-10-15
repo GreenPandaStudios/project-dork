@@ -85,7 +85,7 @@ public class MessageParser {
     private String[] packageMessage(String message) {
         message = message.toLowerCase();
 
-        message = message.replaceAll("\\s+(the|an|a)+\\s+", " ");
+        message = message.replaceAll("\\s+(the|an|a|at|my)+\\s+", " ");
 
 
         return message.split("\\s+");
@@ -221,6 +221,11 @@ public class MessageParser {
                 Item i = currentQuest.currentRoom().peekItem(inspectWhat);
 
                 sendMessage("You take a closer look at the " + i.getName() + ". " + i.Description());
+            } else if (turnManager.currentTurn().getInventory().peekItem(inspectWhat) != null){
+
+                Item i = turnManager.currentTurn().getInventory().peekItem(inspectWhat);
+
+                sendMessage("You take a closer look at your " + i.getName() + ". " + i.Description());
             } else {
                 sendMessage("You see no " + inspectWhat + " here.");
             }

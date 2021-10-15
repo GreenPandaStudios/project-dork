@@ -85,4 +85,11 @@ public class Inventory {
         return listOfItems;
     }
 
+    public Item peekItem(String itemName) {
+        if (items.containsKey(itemName.toLowerCase())) {
+            return items.get(itemName.toLowerCase());
+        }
+        return null;
+    }
+
 }
