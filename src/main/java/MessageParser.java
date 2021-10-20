@@ -1,4 +1,6 @@
+import Items.HealthItem;
 import Items.Item;
+import Items.UsableItem;
 import Players.Player;
 import Quests.*;
 import org.javacord.api.DiscordApi;
@@ -6,6 +8,7 @@ import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
+
 import java.util.regex.*;
 
 import java.util.Objects;
@@ -28,10 +31,6 @@ public class MessageParser {
     private final Pattern endTurnPattern = Pattern.compile("(end|done|next|finish)(\\s*)(turn|my turn|move|my move)");
 
     /////////////////////////////////////////
-
-
-
-
 
 
     public MessageParser(DiscordApi api, TextChannel validTextChannel, Server server) {
@@ -92,8 +91,7 @@ public class MessageParser {
     }
 
 
-
-    private String remove(String str, String regexToRemove){
+    private String remove(String str, String regexToRemove) {
         return str.replaceAll(regexToRemove, "");
 
     }
@@ -103,16 +101,22 @@ public class MessageParser {
                         "A heavy well-made sword",
                         10.5,
                         10, false))
-                .addItem(new Item("Amulet",
+                .addItem(new HealthItem("Amulet",
                         "A scary looking amulet",
                         2,
-                        20, false));
+                        20, false,
+                        1, -20))
+                .addItem(new HealthItem("Potion",
+                        "Restores 5 health",
+                        3,
+                        15, false,
+                        1, 5));
         Room endingRoom = new Room(
                 "Ending Room"
         );
 
 
-        Room hallway = new Room ("Hallway");
+        Room hallway = new Room("Hallway");
         hallway.setDescription("A long expanding hallway covered in paintings");
         Item paintings = new Item();
         paintings.setName("paintings");
@@ -167,7 +171,7 @@ public class MessageParser {
                 case "peek":
                 case "inspect":
                     if (words.length > 1) {
-                        if(words[1].equals("inventory")){
+                        if (words[1].equals("inventory")) {
                             displayInventory();
                         } else {
                             inspectAction(words[1]);
@@ -187,6 +191,15 @@ public class MessageParser {
                         takeAction(words[1]);
                     } else {
                         sendMessage("What would you like to take?");
+                    }
+                    break;
+                //"use" synonyms
+                case "use":
+                case "activate":
+                    if (words.length > 1) {
+                        useAction(words[1]);
+                    } else {
+                        sendMessage("What would you like to use?");
                     }
                     break;
                 //"move" synonyms
@@ -243,7 +256,7 @@ public class MessageParser {
                 Item i = currentQuest.currentRoom().peekItem(inspectWhat);
 
                 sendMessage("You take a closer look at the " + i.getName() + ". " + i.Description());
-            } else if (turnManager.currentTurn().getInventory().peekItem(inspectWhat) != null){
+            } else if (turnManager.currentTurn().getInventory().peekItem(inspectWhat) != null) {
 
                 Item i = turnManager.currentTurn().getInventory().peekItem(inspectWhat);
 
@@ -273,9 +286,12 @@ public class MessageParser {
                     //remove it from the room
                     currentQuest.currentRoom().removeItem(takeWhat);
                     sendMessage("You take the " + i.getName() + ". ");
-                    if (Objects.equals(i.getName(), "Amulet")) {
-                        sendMessage("You take 20 damage.");
-                        turnManager.currentTurn().setHealth(turnManager.currentTurn().getHealth() - 20);
+                    if (i instanceof HealthItem && ((HealthItem) i).getHealth() < 0) {
+                        ((HealthItem) i).useItem(turnManager.currentTurn());
+                        sendMessage("You take " + ((HealthItem) i).getHealth() + " damage. You now have " + turnManager.currentTurn().getHealth() + " health remaining.");
+                        if (!turnManager.canAct(turnManager.currentTurn())) {
+                            endTurn();
+                        }
                     }
                 } else {
                     sendMessage("You can not fit " + i.getName() + " in your inventory.");
@@ -285,10 +301,27 @@ public class MessageParser {
                 sendMessage("You see no " + takeWhat + " here.");
             }
         }
+    }
+
+    private void useAction(String itemName) {
+        Item item = turnManager.currentTurn().getInventory().peekItem(itemName);
+        if (item != null) {
+            if (item instanceof UsableItem) {
+                ((UsableItem) item).useItem(turnManager.currentTurn());
+                sendMessage("You use the " + itemName + ". You now have " + turnManager.currentTurn().getHealth() + " health remaining.");
+                if (((UsableItem) item).getUsesLeft() <= 0) {
+                    turnManager.currentTurn().getInventory().removeItem(itemName);
+                    sendMessage("The " + itemName + " is no longer usable. You discard it.");
+                }
+            } else {
+                sendMessage("You cannot use a \"" + itemName + "\".");
+            }
+        } else {
+            sendMessage("You don't have a \"" + itemName + "\".");
+        }
         if (!turnManager.canAct(turnManager.currentTurn())) {
             endTurn();
         }
-
     }
 
 
@@ -376,7 +409,10 @@ public class MessageParser {
         if (turnManager.canAct(turnManager.currentTurn())) {
             sendMessage(turnManager.currentTurn().getDiscordUser().getDisplayName(server) + " ends their turn.");
         } else {
-            sendMessage(turnManager.currentTurn().getDiscordUser().getDisplayName(server) + " is incapacitated.");
+            sendMessage("A player has fallen. The dungeon closes...");
+            currentQuest.failQuest();
+            currentQuest = null;
+            return;
         }
 
         if (currentQuest.getMap().getEndingRoom().equals(turnManager.currentTurn().getRoom())) {
@@ -387,14 +423,10 @@ public class MessageParser {
             } else {
                 sendMessage(turnManager.currentTurn().getDiscordUser().getDisplayName(server) + " is waiting at the exit.");
             }
-        } else if (turnManager.nextTurn() == -1) {
-            sendMessage("A player has fallen. The dungeon closes...");
-            currentQuest.failQuest();
-            currentQuest = null;
-        } else {
-            sendMessage("You take in the new room. " + currentQuest.currentRoom().Description());
-            sendMessage("It is now " + turnManager.currentTurn().getDiscordUser().getDisplayName(server) + "'s turn.");
         }
+        turnManager.nextTurn();
+        //sendMessage("You take in the new room. " + currentQuest.currentRoom().Description());
+        sendMessage("It is now " + turnManager.currentTurn().getDiscordUser().getDisplayName(server) + "'s turn.");
     }
 
     /**
@@ -459,7 +491,7 @@ public class MessageParser {
         }
     }
 
-    void displayInventory(){
+    void displayInventory() {
         sendMessage(turnManager.currentTurn().getInventory().displayItems());
         sendMessage(turnManager.currentTurn().getInventory().displayWeight());
     }

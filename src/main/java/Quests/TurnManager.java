@@ -37,7 +37,7 @@ public class TurnManager {
      * @return bool whether player can act or not
      */
     public boolean canAct(Player player) {
-        return player.getHealth() != 0;
+        return player.getHealth() > 0;
     }
 
 
