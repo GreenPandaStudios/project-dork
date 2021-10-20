@@ -1,4 +1,6 @@
+import Items.HealthItem;
 import Items.Item;
+import Items.UsableItem;
 import Players.Player;
 import Quests.*;
 import org.javacord.api.DiscordApi;
@@ -103,10 +105,16 @@ public class MessageParser {
                         "A heavy well-made sword",
                         10.5,
                         10, false))
-                .addItem(new Item("Amulet",
+                .addItem(new HealthItem("Amulet",
                         "A scary looking amulet",
                         2,
-                        20, false));
+                        20, false,
+                        -10))
+                .addItem(new HealthItem("Potion",
+                        "Restores 5 health",
+                        3,
+                        15, false,
+                        5));
         Room endingRoom = new Room(
                 "Ending Room"
         );
@@ -187,6 +195,15 @@ public class MessageParser {
                         takeAction(words[1]);
                     } else {
                         sendMessage("What would you like to take?");
+                    }
+                    break;
+                //"use" synonyms
+                case "use":
+                case "activate":
+                    if (words.length > 1) {
+                        useAction(words[1]);
+                    } else {
+                        sendMessage("What would you like to use?");
                     }
                     break;
                 //"move" synonyms
@@ -273,9 +290,9 @@ public class MessageParser {
                     //remove it from the room
                     currentQuest.currentRoom().removeItem(takeWhat);
                     sendMessage("You take the " + i.getName() + ". ");
-                    if (Objects.equals(i.getName(), "Amulet")) {
-                        sendMessage("You take 20 damage.");
-                        turnManager.currentTurn().setHealth(turnManager.currentTurn().getHealth() - 20);
+                    if (i instanceof HealthItem && ((HealthItem)i).getHealth()<0) {
+                        ((HealthItem)i).useItem(turnManager.currentTurn());
+                        sendMessage("You take " + ((HealthItem) i).getHealth() + " damage. You now have "+turnManager.currentTurn().getHealth()+" health remaining.");
                     }
                 } else {
                     sendMessage("You can not fit " + i.getName() + " in your inventory.");
@@ -289,6 +306,22 @@ public class MessageParser {
             endTurn();
         }
 
+    }
+
+    private void useAction(String itemName){
+        Item item = turnManager.currentTurn().getInventory().peekItem(itemName);
+        if(item != null){
+            if(item instanceof UsableItem){
+                ((UsableItem) item).useItem(turnManager.currentTurn());
+                sendMessage("You use the "+itemName+". You now have "+turnManager.currentTurn().getHealth()+" health remaining.");
+                if(((UsableItem) item).getUsesLeft()<=0){
+                    turnManager.currentTurn().getInventory().removeItem(itemName);
+                    sendMessage("The "+itemName+" is no longer usable. You discard it.");
+                }
+            }
+        } else {
+            sendMessage("You don't have a \"" + itemName + "\".");
+        }
     }
 
 
