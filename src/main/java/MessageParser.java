@@ -326,8 +326,6 @@ public class MessageParser {
 
 
     private void moveAction(String direction) {
-
-
         Directions d;
 
         switch (direction.toLowerCase()) {
@@ -405,7 +403,7 @@ public class MessageParser {
      * It will increment the turn index and tell all user's who's turn it is now
      */
     private void endTurn() {
-
+        clearAllMessages();
         if (turnManager.canAct(turnManager.currentTurn())) {
             sendMessage(turnManager.currentTurn().getDiscordUser().getDisplayName(server) + " ends their turn.");
         } else {
@@ -457,6 +455,7 @@ public class MessageParser {
             if (turnManager.numberOfPlayers() == 0) {
                 sendMessage("You must join before starting a quest. Type \"join\" to join.");
             } else {
+                clearAllMessages();
                 sendMessage("Starting a new Quest with the following players: ");
 
                 currentQuest = createDefaultQuest();
@@ -494,5 +493,9 @@ public class MessageParser {
     void displayInventory() {
         sendMessage(turnManager.currentTurn().getInventory().displayItems());
         sendMessage(turnManager.currentTurn().getInventory().displayWeight());
+    }
+
+    void clearAllMessages() {
+        validTextChannel.getMessages(Integer.MAX_VALUE).thenApplyAsync(messages -> messages.deleteAll());
     }
 }
