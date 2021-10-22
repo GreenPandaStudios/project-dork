@@ -3,14 +3,15 @@ package Items;
 public class Item implements Interfaces.IName, Interfaces.IDescriptable {
 
 
-    public Item(String name, String description, double weight, double value, boolean scenery){
+    public Item(String name, String description, double weight, double value, boolean scenery) {
         setValue(value);
         setDescription(description);
         setWeight(weight);
         setName(name);
         setScenery(scenery);
     }
-    public Item(){
+
+    public Item() {
         weight = value = 0;
         name = description = "";
     }
@@ -24,6 +25,7 @@ public class Item implements Interfaces.IName, Interfaces.IDescriptable {
      * If something is scenery it cannot be taken
      * And cannot be moved
      * and will not be printed out in the description
+     *
      * @return
      */
     public boolean isScenery() {

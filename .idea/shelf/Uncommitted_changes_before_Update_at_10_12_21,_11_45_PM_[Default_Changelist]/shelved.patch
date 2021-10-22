@@ -1,0 +1,367 @@
+Index: src/main/java/Quests/TurnManager.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package Quests;\n\nimport Players.Player;\nimport org.javacord.api.entity.user.User;\n\nimport java.util.ArrayList;\nimport java.util.List;\n\npublic class TurnManager {\n\n\n    public ArrayList<Player> getPlayers() {\n        return players;\n    }\n\n    ArrayList<Player> players = new ArrayList<>();\n    private int turnIndex = 0;\n\n    public int nextTurn(){\n        return turnIndex = (turnIndex + 1) % players.size();\n    }\n\n\n    public Player currentTurn(){\n        return  players.get(turnIndex);\n    }\n\n    /**\n     * Adds a player to the turn manager\n     * @param player\n     */\n    public void addPlayer(Player player){\n        //is this player added\n        players.add(players.size(),player);\n        turnIndex = (turnIndex) % players.size();\n    }\n\n    /**\n     * removes a player from the turn manager\n     * @param player\n     */\n    public void removePlayer(Player player){\n        players.remove(player);\n        //refactor the turn index\n        turnIndex = (turnIndex) % players.size();\n    }\n\n    public int numberOfPlayers(){\n        return  players.size();\n    }\n\n    /**\n     * Get a player from a discord user\n     * @param user\n     * @return\n     */\n    public  Player getByUser(User user){\n        for( Player p : players){\n           if (p.getDiscordUser().equals(user)){\n               return p;\n           }\n\n        }\n        return null;\n    }\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/Quests/TurnManager.java b/src/main/java/Quests/TurnManager.java
+--- a/src/main/java/Quests/TurnManager.java	(revision 3c46ae6e62a691fb08f9a633d936787de260b81a)
++++ b/src/main/java/Quests/TurnManager.java	(date 1634096734437)
+@@ -17,7 +17,13 @@
+     private int turnIndex = 0;
+ 
+     public int nextTurn(){
+-        return turnIndex = (turnIndex + 1) % players.size();
++        int turnIndexTemp = (turnIndex + 1) % players.size();
++        turnIndex=turnIndexTemp;
++        if(players.get(turnIndexTemp).getHealth()==0){
++            return -1; //return -1 to signal to the message parser that this player is incapacitated
++        } else {
++            return turnIndex;
++        }
+     }
+ 
+ 
+Index: src/main/java/Players/Player.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package Players;\n\nimport Quests.Room;\nimport org.javacord.api.entity.user.User;\n\npublic class Player {\n\n    // player's current and maximum health, respectively\n    private double health;\n    private double maxHealth;\n\n    public Player(User user){\n        setDiscordUser(user);\n        this.maxHealth=20;\n        setHealth(maxHealth);\n    }\n\n    // testing constructor that doesn't require a discord user\n    public Player(){\n        this.maxHealth=20;\n        setHealth(maxHealth);\n    }\n\n    public User getDiscordUser() {\n        return discordUser;\n    }\n\n    public void setDiscordUser(User discordUser) {\n        this.discordUser = discordUser;\n    }\n\n    //The Discord user associated with this player\n    private User discordUser;\n\n    public Room getRoom() {\n        return room;\n    }\n\n    public void setRoom(Room room) {\n        this.room = room;\n    }\n\n    //the Current room the player is in\n    private Room room;\n\n    public Inventory getInventory() {\n        return inventory;\n    }\n\n    public void setInventory(Inventory inventory) {\n        this.inventory = inventory;\n    }\n    //The player's inventory\n    private  Inventory inventory = new Inventory(100);\n\n    public double getHealth() {\n        return health;\n    }\n\n    public void setHealth(double health) {\n        if(health<0){\n            this.health=0;\n        } else {\n            this.health = Math.min(health, maxHealth);\n        }\n    }\n\n    public double getMaxHealth() {\n        return maxHealth;\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/Players/Player.java b/src/main/java/Players/Player.java
+--- a/src/main/java/Players/Player.java	(revision 3c46ae6e62a691fb08f9a633d936787de260b81a)
++++ b/src/main/java/Players/Player.java	(date 1634096166992)
+@@ -7,7 +7,7 @@
+ 
+     // player's current and maximum health, respectively
+     private double health;
+-    private double maxHealth;
++    private final double maxHealth;
+ 
+     public Player(User user){
+         setDiscordUser(user);
+@@ -37,7 +37,9 @@
+     }
+ 
+     public void setRoom(Room room) {
++        this.room.setPlayerCount(this.room.getPlayerCount()-1);
+         this.room = room;
++        this.room.setPlayerCount(this.room.getPlayerCount()+1);
+     }
+ 
+     //the Current room the player is in
+Index: src/main/java/Quests/Room.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package Quests;\nimport Items.Item;\nimport java.util.HashMap;\nimport java.util.Iterator;\n\npublic class Room implements Interfaces.IDescriptable, Interfaces.IName{\n\n\n\n\n    public Room(){setName(\"\");}\n    public Room(String name){\n        setName(name);\n    }\n\n    /**\n     * The items contained in this room, referenced by there unique name\n     */\n    HashMap<String, Item> items  = new HashMap<String, Item>();\n\n\n    private Doorway[] doorways = {null, null, null, null, null, null};\n\n    /**\n     * Sets the doorway in the provided direction\n     * @param doorway\n     * @param direction\n     * @return The room with updated doorways\n     */\n    public Room setDoorway(Doorway doorway, Directions direction){\n        doorways[direction.ordinal()] = doorway;\n        return  this;\n    }\n\n\n    private  String description;\n    private String name;\n\n    //TODO\n    @Override\n    public String Description() {\n        String descr = description;\n\n\n        //now print out the doorways\n        if (doorways[Directions.North.ordinal()] != null){\n            descr+=\"\\nTo the north you see \" + doorways[Directions.North.ordinal()].Description().toLowerCase();\n        }\n        if (doorways[Directions.South.ordinal()] != null){\n            descr+=\"\\n\\nTo the south you see \" + doorways[Directions.South.ordinal()].Description();\n        }\n        if (doorways[Directions.East.ordinal()] != null){\n            descr+=\"\\n\\nTo the east you see \" + doorways[Directions.East.ordinal()].Description();\n        }\n        if (doorways[Directions.West.ordinal()] != null){\n            descr+=\"\\n\\nTo the west you see \" + doorways[Directions.West.ordinal()].Description();\n        }\n        if (doorways[Directions.Up.ordinal()] != null){\n            descr+=\"\\n\\nLooking up, you see \" + doorways[Directions.Up.ordinal()].Description();\n        }\n        if (doorways[Directions.Down.ordinal()] != null){\n            descr+=\"\\n\\nLooking down, you see \" + doorways[Directions.Down.ordinal()].Description();\n        }\n\n\n        //print items\n        if (!items.isEmpty()){\n            //see if we have anything other than scenery\n            boolean onlyScenery = true;\n            for (Item i : items.values()){\n                if (!i.isScenery()){\n                    onlyScenery = false;\n                    break;\n                }\n            }\n\n            if (!onlyScenery){\n                descr += \"\\n\\n\\nYou also see the following items:\\n\";\n                for (Item i :items.values()){\n                    if(!i.isScenery()){\n                        descr += \"\\t-\" + i.getName() + \"\\n\";\n                    }\n\n                }\n            }\n\n        }\n\n        return descr;\n    }\n\n    @Override\n    public String getName() {\n        return name;\n    }\n\n    public void setDescription(String description) {\n        this.description = description;\n    }\n\n    public void setName(String name) {\n        this.name = name;\n    }\n\n    /**\n     * Adds the provided item to the room if it is not already contained\n     * @param item\n     * @return The room with updated items\n     */\n    public Room addItem(Item item){\n        if (!items.containsKey(item.getName())){\n            items.put(item.getName().toLowerCase(),item);\n        }\n        return this;\n    }\n\n    /**\n     * Removes an item from the room and returns it\n     * @param itemName\n     * @return\n     */\n    public Item removeItem(String itemName){\n        if (items.containsKey(itemName.toLowerCase())) {\n            return items.remove(itemName.toLowerCase());\n        }\n        return null;\n    }\n\n    /**\n     * returns an item with the given name, or null if it doesn't exist\n     * @param itemName\n     * @return\n     */\n    public Item peekItem(String itemName){\n        if (items.containsKey(itemName.toLowerCase())) {\n            return items.get(itemName.toLowerCase());\n        }\n        return null;\n    }\n\n    public Doorway getDoorway(Directions direction) {\n        return doorways[direction.ordinal()];\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/Quests/Room.java b/src/main/java/Quests/Room.java
+--- a/src/main/java/Quests/Room.java	(revision 3c46ae6e62a691fb08f9a633d936787de260b81a)
++++ b/src/main/java/Quests/Room.java	(date 1634096325718)
+@@ -1,40 +1,44 @@
+ package Quests;
++
+ import Items.Item;
++
+ import java.util.HashMap;
+-import java.util.Iterator;
+ 
+-public class Room implements Interfaces.IDescriptable, Interfaces.IName{
++public class Room implements Interfaces.IDescriptable, Interfaces.IName {
+ 
+ 
++    public Room() {
++        setName("");
++    }
+ 
+-
+-    public Room(){setName("");}
+-    public Room(String name){
++    public Room(String name) {
+         setName(name);
+     }
+ 
+     /**
+-     * The items contained in this room, referenced by there unique name
++     * The items contained in this room, referenced by their unique name
+      */
+-    HashMap<String, Item> items  = new HashMap<String, Item>();
++    HashMap<String, Item> items = new HashMap<String, Item>();
+ 
+ 
+     private Doorway[] doorways = {null, null, null, null, null, null};
+ 
+     /**
+      * Sets the doorway in the provided direction
++     *
+      * @param doorway
+      * @param direction
+      * @return The room with updated doorways
+      */
+-    public Room setDoorway(Doorway doorway, Directions direction){
++    public Room setDoorway(Doorway doorway, Directions direction) {
+         doorways[direction.ordinal()] = doorway;
+-        return  this;
++        return this;
+     }
+ 
+ 
+-    private  String description;
++    private String description;
+     private String name;
++    private int playerCount;
+ 
+     //TODO
+     @Override
+@@ -43,41 +47,41 @@
+ 
+ 
+         //now print out the doorways
+-        if (doorways[Directions.North.ordinal()] != null){
+-            descr+="\nTo the north you see " + doorways[Directions.North.ordinal()].Description().toLowerCase();
++        if (doorways[Directions.North.ordinal()] != null) {
++            descr += "\nTo the north you see " + doorways[Directions.North.ordinal()].Description().toLowerCase();
+         }
+-        if (doorways[Directions.South.ordinal()] != null){
+-            descr+="\n\nTo the south you see " + doorways[Directions.South.ordinal()].Description();
++        if (doorways[Directions.South.ordinal()] != null) {
++            descr += "\n\nTo the south you see " + doorways[Directions.South.ordinal()].Description();
+         }
+-        if (doorways[Directions.East.ordinal()] != null){
+-            descr+="\n\nTo the east you see " + doorways[Directions.East.ordinal()].Description();
++        if (doorways[Directions.East.ordinal()] != null) {
++            descr += "\n\nTo the east you see " + doorways[Directions.East.ordinal()].Description();
+         }
+-        if (doorways[Directions.West.ordinal()] != null){
+-            descr+="\n\nTo the west you see " + doorways[Directions.West.ordinal()].Description();
++        if (doorways[Directions.West.ordinal()] != null) {
++            descr += "\n\nTo the west you see " + doorways[Directions.West.ordinal()].Description();
+         }
+-        if (doorways[Directions.Up.ordinal()] != null){
+-            descr+="\n\nLooking up, you see " + doorways[Directions.Up.ordinal()].Description();
++        if (doorways[Directions.Up.ordinal()] != null) {
++            descr += "\n\nLooking up, you see " + doorways[Directions.Up.ordinal()].Description();
+         }
+-        if (doorways[Directions.Down.ordinal()] != null){
+-            descr+="\n\nLooking down, you see " + doorways[Directions.Down.ordinal()].Description();
++        if (doorways[Directions.Down.ordinal()] != null) {
++            descr += "\n\nLooking down, you see " + doorways[Directions.Down.ordinal()].Description();
+         }
+ 
+ 
+         //print items
+-        if (!items.isEmpty()){
++        if (!items.isEmpty()) {
+             //see if we have anything other than scenery
+             boolean onlyScenery = true;
+-            for (Item i : items.values()){
+-                if (!i.isScenery()){
++            for (Item i : items.values()) {
++                if (!i.isScenery()) {
+                     onlyScenery = false;
+                     break;
+                 }
+             }
+ 
+-            if (!onlyScenery){
++            if (!onlyScenery) {
+                 descr += "\n\n\nYou also see the following items:\n";
+-                for (Item i :items.values()){
+-                    if(!i.isScenery()){
++                for (Item i : items.values()) {
++                    if (!i.isScenery()) {
+                         descr += "\t-" + i.getName() + "\n";
+                     }
+ 
+@@ -89,6 +93,14 @@
+         return descr;
+     }
+ 
++    public void setPlayerCount(int playerCount) {
++        this.playerCount = Math.max(playerCount, 0);
++    }
++
++    public int getPlayerCount() {
++        return playerCount;
++    }
++
+     @Override
+     public String getName() {
+         return name;
+@@ -104,22 +116,24 @@
+ 
+     /**
+      * Adds the provided item to the room if it is not already contained
++     *
+      * @param item
+      * @return The room with updated items
+      */
+-    public Room addItem(Item item){
+-        if (!items.containsKey(item.getName())){
+-            items.put(item.getName().toLowerCase(),item);
++    public Room addItem(Item item) {
++        if (!items.containsKey(item.getName())) {
++            items.put(item.getName().toLowerCase(), item);
+         }
+         return this;
+     }
+ 
+     /**
+      * Removes an item from the room and returns it
++     *
+      * @param itemName
+      * @return
+      */
+-    public Item removeItem(String itemName){
++    public Item removeItem(String itemName) {
+         if (items.containsKey(itemName.toLowerCase())) {
+             return items.remove(itemName.toLowerCase());
+         }
+@@ -128,10 +142,11 @@
+ 
+     /**
+      * returns an item with the given name, or null if it doesn't exist
++     *
+      * @param itemName
+      * @return
+      */
+-    public Item peekItem(String itemName){
++    public Item peekItem(String itemName) {
+         if (items.containsKey(itemName.toLowerCase())) {
+             return items.get(itemName.toLowerCase());
+         }
+Index: src/main/java/MessageParser.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import Items.Item;\nimport Players.Player;\nimport Quests.*;\nimport org.javacord.api.DiscordApi;\nimport org.javacord.api.DiscordApiBuilder;\nimport org.javacord.api.entity.channel.ServerTextChannelBuilder;\nimport org.javacord.api.entity.channel.TextChannel;\nimport org.javacord.api.entity.server.Server;\nimport org.javacord.api.event.message.MessageCreateEvent;\n\nimport java.util.Iterator;\n\npublic class MessageParser {\n\n    private Server server;\n    private TextChannel validTextChannel;\n    private Quest currentQuest = null;\n    private TurnManager turnManager = new TurnManager();\n\n\n    DiscordApi api;\n\n\n    public MessageParser(DiscordApi api, TextChannel validTextChannel, Server server){\n\n        // Hook up the listeners\n        api.addMessageCreateListener(this::onMessageCreate);\n\n        this.validTextChannel = validTextChannel;\n        this.api = api;\n        this.server = server;\n    }\n\n\n    public void onMessageCreate(MessageCreateEvent event){\n        //first, validate the channel this message was typed in\n        if (validTextChannel!= event.getChannel()){\n            return;\n        }\n\n        //now make sure it is not the bot sending a message\n        if (event.getMessageAuthor().isYourself()){\n            return;\n        }\n\n        if (currentQuest == null){\n            if (event.getMessageContent().equalsIgnoreCase(\"new quest\")){\n\n\n                //check if anyone has joined to play\n                if (turnManager.numberOfPlayers() == 0){\n                    sendMessage(\"You must join before starting a quest. Type \\\"join\\\" to join.\");\n                }\n                else{\n                    sendMessage(\"Starting a new Quest with the following players: \");\n\n                    currentQuest = createDefaultQuest();\n                    currentQuest.startQuest();\n                    event.getChannel().sendMessage(currentQuest.getMap().getStartingRoom().Description());\n                }\n\n\n            }\n            else if (event.getMessageContent().equalsIgnoreCase(\"join\")){\n                //add this user to the list of users\n                if (turnManager.getByUser(event.getMessageAuthor().asUser().get())==null) {\n                    turnManager.addPlayer(new Player(event.getMessageAuthor().asUser().get()));\n                    sendMessage(event.getMessageAuthor().asUser().get().getDisplayName(server) + \" has joined the party.\");\n                }\n                else{\n                    sendMessage(\"You have already joined the party.\");\n                }\n                sendMessage(\"The current party members are:\\n\" + getPartyMembers());\n            }\n            else if (event.getMessageContent().equalsIgnoreCase(\"leave\")){\n                //add this user to the list of users\n                if (turnManager.getByUser(event.getMessageAuthor().asUser().get())!=null){\n                    sendMessage(event.getMessageAuthor().asUser().get().getDisplayName(server) + \" has left the party.\");\n                    turnManager.removePlayer(turnManager.getByUser(event.getMessageAuthor().asUser().get()));\n\n                }\n                else{\n                    sendMessage(\"You are not a member of this party.\\n\");\n                }\n                sendMessage(\"The current party members are:\\n\" + getPartyMembers());\n\n\n            }\n            else{\n                event.getChannel().sendMessage(\"No active quest!\\nPlease create a new quest with 'New Quest'\");\n            }\n        }\n        else{\n            //if it is this player's turn\n            if (event.getMessageAuthor().asUser().get().equals(turnManager.currentTurn().getDiscordUser())){\n                parseValidMessage(packageMessage(event.getMessageContent()));\n            }\n            else{\n                sendMessage(event.getMessageAuthor().asUser().get().getDisplayName(server) + \", it is not your turn.\");\n            }\n\n        }\n\n    }\n\n    /**\n     * Packages a message to be valid and be able to be parsed by the\n     * parseValidMessage Method\n     * @param message\n     * @return\n     */\n    private  String[] packageMessage(String message){\n        message = message.toLowerCase();\n\n        message = message.replaceAll(\" the \",\" \");\n        message = message.replaceAll(\" a \",\" \");\n        message = message.replaceAll(\" an \",\" \");\n\n\n\n\n        return message.split(\"\\\\s+\");\n    }\n    private Quest createDefaultQuest(){\n        Room startingRoom = new Room( \"Starting Room\").addItem(new Item(\"Sword\",\n                \"A heavy well-made sword\",\n                10.5,\n                10, false));\n        Room endingRoom = new Room(\n                \"Ending Room\"\n        );\n        startingRoom.addItem(new Item(\"torch\", \"A flickering torch cemented firmly into the wall.\", 0,0,true));\n\n        endingRoom.addItem(new Item(\"Golden-Apple\", \"A curious golden apple.\", 50, 1000, false));\n        endingRoom.setDescription(\"You are in a very dark room.\");\n        Doorway backUp = new Doorway(startingRoom, false);\n        Doorway d = new Doorway(endingRoom, false);\n        Doorway d1 = new Doorway(endingRoom, false);\n        backUp.setUnlockedDesc(\"A stair-case winds its way upwards.\");\n        d.setLockedDesc(\"an old rusty and heavy looking door with a large padlock.\");\n        d.setUnlockedDesc(\"an old heavy door leaning open. There is a padlock on the ground beside it.\");\n        d1.setUnlockedDesc(\"Stairs winding down to nearly complete darkness. There is an ever-so faint light just beyond the point of complete darkness.\");\n\n        startingRoom.setDoorway(d, Directions.South);\n        startingRoom.setDoorway(d1, Directions.Down);\n        endingRoom.setDoorway(backUp, Directions.Up);\n\n\n        startingRoom.setDescription(\"You are standing in a dark stone chamber. There is a single torch on the wall beside you.\");\n\n\n\n        Map m = new Map(startingRoom,endingRoom);\n\n        return  new Quest(m, turnManager);\n    }\n\n    private void parseValidMessage(String[] words) {\n        if (words.length > 0) {\n            switch (words[0]) {\n                //\"inspect\" synonyms\n                case \"look\":\n                case \"examine\":\n                case \"study\":\n                case \"peek\":\n                case \"inspect\":\n                    if (words.length > 1) {\n                        inspectAction(words[1]);\n                    } else {\n                        //assume we are talking about the room\n                        sendMessage(\"You take in your surroundings. \" +currentQuest.currentRoom().Description());\n                    }\n                    break;\n                //\"take\" synonyms\n                case \"grab\":\n                case \"collect\":\n                case \"store\":\n                case \"steal\":\n                case \"take\":\n                    if (words.length > 1){\n                        takeAction(words[1]);\n                    }\n                    else{\n                        sendMessage(\"What would you like to take?\");\n                    }\n                    break;\n                 //\"move\" synonyms\n                case \"run\":\n                case \"walk\":\n                case \"go\":\n                case \"travel\":\n                case \"move\":\n                    if (words.length > 1){\n                        moveAction(words[1]);\n                    }\n                    else{\n                        sendMessage(\"Where would you like to move to?\");\n                    }\n                    break;\n                //\"remove\" synonyms\n                case \"drop\":\n                case \"throw\":\n                case \"remove\":\n                case \"leave\":\n                    if (words.length > 1){\n                        removeAction(words[1]);\n                    }\n                    else{\n                        sendMessage(\"What would you like to remove from your inventory?\");\n                    }\n                    break;\n                case \"end\":\n                case \"done\":\n                case \"next\":\n                case \"finish\":\n                    endTurn();\n                    break;\n                default:\n                    sendMessage(\"I don't understand \\\"\" + words[0] + \"\\\"\");\n                    break;\n            }\n        } else {\n            sendMessage(\"Please enter something.\");\n        }\n    }\n    /**\n     *\n     * @param inspectWhat\n     */\n    private void inspectAction(String inspectWhat){\n        if (inspectWhat != null){\n            inspectWhat = inspectWhat.toLowerCase();\n            if (currentQuest.currentRoom().peekItem(inspectWhat)!=null){\n\n                Item i = currentQuest.currentRoom().peekItem(inspectWhat);\n\n                sendMessage(\"You take a closer look at the \"+i.getName()+\". \" + i.Description());\n            }\n            else{\n               sendMessage(\"You see no \" + inspectWhat +\" here.\");\n            }\n        }\n    }\n\n    private void takeAction(String takeWhat){\n\n        if (takeWhat != null){\n            takeWhat = takeWhat.toLowerCase();\n            if (currentQuest.currentRoom().peekItem(takeWhat)!=null){\n\n                Item i = currentQuest.currentRoom().peekItem(takeWhat);\n\n                //make sure it is not scenery\n                if (i.isScenery()){\n                    sendMessage(\"You can't take the \" + i.getName());\n                    return;\n                }\n\n                //try to put the item in the current player's inventory\n                if (turnManager.currentTurn().getInventory().addItem(i)){\n                    //remove it from the room\n                    currentQuest.currentRoom().removeItem(takeWhat);\n                    sendMessage(\"You take the \" + i.getName());\n                }\n                else{\n                    sendMessage(\"You can not fit \"+i.getName()+\" in your inventory.\");\n                }\n            }\n            else{\n                //not in the room\n                sendMessage(\"You see no \" + takeWhat +\" here.\");\n            }\n        }\n    }\n\n    private void moveAction(String direction){\n\n\n        Directions d;\n\n        switch (direction.toLowerCase()){\n            case \"north\":\n            case \"n\":\n                d = Directions.North;\n                break;\n            case \"south\":\n            case \"s\":\n                d = Directions.South;\n                break;\n            case \"east\":\n            case \"e\":\n                d = Directions.East;\n                break;\n            case \"up\":\n            case \"u\":\n                d = Directions.Up;\n                break;\n            case \"down\":\n            case \"d\":\n                d = Directions.Down;\n                break;\n            case \"west\":\n            case \"w\":\n                d = Directions.West;\n                break;\n            default:\n                sendMessage(direction + \" is not a valid direction.\");\n                return;\n        }\n\n        //we have a valid direction\n        Doorway door = currentQuest.currentRoom().getDoorway(d);\n        if (door != null){\n            if (currentQuest.currentRoom().getDoorway(d).getLocked()){\n                sendMessage(\"That way is locked.\");\n            }\n            else{\n                //move the player the correct direction\n                turnManager.currentTurn().setRoom(door.getToRoom());\n                sendMessage(\"You move \" + d.name()+\".\");\n\n                endTurn();\n            }\n        }\n        else{\n            sendMessage(\"There is nothing that way.\");\n        }\n\n    }\n\n    private void removeAction(String item){\n        if (item != null){\n            //make sure we have the thing in our inventory\n            Item i = turnManager.currentTurn().getInventory().removeItem(item);\n            if (i != null){\n                //put the item in this room\n                currentQuest.currentRoom().addItem(i);\n                sendMessage(\"You removed \" + i.getName() + \" from your inventory.\");\n            }\n            else{\n                sendMessage(\"You don't have a \\\"\" + item +\"\\\".\");\n            }\n        }\n    }\n    /**\n     * Sends the message to Discord\n     * @param message\n     */\n    private void sendMessage(String message){\n        validTextChannel.sendMessage(message);\n    }\n\n    /**\n     * Call this on a valid turn.\n     * It will increment the turn index and tell all user's who's turn it is now\n     */\n    private void endTurn(){\n\n        sendMessage(turnManager.currentTurn().getDiscordUser().getDisplayName(server)+\" ends their turn.\" );\n\n        turnManager.nextTurn();\n        sendMessage(\"It is now \" + turnManager.currentTurn().getDiscordUser().getDisplayName(server)+\"'s turn.\");\n    }\n\n    /**\n     * Returns a string of all the current players who have joined this quest\n     * @return\n     */\n    private String getPartyMembers(){\n        String s = \"\";\n        for (Player p : turnManager.getPlayers()) {\n            s+=\"\\t\" + p.getDiscordUser().getDisplayName(server)+\"\\n\";\n        }\n        return s;\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/MessageParser.java b/src/main/java/MessageParser.java
+--- a/src/main/java/MessageParser.java	(revision 3c46ae6e62a691fb08f9a633d936787de260b81a)
++++ b/src/main/java/MessageParser.java	(date 1634096734457)
+@@ -319,6 +319,10 @@
+                 turnManager.currentTurn().setRoom(door.getToRoom());
+                 sendMessage("You move " + d.name()+".");
+ 
++                if(turnManager.currentTurn().getRoom().getPlayerCount()==turnManager.numberOfPlayers()){
++                    //win condition
++                }
++
+                 endTurn();
+             }
+         }
+@@ -358,7 +362,7 @@
+ 
+         sendMessage(turnManager.currentTurn().getDiscordUser().getDisplayName(server)+" ends their turn." );
+ 
+-        turnManager.nextTurn();
++        if(turnManager.nextTurn())
+         sendMessage("It is now " + turnManager.currentTurn().getDiscordUser().getDisplayName(server)+"'s turn.");
+     }
+ 
+Index: src/test/java/HealthTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import Players.Player;\nimport org.junit.Assert;\nimport org.junit.Test;\n\npublic class HealthTest {\n\n    private Player player;\n\n    @Test\n    public void testHealth() {\n        player=new Player();\n        player.setHealth(10.5); //general test\n        double currHealth = player.getHealth();\n        Assert.assertEquals(currHealth,10.5, 0.0);\n        player.setHealth(30); //above maximum test\n        currHealth = player.getHealth();\n        Assert.assertEquals(currHealth,20, 0.0);\n        player.setHealth(-10); //below minimum test\n        currHealth = player.getHealth();\n        Assert.assertEquals(currHealth,0, 0.0);\n        player.setHealth(20); //exact maximum test\n        currHealth = player.getHealth();\n        Assert.assertEquals(currHealth,20, 0.0);\n        player.setHealth(0); //exact minimum test\n        currHealth = player.getHealth();\n        Assert.assertEquals(currHealth,0, 0.0);\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/test/java/HealthTest.java b/src/test/java/HealthTest.java
+--- a/src/test/java/HealthTest.java	(revision 3c46ae6e62a691fb08f9a633d936787de260b81a)
++++ b/src/test/java/HealthTest.java	(date 1634096325745)
+@@ -8,21 +8,21 @@
+ 
+     @Test
+     public void testHealth() {
+-        player=new Player();
++        player = new Player();
+         player.setHealth(10.5); //general test
+         double currHealth = player.getHealth();
+-        Assert.assertEquals(currHealth,10.5, 0.0);
++        Assert.assertEquals(currHealth, 10.5, 0.0);
+         player.setHealth(30); //above maximum test
+         currHealth = player.getHealth();
+-        Assert.assertEquals(currHealth,20, 0.0);
++        Assert.assertEquals(currHealth, 20, 0.0);
+         player.setHealth(-10); //below minimum test
+         currHealth = player.getHealth();
+-        Assert.assertEquals(currHealth,0, 0.0);
++        Assert.assertEquals(currHealth, 0, 0.0);
+         player.setHealth(20); //exact maximum test
+         currHealth = player.getHealth();
+-        Assert.assertEquals(currHealth,20, 0.0);
++        Assert.assertEquals(currHealth, 20, 0.0);
+         player.setHealth(0); //exact minimum test
+         currHealth = player.getHealth();
+-        Assert.assertEquals(currHealth,0, 0.0);
++        Assert.assertEquals(currHealth, 0, 0.0);
+     }
+ }
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"AutoImportSettings\">\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\n  </component>\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"21e12942-95f0-4143-86d6-e399e0cda36f\" name=\"Default Changelist\" comment=\"Created test module, implemented Player health, and made test class for health (passes all)\">\n      <change afterPath=\"$PROJECT_DIR$/.idea/compiler.xml\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/.idea/encodings.xml\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/.idea/libraries/junit1.xml\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/.idea/modules.xml\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/.idea/runConfigurations.xml\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/test/java/HealthTest.java\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.bin\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.bin\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.lock\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.lock\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.bin\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.bin\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.lock\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.lock\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.gradle/5.2.1/javaCompile/classAnalysis.bin\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.gradle/5.2.1/javaCompile/classAnalysis.bin\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.gradle/5.2.1/javaCompile/javaCompile.lock\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.gradle/5.2.1/javaCompile/javaCompile.lock\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.gradle/5.2.1/javaCompile/taskHistory.bin\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.gradle/5.2.1/javaCompile/taskHistory.bin\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.idea/jarRepositories.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/jarRepositories.xml\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.idea/misc.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/misc.xml\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/build.gradle\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/build.gradle\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/Players/Player.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/Players/Player.java\" afterDir=\"false\" />\n    </list>\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"ExternalProjectsData\">\n    <projectState path=\"$PROJECT_DIR$\">\n      <ProjectState />\n    </projectState>\n  </component>\n  <component name=\"FileTemplateManagerImpl\">\n    <option name=\"RECENT_TEMPLATES\">\n      <list>\n        <option value=\"Enum\" />\n        <option value=\"Interface\" />\n        <option value=\"Class\" />\n      </list>\n    </option>\n  </component>\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\n      <map>\n        <entry key=\"$PROJECT_DIR$\" value=\"main\" />\n      </map>\n    </option>\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\n  </component>\n  <component name=\"ProjectId\" id=\"1zEertYESxq72s46sBmscSETrtP\" />\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\">\n    <ConfirmationsSetting value=\"2\" id=\"Add\" />\n  </component>\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n    <option name=\"sortByType\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\">\n    <property name=\"Downloaded.Files.Path.Enabled\" value=\"false\" />\n    <property name=\"Repository.Attach.Annotations\" value=\"false\" />\n    <property name=\"Repository.Attach.JavaDocs\" value=\"false\" />\n    <property name=\"Repository.Attach.Sources\" value=\"false\" />\n    <property name=\"RunOnceActivity.OpenProjectViewOnStart\" value=\"true\" />\n    <property name=\"RunOnceActivity.ShowReadmeOnStart\" value=\"true\" />\n    <property name=\"SHARE_PROJECT_CONFIGURATION_FILES\" value=\"true\" />\n    <property name=\"WebServerToolWindowFactoryState\" value=\"false\" />\n    <property name=\"aspect.path.notification.shown\" value=\"true\" />\n    <property name=\"jdk.selected.JAVA_MODULE\" value=\"11\" />\n    <property name=\"last_opened_file_path\" value=\"$PROJECT_DIR$\" />\n    <property name=\"node.js.detected.package.eslint\" value=\"true\" />\n    <property name=\"node.js.detected.package.tslint\" value=\"true\" />\n    <property name=\"node.js.path.for.package.eslint\" value=\"project\" />\n    <property name=\"node.js.path.for.package.tslint\" value=\"project\" />\n    <property name=\"node.js.selected.package.eslint\" value=\"(autodetect)\" />\n    <property name=\"node.js.selected.package.tslint\" value=\"(autodetect)\" />\n    <property name=\"project.structure.last.edited\" value=\"Libraries\" />\n    <property name=\"project.structure.proportion\" value=\"0.15\" />\n    <property name=\"project.structure.side.proportion\" value=\"0.2\" />\n  </component>\n  <component name=\"RecentsManager\">\n    <key name=\"MoveFile.RECENT_KEYS\">\n      <recent name=\"$PROJECT_DIR$/src/main/java/Tests\" />\n      <recent name=\"$PROJECT_DIR$/src/main/test/src/main/java\" />\n      <recent name=\"$PROJECT_DIR$/src/main/test/src\" />\n      <recent name=\"E:\\School\\Fall21\\CS3141\\dork\\project-dork\\src\\main\\java\" />\n    </key>\n  </component>\n  <component name=\"RunManager\" selected=\"Gradle.HealthTest.testHealth\">\n    <configuration name=\"Main\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\n      <option name=\"MAIN_CLASS_NAME\" value=\"Main\" />\n      <module name=\"dork.main\" />\n      <method v=\"2\">\n        <option name=\"Make\" enabled=\"true\" />\n      </method>\n    </configuration>\n    <configuration name=\"HealthTest\" type=\"GradleRunConfiguration\" factoryName=\"Gradle\" temporary=\"true\">\n      <ExternalSystemSettings>\n        <option name=\"executionName\" />\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$\" />\n        <option name=\"externalSystemIdString\" value=\"GRADLE\" />\n        <option name=\"scriptParameters\" value=\"--tests &quot;HealthTest&quot;\" />\n        <option name=\"taskDescriptions\">\n          <list />\n        </option>\n        <option name=\"taskNames\">\n          <list>\n            <option value=\":test\" />\n          </list>\n        </option>\n        <option name=\"vmOptions\" />\n      </ExternalSystemSettings>\n      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>\n      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>\n      <DebugAllEnabled>false</DebugAllEnabled>\n      <method v=\"2\" />\n    </configuration>\n    <configuration name=\"HealthTest.testGetHealth\" type=\"GradleRunConfiguration\" factoryName=\"Gradle\" temporary=\"true\">\n      <ExternalSystemSettings>\n        <option name=\"executionName\" />\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$\" />\n        <option name=\"externalSystemIdString\" value=\"GRADLE\" />\n        <option name=\"scriptParameters\" value=\"--tests &quot;HealthTest.testGetHealth&quot;\" />\n        <option name=\"taskDescriptions\">\n          <list />\n        </option>\n        <option name=\"taskNames\">\n          <list>\n            <option value=\":test\" />\n          </list>\n        </option>\n        <option name=\"vmOptions\" />\n      </ExternalSystemSettings>\n      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>\n      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>\n      <DebugAllEnabled>false</DebugAllEnabled>\n      <method v=\"2\" />\n    </configuration>\n    <configuration name=\"HealthTest.testHealth\" type=\"GradleRunConfiguration\" factoryName=\"Gradle\" temporary=\"true\">\n      <ExternalSystemSettings>\n        <option name=\"executionName\" />\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$\" />\n        <option name=\"externalSystemIdString\" value=\"GRADLE\" />\n        <option name=\"scriptParameters\" value=\"--tests &quot;HealthTest.testHealth&quot;\" />\n        <option name=\"taskDescriptions\">\n          <list />\n        </option>\n        <option name=\"taskNames\">\n          <list>\n            <option value=\":test\" />\n          </list>\n        </option>\n        <option name=\"vmOptions\" />\n      </ExternalSystemSettings>\n      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>\n      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>\n      <DebugAllEnabled>false</DebugAllEnabled>\n      <method v=\"2\" />\n    </configuration>\n    <configuration name=\"HealthTest.testSetHealth\" type=\"GradleRunConfiguration\" factoryName=\"Gradle\" temporary=\"true\">\n      <ExternalSystemSettings>\n        <option name=\"executionName\" />\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$\" />\n        <option name=\"externalSystemIdString\" value=\"GRADLE\" />\n        <option name=\"scriptParameters\" value=\"--tests &quot;HealthTest.testSetHealth&quot;\" />\n        <option name=\"taskDescriptions\">\n          <list />\n        </option>\n        <option name=\"taskNames\">\n          <list>\n            <option value=\":test\" />\n          </list>\n        </option>\n        <option name=\"vmOptions\" />\n      </ExternalSystemSettings>\n      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>\n      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>\n      <DebugAllEnabled>false</DebugAllEnabled>\n      <method v=\"2\" />\n    </configuration>\n    <recent_temporary>\n      <list>\n        <item itemvalue=\"Gradle.HealthTest.testHealth\" />\n        <item itemvalue=\"Gradle.HealthTest\" />\n        <item itemvalue=\"Gradle.HealthTest.testSetHealth\" />\n        <item itemvalue=\"Gradle.HealthTest.testGetHealth\" />\n        <item itemvalue=\"Application.Main\" />\n      </list>\n    </recent_temporary>\n  </component>\n  <component name=\"ServiceViewManager\">\n    <option name=\"viewStates\">\n      <list>\n        <serviceView>\n          <treeState>\n            <expand />\n            <select />\n          </treeState>\n        </serviceView>\n      </list>\n    </option>\n  </component>\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\n  <component name=\"SvnConfiguration\">\n    <configuration />\n  </component>\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <changelist id=\"21e12942-95f0-4143-86d6-e399e0cda36f\" name=\"Default Changelist\" comment=\"\" />\n      <created>1633717876749</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1633717876749</updated>\n      <workItem from=\"1633717881120\" duration=\"549000\" />\n      <workItem from=\"1633718610685\" duration=\"4201000\" />\n      <workItem from=\"1633779432121\" duration=\"16736000\" />\n      <workItem from=\"1633868904626\" duration=\"842000\" />\n      <workItem from=\"1633870233087\" duration=\"1243000\" />\n      <workItem from=\"1633968804915\" duration=\"3130000\" />\n    </task>\n    <servers />\n  </component>\n  <component name=\"TypeScriptGeneratedFilesManager\">\n    <option name=\"version\" value=\"1\" />\n  </component>\n  <component name=\"Vcs.Log.Tabs.Properties\">\n    <option name=\"TAB_STATES\">\n      <map>\n        <entry key=\"MAIN\">\n          <value>\n            <State />\n          </value>\n        </entry>\n      </map>\n    </option>\n    <option name=\"oldMeFiltersMigrated\" value=\"true\" />\n  </component>\n  <component name=\"VcsManagerConfiguration\">\n    <MESSAGE value=\"Created test module, implemented Player health, and made test class for health (passes all)\" />\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"Created test module, implemented Player health, and made test class for health (passes all)\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 3c46ae6e62a691fb08f9a633d936787de260b81a)
++++ b/.idea/workspace.xml	(date 1634096684967)
+@@ -5,26 +5,12 @@
+   </component>
+   <component name="ChangeListManager">
+     <list default="true" id="21e12942-95f0-4143-86d6-e399e0cda36f" name="Default Changelist" comment="Created test module, implemented Player health, and made test class for health (passes all)">
+-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/.idea/libraries/junit1.xml" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/.idea/runConfigurations.xml" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/test/java/HealthTest.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.bin" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.lock" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.bin" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.lock" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/classAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/classAnalysis.bin" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/javaCompile.lock" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/taskHistory.bin" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/MessageParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MessageParser.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/main/java/Players/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Players/Player.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/Quests/Room.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Quests/Room.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/Quests/TurnManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Quests/TurnManager.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/test/java/HealthTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/HealthTest.java" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -224,6 +210,21 @@
+       <workItem from="1633870233087" duration="1243000" />
+       <workItem from="1633968804915" duration="3130000" />
+     </task>
++    <task id="LOCAL-00001" summary="Created test module, implemented Player health, and made test class for health (passes all)">
++      <created>1634065779134</created>
++      <option name="number" value="00001" />
++      <option name="presentableId" value="LOCAL-00001" />
++      <option name="project" value="LOCAL" />
++      <updated>1634065779134</updated>
++    </task>
++    <task id="LOCAL-00002" summary="Created test module, implemented Player health, and made test class for health (passes all)">
++      <created>1634095255605</created>
++      <option name="number" value="00002" />
++      <option name="presentableId" value="LOCAL-00002" />
++      <option name="project" value="LOCAL" />
++      <updated>1634095255605</updated>
++    </task>
++    <option name="localTasksCounter" value="3" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">

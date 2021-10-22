@@ -2,27 +2,34 @@ package Quests;
 
 
 import Interfaces.IDescriptable;
+
 public class Doorway implements IDescriptable {
     /**
-     *
      * @param toRoom
      * @param locked
      */
-    public Doorway(Room toRoom, boolean locked){
+    public Doorway(Room toRoom, boolean locked) {
 
         setLocked(locked);
         setToRoom(toRoom);
     }
-    public  Doorway(){locked = false;};
+
+    public Doorway() {
+        locked = false;
+    }
+
+    ;
 
 
     private Room toRoom;
 
     private boolean locked;
-    public boolean getLocked(){
-        return  locked;
+
+    public boolean getLocked() {
+        return locked;
     }
-    public void setLocked(boolean value){
+
+    public void setLocked(boolean value) {
         locked = value;
     }
 
@@ -49,11 +56,9 @@ public class Doorway implements IDescriptable {
     private String unlockedDesc = "The doorway is unlocked";
 
 
-
-
     @Override
     public String Description() {
-        return locked ? lockedDesc : unlockedDesc ;
+        return locked ? lockedDesc : unlockedDesc;
     }
 
     public Room getToRoom() {
