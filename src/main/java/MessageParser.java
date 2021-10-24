@@ -23,12 +23,12 @@ public class MessageParser {
 
     //////////////////////////////REGEX constants
 
-    private final Pattern inspectObjectPattern = Pattern.compile("(look|examine|study|inspect|peek)(\\s+).+");
+    private final Pattern inspectObjectPattern = Pattern.compile("(look|examine|study|inspect|peek)(\\s+)(.+)");
 
-    private final Pattern takePattern = Pattern.compile("(grab|collect|store|steal|take)(\\s+)");
-    private final Pattern movePattern = Pattern.compile("(run|walk|go|travel|move)(\\s+)");
-    private final Pattern dropPattern = Pattern.compile("(drop|throw|remove|leave)(\\s+)");
-    private final Pattern endTurnPattern = Pattern.compile("(end|done|next|finish)(\\s*)(turn|my turn|move|my move)");
+    private final Pattern takePattern = Pattern.compile("grab|collect|store|steal|take\\s+(.+)");
+    private final Pattern movePattern = Pattern.compile("run|walk|go|travel|move\\s+(.+)");
+    private final Pattern dropPattern = Pattern.compile("drop|throw|remove|leave\\s+(.+)");
+    private final Pattern endTurnPattern = Pattern.compile("end|done|next|finish(\\s+turn|my turn|move|my move|\\s)*");
 
     /////////////////////////////////////////
 
@@ -62,7 +62,8 @@ public class MessageParser {
         } else {
             // If it is this player's turn
             if (event.getMessageAuthor().asUser().get().equals(turnManager.currentTurn().getDiscordUser())) {
-                parseValidMessage(packageMessage(event.getMessageContent()));
+                //parseUsingRegex(event.getMessageContent());
+               parseValidMessage(packageMessage(event.getMessageContent()));
                 // Not this users turn
             } else {
                 // Delete message
@@ -71,6 +72,16 @@ public class MessageParser {
                 event.getMessageAuthor().asUser().get().openPrivateChannel().thenApplyAsync(channel -> channel.sendMessage(
                         event.getMessageAuthor().asUser().get().getDisplayName(server) + ", please refrain from sending messages while it is not your turn."));
             }
+        }
+    }
+
+
+    private void parseUsingRegex(String message){
+        if (message.matches(inspectObjectPattern.pattern())){
+            Matcher m = inspectObjectPattern.matcher(message);
+            //the first group should be the object
+            m.find();
+            sendMessage(m.group(2));
         }
     }
 
