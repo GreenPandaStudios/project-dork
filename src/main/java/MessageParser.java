@@ -23,13 +23,14 @@ public class MessageParser {
 
     //////////////////////////////REGEX constants
 
-    private final Pattern inspectObjectPattern = Pattern.compile("(look|examine|study|inspect|peek)(\\s+)(.+)");
+    private final Pattern inspectObjectPattern = Pattern.compile("(look|examine|study|inspect|peek)(\\s*)(.*)");
 
-    private final Pattern takePattern = Pattern.compile("grab|collect|store|steal|take\\s+(.+)");
-    private final Pattern movePattern = Pattern.compile("run|walk|go|travel|move\\s+(.+)");
-    private final Pattern dropPattern = Pattern.compile("drop|throw|remove|leave\\s+(.+)");
-    private final Pattern endTurnPattern = Pattern.compile("end|done|next|finish(\\s+turn|my turn|move|my move|\\s)*");
-
+    private final Pattern takePattern = Pattern.compile("(grab|collect|store|steal|take)(\\s*)(.*)");
+    private final Pattern movePattern = Pattern.compile("(run|walk|go|travel|move)(\\s*)(.*)");
+    private final Pattern dropPattern = Pattern.compile("(drop|throw|remove|leave)(\\s*)(.*)");
+    private final Pattern endTurnPattern = Pattern.compile("end|done|next|finish(\\s*turn|my turn|move|my move|\\s)*");
+    private final Pattern usePattern = Pattern.compile("(use|activate)(\\s*)(.*)");
+    private final Pattern inventoryPattern = Pattern.compile("(inventory|i|items)");
     /////////////////////////////////////////
 
 
@@ -62,8 +63,7 @@ public class MessageParser {
         } else {
             // If it is this player's turn
             if (event.getMessageAuthor().asUser().get().equals(turnManager.currentTurn().getDiscordUser())) {
-                //parseUsingRegex(event.getMessageContent());
-               parseValidMessage(packageMessage(event.getMessageContent()));
+                parseUsingRegex(packageMessage(event.getMessageContent()));
                 // Not this users turn
             } else {
                 // Delete message
@@ -76,13 +76,77 @@ public class MessageParser {
     }
 
 
-    private void parseUsingRegex(String message){
-        if (message.matches(inspectObjectPattern.pattern())){
-            Matcher m = inspectObjectPattern.matcher(message);
-            //the first group should be the object
-            m.find();
-            sendMessage(m.group(2));
+    private void parseUsingRegex(String message) {
+        Matcher m;
+        //inspect object
+        if ((m = inspectObjectPattern.matcher(message)).find()) {
+            if (!m.group(3).equals("")) {
+                if (m.group(3).equals("inventory")) {
+                    displayInventory();
+                } else {
+                    inspectAction(m.group(3));
+                }
+            } else {
+                //assume we are talking about the room
+                sendMessage("You take in your surroundings. " + currentQuest.currentRoom().Description());
+            }
+            return;
         }
+        //take object
+        if ((m = takePattern.matcher(message)).find()) {
+            if (!m.group(3).equals("")) {
+                takeAction(m.group(3));
+            } else {
+                sendMessage("What would you like to take?");
+            }
+            return;
+        }
+        //drop object
+        if ((m = dropPattern.matcher(message)).find()) {
+            if (!m.group(3).equals("")) {
+                removeAction(m.group(3));
+            } else {
+                sendMessage("What would you like to remove from your inventory?");
+            }
+            return;
+        }
+        //use object
+        if ((m = usePattern.matcher(message)).find()) {
+            if (!m.group(3).equals("")) {
+                useAction(m.group(3));
+            } else {
+                sendMessage("What would you like to use?");
+            }
+            return;
+        }
+        //inventory
+        if ((m = usePattern.matcher(message)).find()) {
+            if (!m.group(3).equals("")) {
+                useAction(m.group(3));
+            } else {
+                sendMessage("What would you like to use?");
+            }
+            return;
+        }
+        //move
+        if ((m = movePattern.matcher(message)).find()) {
+            if (!m.group(3).equals("")) {
+                moveAction(m.group(3));
+            } else {
+                sendMessage("Where would you like to move to?");
+            }
+            return;
+        }
+        if ((m = endTurnPattern.matcher(message)).find()) {
+
+            endTurn();
+            return;
+        }
+        if ((m = inventoryPattern.matcher(message)).find()) {
+            displayInventory();
+            return;
+        }
+        sendMessage("I don't understand " + "\"" + message + "\"");
     }
 
     /**
@@ -92,13 +156,13 @@ public class MessageParser {
      * @param message
      * @return
      */
-    private String[] packageMessage(String message) {
+    private String packageMessage(String message) {
         message = message.toLowerCase();
 
         message = message.replaceAll("\\s+(the|an|a|at|my)+\\s+", " ");
 
 
-        return message.split("\\s+");
+        return message;
     }
 
 
@@ -109,9 +173,9 @@ public class MessageParser {
 
     private Quest createDefaultQuest() {
         Room startingRoom = new Room("Starting Room").addItem(new Item("Sword",
-                        "A heavy well-made sword",
-                        10.5,
-                        10, false))
+                "A heavy well-made sword",
+                10.5,
+                10, false))
                 .addItem(new HealthItem("Amulet",
                         "A scary looking amulet",
                         2,
@@ -172,6 +236,8 @@ public class MessageParser {
         return new Quest(m, turnManager);
     }
 
+    //DEPRECATED
+    /* DEPRECATED
     private void parseValidMessage(String[] words) {
         if (words.length > 0) {
             switch (words[0]) {
@@ -255,6 +321,7 @@ public class MessageParser {
             sendMessage("Please enter something.");
         }
     }
+    */
 
     /**
      * @param inspectWhat
