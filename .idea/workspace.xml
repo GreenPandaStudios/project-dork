@@ -13,10 +13,8 @@
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/javaCompile.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Items/HealthItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Items/HealthItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Items/UsableItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Items/UsableItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/MessageParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MessageParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Quests/TurnManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Quests/TurnManager.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -242,7 +240,21 @@
       <option name="project" value="LOCAL" />
       <updated>1634773875621</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Health Items can now deal damage (upon picking up) and heal players (upon usage)">
+      <created>1634778892157</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1634778892157</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Health Items can now deal damage (upon picking up) and heal players (upon usage)">
+      <created>1634778950213</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1634778950213</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

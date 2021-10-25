@@ -31,6 +31,7 @@ public class MessageParser {
     private final Pattern endTurnPattern = Pattern.compile("end|done|next|finish(\\s*turn|my turn|move|my move|\\s)*");
     private final Pattern usePattern = Pattern.compile("(use|activate)(\\s*)(.*)");
     private final Pattern inventoryPattern = Pattern.compile("(inventory|i|items)");
+    private final Pattern statusPattern = Pattern.compile("status|health");
     /////////////////////////////////////////
 
 
@@ -137,8 +138,12 @@ public class MessageParser {
             }
             return;
         }
+        //status
+        if ((m = statusPattern.matcher(message)).find()){
+            statusAction();
+            return;
+        }
         if ((m = endTurnPattern.matcher(message)).find()) {
-
             endTurn();
             return;
         }
@@ -180,7 +185,7 @@ public class MessageParser {
                         "A scary looking amulet",
                         2,
                         20, false,
-                        1, -20))
+                        1, -10))
                 .addItem(new HealthItem("Potion",
                         "Restores 5 health",
                         3,
@@ -386,13 +391,13 @@ public class MessageParser {
         if (item != null) {
             if (item instanceof UsableItem) {
                 ((UsableItem) item).useItem(turnManager.currentTurn());
-                sendMessage("You use the " + itemName + ". You now have " + turnManager.currentTurn().getHealth() + " health remaining.");
+                sendMessage("You use the " + itemName + ". You now have " + turnManager.currentTurn().getHealth() + " / "+ turnManager.currentTurn().getMaxHealth() + " health remaining.");
                 if (((UsableItem) item).getUsesLeft() <= 0) {
                     turnManager.currentTurn().getInventory().removeItem(itemName);
                     sendMessage("The " + itemName + " is no longer usable. You discard it.");
                 }
             } else {
-                sendMessage("You cannot use a \"" + itemName + "\".");
+                sendMessage("You cannot use a " + itemName + ".");
             }
         } else {
             sendMessage("You don't have a \"" + itemName + "\".");
@@ -400,6 +405,10 @@ public class MessageParser {
         if (!turnManager.canAct(turnManager.currentTurn())) {
             endTurn();
         }
+    }
+
+    private void statusAction() {
+        sendMessage("Health: "+turnManager.currentTurn().getHealth() + " / "+ turnManager.currentTurn().getMaxHealth());
     }
 
 
