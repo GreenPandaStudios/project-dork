@@ -23,15 +23,16 @@ public class MessageParser {
 
     //////////////////////////////REGEX constants
 
-    private final Pattern inspectObjectPattern = Pattern.compile("(look|examine|study|inspect|peek)(\\s*)(.*)");
+    private final Pattern inspectObjectPattern = Pattern.compile("(look|examine|study|inspect|peek)(\\s*)(?<item>.*)");
 
-    private final Pattern takePattern = Pattern.compile("(grab|collect|store|steal|take)(\\s*)(.*)");
-    private final Pattern movePattern = Pattern.compile("(run|walk|go|travel|move)(\\s*)(.*)");
-    private final Pattern dropPattern = Pattern.compile("(drop|throw|remove|leave)(\\s*)(.*)");
+    private final Pattern takePattern = Pattern.compile("(grab|collect|store|steal|take)(\\s*)(?<item>.*)");
+    private final Pattern movePattern = Pattern.compile("(run|walk|go|travel|move)(\\s*)(?<direction>.*)");
+    private final Pattern dropPattern = Pattern.compile("(drop|throw|remove|leave)(\\s*)(?<item>.*)");
     private final Pattern endTurnPattern = Pattern.compile("end|done|next|finish(\\s*turn|my turn|move|my move|\\s)*");
-    private final Pattern usePattern = Pattern.compile("(use|activate)(\\s*)(.*)");
+    private final Pattern usePattern = Pattern.compile("(use|activate)(\\s*)(?<item>.*)");
     private final Pattern inventoryPattern = Pattern.compile("(inventory|i|items)");
-    private final Pattern statusPattern = Pattern.compile("status|health");
+    private final Pattern statusPattern = Pattern.compile("(what is my)?(status|health)");
+    private final Pattern helpPattern = Pattern.compile("(((I (need|want))?help)|(I'm)?confused|(What are the)?commands)([?])?");
     /////////////////////////////////////////
 
 
@@ -64,7 +65,7 @@ public class MessageParser {
         } else {
             // If it is this player's turn
             if (event.getMessageAuthor().asUser().get().equals(turnManager.currentTurn().getDiscordUser())) {
-                parseUsingRegex(packageMessage(event.getMessageContent()));
+                parseUsingRegex(packageMessage(event.getMessageContent()), event);
                 // Not this users turn
             } else {
                 // Delete message
@@ -77,8 +78,15 @@ public class MessageParser {
     }
 
 
-    private void parseUsingRegex(String message) {
+    private void parseUsingRegex(String message, MessageCreateEvent event) {
         Matcher m;
+        //help
+        if ((m = helpPattern.matcher(message)).find()){
+            displayHelp(event);
+            return;
+        }
+
+
         //inspect object
         if ((m = inspectObjectPattern.matcher(message)).find()) {
             if (!m.group(3).equals("")) {
@@ -104,8 +112,8 @@ public class MessageParser {
         }
         //drop object
         if ((m = dropPattern.matcher(message)).find()) {
-            if (!m.group(3).equals("")) {
-                removeAction(m.group(3));
+            if (!m.group("item").equals("")) {
+                removeAction(m.group("item"));
             } else {
                 sendMessage("What would you like to remove from your inventory?");
             }
@@ -113,8 +121,8 @@ public class MessageParser {
         }
         //use object
         if ((m = usePattern.matcher(message)).find()) {
-            if (!m.group(3).equals("")) {
-                useAction(m.group(3));
+            if (!m.group("item").equals("")) {
+                useAction(m.group("item"));
             } else {
                 sendMessage("What would you like to use?");
             }
@@ -123,8 +131,8 @@ public class MessageParser {
 
         //move
         if ((m = movePattern.matcher(message)).find()) {
-            if (!m.group(3).equals("")) {
-                moveAction(m.group(3));
+            if (!m.group("direction").equals("")) {
+                moveAction(m.group("direction"));
             } else {
                 sendMessage("Where would you like to move to?");
             }
@@ -570,7 +578,15 @@ public class MessageParser {
             sendMessage("No active quest!\nPlease create a new quest with \"Start Quest\"");
         }
     }
+    void displayHelp(MessageCreateEvent event){
 
+        // Delete message
+        event.deleteMessage();
+        // Send them a direct message with the help
+        event.getMessageAuthor().asUser().get().openPrivateChannel().thenApplyAsync(channel -> channel.sendMessage(
+                "Help is currently in progress. :("));
+
+    }
     void displayInventory() {
         sendMessage(turnManager.currentTurn().getInventory().displayItems());
         sendMessage(turnManager.currentTurn().getInventory().displayWeight());

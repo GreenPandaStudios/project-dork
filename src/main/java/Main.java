@@ -5,7 +5,7 @@ import org.javacord.api.entity.server.Server;
 public class Main {
 
     // This is the only channel the bot will react in
-    public static final String BotChannelName = "dork-domain-lou";
+    public static final String BotChannelName = "dork-domain";
     public static final String BotToken = "ODk2MTA1OTE5MTcwMTA1NDE1.YWCRqw.rHVwkUqm1UvuEeHV2iKvbSxsHck";
 
     public static void main(String[] args) {
