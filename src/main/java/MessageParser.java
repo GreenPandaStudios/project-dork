@@ -105,7 +105,7 @@ public class MessageParser {
                         "A scary looking amulet",
                         2,
                         20, false,
-                        1, -20))
+                        1, -10))
                 .addItem(new HealthItem("Potion",
                         "Restores 5 health",
                         3,
