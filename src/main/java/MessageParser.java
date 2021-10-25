@@ -120,15 +120,7 @@ public class MessageParser {
             }
             return;
         }
-        //inventory
-        if ((m = usePattern.matcher(message)).find()) {
-            if (!m.group(3).equals("")) {
-                useAction(m.group(3));
-            } else {
-                sendMessage("What would you like to use?");
-            }
-            return;
-        }
+
         //move
         if ((m = movePattern.matcher(message)).find()) {
             if (!m.group(3).equals("")) {

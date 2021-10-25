@@ -15,6 +15,11 @@ public class Item implements Interfaces.IName, Interfaces.IDescriptable {
         weight = value = 0;
         name = description = "";
     }
+    public Item(String name){
+        weight = value = 0;
+        description = "";
+        setName(name);
+    }
 
     private double weight = 0;
     private double value = 0;
