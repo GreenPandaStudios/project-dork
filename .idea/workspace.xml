@@ -11,7 +11,6 @@
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/classAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/classAnalysis.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/javaCompile.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/taskHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
@@ -95,7 +94,7 @@
   </component>
   <component name="RunManager" selected="Application.Main">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="ALTERNATIVE_JRE_PATH" value="1.8" />
+      <option name="ALTERNATIVE_JRE_PATH" value="11" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="MAIN_CLASS_NAME" value="Main" />
       <module name="dork.main" />
@@ -119,7 +118,9 @@
         </option>
         <option name="vmOptions" />
       </ExternalSystemSettings>
-      <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
     <configuration name="HealthTest.testGetHealth" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
@@ -138,7 +139,9 @@
         </option>
         <option name="vmOptions" />
       </ExternalSystemSettings>
-      <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
     <configuration name="HealthTest.testHealth" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
@@ -157,7 +160,9 @@
         </option>
         <option name="vmOptions" />
       </ExternalSystemSettings>
-      <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
     <configuration name="HealthTest.testSetHealth" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
@@ -176,7 +181,9 @@
         </option>
         <option name="vmOptions" />
       </ExternalSystemSettings>
-      <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
     <list>
@@ -188,11 +195,11 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Main" />
         <item itemvalue="Gradle.HealthTest.testHealth" />
         <item itemvalue="Gradle.HealthTest" />
         <item itemvalue="Gradle.HealthTest.testSetHealth" />
         <item itemvalue="Gradle.HealthTest.testGetHealth" />
+        <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
   </component>
@@ -208,7 +215,7 @@
       </list>
     </option>
   </component>
-  <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -258,40 +265,17 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State>
-              <option name="COLUMN_ORDER" />
-            </State>
+            <State />
           </value>
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Created test module, implemented Player health, and made test class for health (passes all)" />
     <MESSAGE value="Created win/lose conditions (not tested yet)" />
     <MESSAGE value="Health Items can now deal damage (upon picking up) and heal players (upon usage)" />
     <option name="LAST_COMMIT_MESSAGE" value="Health Items can now deal damage (upon picking up) and heal players (upon usage)" />
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="221" y="67" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1635194979100">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state x="221" y="67" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.824/-1840.-213.1840.1080@0.0.1536.824" timestamp="1635194979100" />
-    <state width="1493" height="216" key="GridCell.Tab.0.bottom" timestamp="1635195074666">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state width="1493" height="216" key="GridCell.Tab.0.bottom/0.0.1536.824/-1840.-213.1840.1080@0.0.1536.824" timestamp="1635195074666" />
-    <state width="1493" height="216" key="GridCell.Tab.0.center" timestamp="1635195074666">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state width="1493" height="216" key="GridCell.Tab.0.center/0.0.1536.824/-1840.-213.1840.1080@0.0.1536.824" timestamp="1635195074666" />
-    <state width="1493" height="216" key="GridCell.Tab.0.left" timestamp="1635195074666">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state width="1493" height="216" key="GridCell.Tab.0.left/0.0.1536.824/-1840.-213.1840.1080@0.0.1536.824" timestamp="1635195074666" />
-    <state width="1493" height="216" key="GridCell.Tab.0.right" timestamp="1635195074666">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state width="1493" height="216" key="GridCell.Tab.0.right/0.0.1536.824/-1840.-213.1840.1080@0.0.1536.824" timestamp="1635195074666" />
   </component>
 </project>

@@ -23,6 +23,13 @@ public class HealthItem extends UsableItem {
     }
 
     @Override
+    public String Description() {
+        String desc = super.Description();
+        desc+=("\n"+"A small inscription reads: "+getHealth()+"HP");
+        return desc;
+    }
+
+    @Override
     public void useItem(Player player) {
         player.setHealth(player.getHealth() + health);
         usesLeft--;

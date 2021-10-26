@@ -46,7 +46,9 @@ public class Item implements Interfaces.IName, Interfaces.IDescriptable {
 
     @Override
     public String Description() {
-        return description;
+        String desc = description;
+        desc += "\n"+"It weighs "+getWeight()+"lb.";
+        return desc;
     }
 
     @Override
