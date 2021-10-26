@@ -494,7 +494,7 @@ public class MessageParser {
         if (turnManager.canAct(turnManager.currentTurn())) {
             sendMessage(turnManager.currentTurn().getDiscordUser().getDisplayName(server) + " ends their turn.");
         } else {
-            sendMessage("A player has fallen. The dungeon closes...");
+            sendMessage(TextConstants.playerDies);
             currentQuest.failQuest();
             currentQuest = null;
             return;
@@ -502,7 +502,7 @@ public class MessageParser {
 
         if (currentQuest.getMap().getEndingRoom().equals(turnManager.currentTurn().getRoom())) {
             if (turnManager.currentTurn().getRoom().getPlayerCount() == turnManager.numberOfPlayers()) {
-                sendMessage("All players have made it to the exit. Great job!");
+                sendMessage(TextConstants.allPlayersAtExit);
                 currentQuest.winQuest();
                 currentQuest = null;
             } else {
@@ -510,7 +510,7 @@ public class MessageParser {
             }
         }
         turnManager.nextTurn();
-        sendMessage("You take in the new room. " + currentQuest.currentRoom().Description());
+        sendMessage(TextConstants.inspectRoomOnTurnStart + currentQuest.currentRoom().Description());
         sendMessage("It is now " + turnManager.currentTurn().getDiscordUser().getDisplayName(server) + "'s turn.");
     }
 
@@ -540,7 +540,7 @@ public class MessageParser {
 
             //check if anyone has joined to play
             if (turnManager.numberOfPlayers() == 0) {
-                sendMessage("You must join before starting a quest. Type \"join\" to join.");
+                sendMessage(TextConstants.cannotStartQuest);
             } else {
                 clearAllMessages();
                 sendMessage("Starting a new Quest with the following players:\n" + getPartyMembers());
@@ -557,9 +557,9 @@ public class MessageParser {
                 turnManager.addPlayer(new Player(discordUser));
                 sendMessage(discordUser.getDisplayName(server) + " has joined the party.");
             } else {
-                sendMessage("You have already joined the party.");
+                sendMessage(TextConstants.alreadyJoined);
             }
-            sendMessage("The current party members are:\n" + getPartyMembers());
+            sendMessage(TextConstants.partyMembersHeader + getPartyMembers());
         } else if (messageInput.equalsIgnoreCase("leave")) {
             //add this user to the list of users
             if (turnManager.getByUser(discordUser) != null) {
@@ -567,15 +567,15 @@ public class MessageParser {
                 turnManager.removePlayer(turnManager.getByUser(discordUser));
 
             } else {
-                sendMessage("You are not a member of this party.\n");
+                sendMessage(TextConstants.notAPartyMember);
             }
             if (getPartyMembers().isEmpty()) {
-                sendMessage("There are no current part members.");
+                sendMessage(TextConstants.noPartyMembers);
             } else {
-                sendMessage("The current party members are:\n" + getPartyMembers());
+                sendMessage(TextConstants.partyMembersHeader+ getPartyMembers());
             }
         } else {
-            sendMessage("No active quest!\nPlease create a new quest with \"Start Quest\"");
+            sendMessage(TextConstants.noActiveQuest);
         }
     }
     void displayHelp(MessageCreateEvent event){
@@ -584,7 +584,7 @@ public class MessageParser {
         event.deleteMessage();
         // Send them a direct message with the help
         event.getMessageAuthor().asUser().get().openPrivateChannel().thenApplyAsync(channel -> channel.sendMessage(
-                "Help is currently in progress. :("));
+                TextConstants.helpOutput));
 
     }
     void displayInventory() {
