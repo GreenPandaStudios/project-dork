@@ -218,7 +218,7 @@ public class MessageParser {
 
         startingRoom.addItem(new Item("torch", "A flickering torch cemented firmly into the wall.", 0, 0, true));
 
-        endingRoom.addItem(new Item("Golden-Apple", "A curious golden apple.", 50, 1000, false));
+        hallway.addItem(new Item("Golden Apple", "A curious golden apple.", 50, 1000, false));
         endingRoom.setDescription("You are in a very dark room.");
         Doorway backUp = new Doorway(startingRoom, false);
         Doorway d = new Doorway(hallway, false);

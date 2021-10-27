@@ -2,6 +2,7 @@ package Quests;
 
 import Items.Item;
 
+import java.text.ParseException;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,14 +12,17 @@ public class MapLoader {
 
     //////////////////////////////REGEX constants
 
-    private final Pattern codeCommentPattern = Pattern.compile("\\s*^//\\s*");
+    private final Pattern codeCommentPattern = Pattern.compile("\\s*^(//)\\s*");
 
-    private final Pattern createRoomPattern = Pattern.compile("\\s*create\\s+room\\s+(?<roomName>.+)\\s*");
-    private final Pattern createItemPattern = Pattern.compile("\\s*create\\s+item\\s+(?<itemName>.+)\\s*");
-    private final Pattern createDoorwayPattern = Pattern.compile("\\s*create\\s+doorway\\s+(?<doorwayName>.+)\\s*");
-    private final Pattern connectRoomsPattern = Pattern.compile("\\s*connect\\s+(?<fromRoom>.+)\\s+to\\s+(?<toRoom>.+)\\s+from\\s+(?<direction>.+)\\s+using\\s+(?<doorwayName>.+)\\s*");
-    private final Pattern addItemPattern = Pattern.compile("\\s*add\\s+(?<itemName>.+)\\s+to\\s+(?<roomName>.+)\\s*");
-
+    private final Pattern createRoomPattern = Pattern.compile("\\s*create\\s+room\\s+(?<roomName>.+)\\s*?(^(//).*)");
+    private final Pattern createItemPattern = Pattern.compile("\\s*create\\s+item\\s+(?<itemName>.+)\\s*?(^(//).*)");
+    private final Pattern createDoorwayPattern = Pattern.compile("\\s*create\\s+doorway\\s+(?<doorwayName>.+)\\s*?(^(//).*)");
+    private final Pattern connectRoomsPattern = Pattern.compile("\\s*connect\\s+(?<fromRoom>.+)\\s+to\\s+(?<toRoom>.+)\\s+from\\s+(?<direction>.+)\\s+using\\s+(?<doorwayName>.+)\\s*?(^(//).*)");
+    private final Pattern addItemPattern = Pattern.compile("\\s*add\\s+(?<itemName>.+)\\s+to\\s+(?<roomName>.+)\\s*?(^(//).*)");
+    private final Pattern setItemDescription = Pattern.compile("\\s*set\\s+item\\s+(?<itemName>.+)\\s+" +
+            "description\\s+to\\s+\"(?<itemDescription>.+)\"\\s*?(^(//).*)");
+    private final Pattern setItemWeight = Pattern.compile("\\s*set\\s+item\\s+(?<itemName>.+)\\s+" +
+            "weight\\s+to\\s+(?<itemWeight>(^\\d*\\.\\d+|\\d+\\.\\d*$))\\s*?(^(//).*)");
     /////////////////////////////////////////
 
 
@@ -154,7 +158,32 @@ public class MapLoader {
             declaredDoorways.put(m.group("doorwayName"), new Doorway());
             return 0;
         }
+        //set item description
+        if ((m = setItemDescription.matcher(line)).find()) {
+            if (!declaredItems.contains(m.group("itemName"))) {
+                //ERROR: the item doesn't exist
+                return -1;
+            }
 
+            declaredItems.get(m.group("itemName")).setDescription(m.group("itemDescription"));
+            return 0;
+        }
+        //set item weight
+        if ((m = setItemWeight.matcher(line)).find()) {
+            if (!declaredItems.contains(m.group("itemName"))) {
+                //ERROR: the item doesn't exist
+                return -1;
+            }
+            try{
+                declaredItems.get(m.group("itemName")).setWeight(Double.parseDouble(m.group("itemWeight")));
+            }
+            catch (Exception e){
+                //couldn't parse
+                return -1;
+            }
+
+            return 0;
+        }
 
         //ERROR: invalid line
         return -1;
