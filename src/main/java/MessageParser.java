@@ -33,6 +33,7 @@ public class MessageParser {
     private final Pattern inventoryPattern = Pattern.compile("(inventory|i|items)");
     private final Pattern statusPattern = Pattern.compile("(what is my)?(status|health)");
     private final Pattern helpPattern = Pattern.compile("(((I (need|want))?help)|(I'm)?confused|(What are the)?commands)([?])?");
+    private final Pattern givePattern = Pattern.compile("(give)(\\s*)(?<item>\\S*)(\\s*)(to)?(\\s*)(?<player>.*)");
     /////////////////////////////////////////
 
 
@@ -85,7 +86,10 @@ public class MessageParser {
             displayHelp(event);
             return;
         }
-
+        if((m = givePattern.matcher(message)).find()) {
+            sendMessage("Give command parsed");
+            return;
+        }
 
         //inspect object
         if ((m = inspectObjectPattern.matcher(message)).find()) {
@@ -151,6 +155,7 @@ public class MessageParser {
             displayInventory();
             return;
         }
+
         sendMessage("I don't understand " + "\"" + message + "\"");
     }
 
