@@ -338,12 +338,12 @@ public class MessageParser {
 
                 Item i = currentQuest.currentRoom().peekItem(inspectWhat);
 
-                sendMessage("You take a closer look at the " + i.getName() + ". " + i.Description());
+                sendMessage("You take a closer look at the " + i.getName() + ".\n" + i.Description() + ".");
             } else if (turnManager.currentTurn().getInventory().peekItem(inspectWhat) != null) {
 
                 Item i = turnManager.currentTurn().getInventory().peekItem(inspectWhat);
 
-                sendMessage("You take a closer look at your " + i.getName() + ". " + i.Description());
+                sendMessage("You take a closer look at your " + i.getName() + ".\n" + i.Description() + ".");
             } else {
                 sendMessage("You see no " + inspectWhat + " here.");
             }

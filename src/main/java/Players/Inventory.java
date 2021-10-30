@@ -80,7 +80,8 @@ public class Inventory {
         }
         String listOfItems = "Your inventory contains:\n";
         for (Item i : items.values()) {
-            listOfItems += "\t-" + i.getName() + "\n";
+            listOfItems += "\t-" + i.getName() + "\n"
+            + "\t\t Weight: " + i.getWeight() + ", Value: " + i.getValue() + "\n";
         }
         return listOfItems;
     }
