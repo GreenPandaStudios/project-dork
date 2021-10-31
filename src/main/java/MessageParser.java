@@ -1,5 +1,6 @@
 import Items.HealthItem;
 import Items.Item;
+import Items.KeyItem;
 import Items.UsableItem;
 import Players.Player;
 import Quests.*;
@@ -9,6 +10,7 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 
+import java.util.Locale;
 import java.util.regex.*;
 
 import java.util.Objects;
@@ -226,7 +228,8 @@ public class MessageParser {
         hallway.addItem(new Item("Golden Apple", "A curious golden apple.", 50, 1000, false));
         endingRoom.setDescription("You are in a very dark room.");
         Doorway backUp = new Doorway(startingRoom, false);
-        Doorway d = new Doorway(hallway, false);
+        Doorway d = new Doorway(hallway, true, "RustyKey");
+        startingRoom.addItem(new KeyItem("RustyKey", "A heavy, rusty key.",1.0, 1.0, false));
         Doorway d1 = new Doorway(hallway, false);
         backUp.setUnlockedDesc("A stair-case winds its way upwards.");
         d.setLockedDesc("an old rusty and heavy looking door with a large padlock.");
@@ -395,11 +398,43 @@ public class MessageParser {
         Item item = turnManager.currentTurn().getInventory().peekItem(itemName);
         if (item != null) {
             if (item instanceof UsableItem) {
-                ((UsableItem) item).useItem(turnManager.currentTurn());
-                sendMessage("You use the " + itemName + ". You now have " + turnManager.currentTurn().getHealth() + " / "+ turnManager.currentTurn().getMaxHealth() + " health remaining.");
+                if(item instanceof HealthItem) {
+                    ((UsableItem) item).useItem(turnManager.currentTurn());
+                    sendMessage("You use the " + itemName + ". You now have " + turnManager.currentTurn().getHealth() + " / "+ turnManager.currentTurn().getMaxHealth() + " health remaining.");
+                }
                 if (((UsableItem) item).getUsesLeft() <= 0) {
                     turnManager.currentTurn().getInventory().removeItem(itemName);
                     sendMessage("The " + itemName + " is no longer usable. You discard it.");
+                }
+            } else if(item instanceof KeyItem) {
+                boolean doorUnlocked = false;
+                if(attemptUnlock(Directions.Down, itemName)) {
+                    sendMessage(TextConstants.doorUnlocked + "lower door.");
+                    doorUnlocked = true;
+                }
+                if(attemptUnlock(Directions.Up, itemName)) {
+                    sendMessage(TextConstants.doorUnlocked + "upper door.");
+                    doorUnlocked = true;
+                }
+                if(attemptUnlock(Directions.North, itemName)) {
+                    sendMessage(TextConstants.doorUnlocked + "northern door.");
+                    doorUnlocked = true;
+                }
+                if(attemptUnlock(Directions.East, itemName)) {
+                    sendMessage(TextConstants.doorUnlocked + "eastern door.");
+                    doorUnlocked = true;
+                }
+                if(attemptUnlock(Directions.South, itemName)) {
+                    sendMessage(TextConstants.doorUnlocked + "southern door.");
+                    doorUnlocked = true;
+                }
+                if(attemptUnlock(Directions.West, itemName)) {
+                    sendMessage(TextConstants.doorUnlocked + "western door.");
+                    doorUnlocked = true;
+                }
+
+                if(!doorUnlocked) {
+                    sendMessage(TextConstants.noDoorsUnlocked);
                 }
             } else {
                 sendMessage("You cannot use a " + itemName + ".");
@@ -410,6 +445,19 @@ public class MessageParser {
         if (!turnManager.canAct(turnManager.currentTurn())) {
             endTurn();
         }
+    }
+
+    //attempts to unlock a door in the given direction with the given key, returns true if successful
+    private boolean attemptUnlock(Directions direction, String keyName) {
+        if(turnManager.currentTurn().getRoom().getDoorway(direction) != null) {
+            if(turnManager.currentTurn().getRoom().getDoorway(direction).getLocked()) {
+                if(turnManager.currentTurn().getRoom().getDoorway(direction).getKeyName().toLowerCase().equals(keyName)) {
+                    turnManager.currentTurn().getRoom().getDoorway(direction).setLocked(false);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void statusAction() {

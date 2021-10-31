@@ -14,6 +14,12 @@ public class Doorway implements IDescriptable {
         setToRoom(toRoom);
     }
 
+    public Doorway(Room toRoom, boolean locked, String keyName) {
+        setLocked(locked);
+        setToRoom(toRoom);
+        setKeyName(keyName);
+    }
+
     public Doorway() {
         locked = false;
     }
@@ -24,6 +30,8 @@ public class Doorway implements IDescriptable {
     private Room toRoom;
 
     private boolean locked;
+
+    private String keyName;
 
     public boolean getLocked() {
         return locked;
@@ -70,4 +78,11 @@ public class Doorway implements IDescriptable {
     }
 
 
+    public String getKeyName() {
+        return keyName;
+    }
+
+    public void setKeyName(String keyName) {
+        this.keyName = keyName;
+    }
 }

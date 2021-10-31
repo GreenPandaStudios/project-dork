@@ -32,5 +32,7 @@ public class TextConstants {
     public static final String inspectRoomOnTurnStart = "You take in your surroundings.";
     public static final String allPlayersAtExit = "All players have made it to the exit. Great job!";
     public static final String playerDies = "A player has fallen. The dungeon closes...";
+    public static final String doorUnlocked = "You unlock the ";
+    public static final String noDoorsUnlocked = "The key did not unlock any doors in this room.";
     ////////////////////////////////////
 }
