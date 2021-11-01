@@ -6,11 +6,17 @@ import Players.Player;
 import Quests.*;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
+import org.javacord.api.entity.message.MessageAttachment;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 import java.util.Locale;
+import java.util.Scanner;
 import java.util.regex.*;
 
 import java.util.Objects;
@@ -63,8 +69,25 @@ public class MessageParser {
 
         // There is no active quest
         if (currentQuest == null) {
+            for(int i = 0; i < event.getMessageAttachments().size(); i++){
+                MessageAttachment attachment = event.getMessageAttachments().get(0);
+                String filename = attachment.getFileName();
+                String extension = filename.substring(filename.length() - 6);
+                StringBuilder text = new StringBuilder();
+                if (extension.compareTo(".quest") == 0) {
+                    try {
+                        InputStream stream = attachment.downloadAsInputStream();
+                        Scanner scan = new Scanner(stream);
+                        while(scan.hasNext()){
+                            text.append(scan.nextLine()).append("\n");
+                        }
+                        //DO SOMETHING WITH TEXT
+                    } catch (IOException ignored){
+                        System.out.println("IOException during quest download");
+                    }
+                }
+            }
             preQuestPartyManagement(event.getMessageContent(), event.getMessageAuthor().asUser().get());
-
         } else {
             // If it is this player's turn
             if (event.getMessageAuthor().asUser().get().equals(turnManager.currentTurn().getDiscordUser())) {
@@ -84,17 +107,17 @@ public class MessageParser {
     private void parseUsingRegex(String message, MessageCreateEvent event) {
         Matcher m;
         //help
-        if ((m = helpPattern.matcher(message)).find()){
+        if ((m = helpPattern.matcher(message)).find()) {
             displayHelp(event);
             return;
         }
 
-        if((m = givePattern.matcher(message)).find()) {
+        if ((m = givePattern.matcher(message)).find()) {
 
             //Loop through all players
-            for(Player receiver : turnManager.getPlayers()){
+            for (Player receiver : turnManager.getPlayers()) {
                 //If player name matches provided name, attempt to give item to reciever
-                if(receiver.getDiscordUser().getDisplayName(server).toLowerCase().equals(m.group("player"))) {
+                if (receiver.getDiscordUser().getDisplayName(server).toLowerCase().equals(m.group("player"))) {
                     sendMessage(turnManager.currentTurn().getInventory().giveItem(m.group("item"), receiver));
                     return;
                 }
@@ -156,7 +179,7 @@ public class MessageParser {
             return;
         }
         //status
-        if ((m = statusPattern.matcher(message)).find()){
+        if ((m = statusPattern.matcher(message)).find()) {
             statusAction();
             return;
         }
@@ -196,9 +219,9 @@ public class MessageParser {
 
     private Quest createDefaultQuest() {
         Room startingRoom = new Room("Starting Room").addItem(new Item("Sword",
-                "A heavy well-made sword",
-                10.5,
-                10, false))
+                        "A heavy well-made sword",
+                        10.5,
+                        10, false))
                 .addItem(new HealthItem("Amulet",
                         "A scary looking amulet",
                         2,
@@ -240,7 +263,7 @@ public class MessageParser {
         endingRoom.setDescription("You are in a very dark room.");
         Doorway backUp = new Doorway(startingRoom, false);
         Doorway d = new Doorway(hallway, true, "RustyKey");
-        startingRoom.addItem(new KeyItem("RustyKey", "A heavy, rusty key.",1.0, 1.0, false));
+        startingRoom.addItem(new KeyItem("RustyKey", "A heavy, rusty key.", 1.0, 1.0, false));
         Doorway d1 = new Doorway(hallway, false);
         backUp.setUnlockedDesc("A stair-case winds its way upwards.");
         d.setLockedDesc("an old rusty and heavy looking door with a large padlock.");
@@ -409,42 +432,42 @@ public class MessageParser {
         Item item = turnManager.currentTurn().getInventory().peekItem(itemName);
         if (item != null) {
             if (item instanceof UsableItem) {
-                if(item instanceof HealthItem) {
+                if (item instanceof HealthItem) {
                     ((UsableItem) item).useItem(turnManager.currentTurn());
-                    sendMessage("You use the " + itemName + ". You now have " + turnManager.currentTurn().getHealth() + " / "+ turnManager.currentTurn().getMaxHealth() + " health remaining.");
+                    sendMessage("You use the " + itemName + ". You now have " + turnManager.currentTurn().getHealth() + " / " + turnManager.currentTurn().getMaxHealth() + " health remaining.");
                 }
                 if (((UsableItem) item).getUsesLeft() <= 0) {
                     turnManager.currentTurn().getInventory().removeItem(itemName);
                     sendMessage("The " + itemName + " is no longer usable. You discard it.");
                 }
-            } else if(item instanceof KeyItem) {
+            } else if (item instanceof KeyItem) {
                 boolean doorUnlocked = false;
-                if(attemptUnlock(Directions.Down, itemName)) {
+                if (attemptUnlock(Directions.Down, itemName)) {
                     sendMessage(TextConstants.doorUnlocked + "lower door.");
                     doorUnlocked = true;
                 }
-                if(attemptUnlock(Directions.Up, itemName)) {
+                if (attemptUnlock(Directions.Up, itemName)) {
                     sendMessage(TextConstants.doorUnlocked + "upper door.");
                     doorUnlocked = true;
                 }
-                if(attemptUnlock(Directions.North, itemName)) {
+                if (attemptUnlock(Directions.North, itemName)) {
                     sendMessage(TextConstants.doorUnlocked + "northern door.");
                     doorUnlocked = true;
                 }
-                if(attemptUnlock(Directions.East, itemName)) {
+                if (attemptUnlock(Directions.East, itemName)) {
                     sendMessage(TextConstants.doorUnlocked + "eastern door.");
                     doorUnlocked = true;
                 }
-                if(attemptUnlock(Directions.South, itemName)) {
+                if (attemptUnlock(Directions.South, itemName)) {
                     sendMessage(TextConstants.doorUnlocked + "southern door.");
                     doorUnlocked = true;
                 }
-                if(attemptUnlock(Directions.West, itemName)) {
+                if (attemptUnlock(Directions.West, itemName)) {
                     sendMessage(TextConstants.doorUnlocked + "western door.");
                     doorUnlocked = true;
                 }
 
-                if(!doorUnlocked) {
+                if (!doorUnlocked) {
                     sendMessage(TextConstants.noDoorsUnlocked);
                 }
             } else {
@@ -460,9 +483,9 @@ public class MessageParser {
 
     //attempts to unlock a door in the given direction with the given key, returns true if successful
     private boolean attemptUnlock(Directions direction, String keyName) {
-        if(turnManager.currentTurn().getRoom().getDoorway(direction) != null) {
-            if(turnManager.currentTurn().getRoom().getDoorway(direction).getLocked()) {
-                if(turnManager.currentTurn().getRoom().getDoorway(direction).getKeyName().toLowerCase().equals(keyName)) {
+        if (turnManager.currentTurn().getRoom().getDoorway(direction) != null) {
+            if (turnManager.currentTurn().getRoom().getDoorway(direction).getLocked()) {
+                if (turnManager.currentTurn().getRoom().getDoorway(direction).getKeyName().toLowerCase().equals(keyName)) {
                     turnManager.currentTurn().getRoom().getDoorway(direction).setLocked(false);
                     return true;
                 }
@@ -472,7 +495,7 @@ public class MessageParser {
     }
 
     private void statusAction() {
-        sendMessage("Health: "+turnManager.currentTurn().getHealth() + " / "+ turnManager.currentTurn().getMaxHealth());
+        sendMessage("Health: " + turnManager.currentTurn().getHealth() + " / " + turnManager.currentTurn().getMaxHealth());
     }
 
 
@@ -601,7 +624,6 @@ public class MessageParser {
     public void preQuestPartyManagement(String messageInput, User discordUser) {
         if (messageInput.equalsIgnoreCase("start quest")) {
 
-
             //check if anyone has joined to play
             if (turnManager.numberOfPlayers() == 0) {
                 sendMessage(TextConstants.cannotStartQuest);
@@ -636,13 +658,14 @@ public class MessageParser {
             if (getPartyMembers().isEmpty()) {
                 sendMessage(TextConstants.noPartyMembers);
             } else {
-                sendMessage(TextConstants.partyMembersHeader+ getPartyMembers());
+                sendMessage(TextConstants.partyMembersHeader + getPartyMembers());
             }
         } else {
             sendMessage(TextConstants.noActiveQuest);
         }
     }
-    void displayHelp(MessageCreateEvent event){
+
+    void displayHelp(MessageCreateEvent event) {
 
         // Delete message
         event.deleteMessage();
@@ -651,6 +674,7 @@ public class MessageParser {
                 TextConstants.helpOutput));
 
     }
+
     void displayInventory() {
         sendMessage(turnManager.currentTurn().getInventory().displayItems());
         sendMessage(turnManager.currentTurn().getInventory().displayWeight());
