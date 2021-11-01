@@ -89,7 +89,7 @@ public class Inventory {
     public String giveItem(String item, Player p){
         if(items.containsKey(item)){
             if(p.getInventory().addItem(items.get(item))){
-                items.remove(item);
+                removeItem(item);
                 return "You gave your " + item + " to " + p.getDiscordUser().getDiscriminatedName() + "!";
             }
             return "Unable to give item to player.";
