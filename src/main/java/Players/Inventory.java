@@ -86,6 +86,18 @@ public class Inventory {
         return listOfItems;
     }
 
+    public String giveItem(String item, Player p){
+        if(items.containsKey(item)){
+            if(p.getInventory().addItem(items.get(item))){
+                items.remove(item);
+                return "You gave your " + item + " to " + p.getDiscordUser().getDiscriminatedName() + "!";
+            }
+            return "Unable to give item to player.";
+        }
+
+        return "You do not have that item in your inventory!";
+    }
+
     public String displayWeight(){
         return "Current Weight: " + getCurrentWeight() + " / " + getMaxWeight() + "\n";
     }
