@@ -3,6 +3,7 @@ package Quests;
 import Items.Item;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,20 +13,26 @@ public class MapLoader {
 
     //////////////////////////////REGEX constants
 
-    private final Pattern codeCommentPattern = Pattern.compile("\\s*^(//)\\s*");
+    private final Pattern codeCommentPattern = Pattern.compile("^(\\s*(//))");
 
-    private final Pattern createRoomPattern = Pattern.compile("\\s*create\\s+room\\s+(?<roomName>.+)\\s*?(^(//).*)");
+    private final Pattern createRoomPattern = Pattern.compile("\\s*create\\s+room\\s+(?<roomName>.+)\\s*");
+    private final Pattern setStartRoomPattern = Pattern.compile("\\s*set\\s+start\\s+room\\s+to\\s+(?<roomName>.+)\\s*");
+    private final Pattern setEndRoomPattern = Pattern.compile("\\s*set\\s+end\\s+room\\s+to\\s+(?<roomName>.+)\\s*");
     private final Pattern createItemPattern = Pattern.compile("\\s*create\\s+item\\s+(?<itemName>.+)\\s*?(^(//).*)");
-    private final Pattern createDoorwayPattern = Pattern.compile("\\s*create\\s+doorway\\s+(?<doorwayName>.+)\\s*?(^(//).*)");
-    private final Pattern connectRoomsPattern = Pattern.compile("\\s*connect\\s+(?<fromRoom>.+)\\s+to\\s+(?<toRoom>.+)\\s+from\\s+(?<direction>.+)\\s+using\\s+(?<doorwayName>.+)\\s*?(^(//).*)");
-    private final Pattern addItemPattern = Pattern.compile("\\s*add\\s+(?<itemName>.+)\\s+to\\s+(?<roomName>.+)\\s*?(^(//).*)");
+    private final Pattern createDoorwayPattern = Pattern.compile("\\s*create\\s+doorway\\s+(?<doorwayName>.+)\\s*");
+    private final Pattern connectRoomsPattern = Pattern.compile("\\s*connect\\s+(?<fromRoom>.+)\\s+to\\s+(?<toRoom>.+)\\s+from\\s+(?<direction>.+)\\s+using\\s+(?<doorwayName>.+)\\s*");
+    private final Pattern addItemPattern = Pattern.compile("\\s*add\\s+(?<itemName>.+)\\s+to\\s+(?<roomName>.+)\\s*");
     private final Pattern setItemDescription = Pattern.compile("\\s*set\\s+item\\s+(?<itemName>.+)\\s+" +
             "description\\s+to\\s+\"(?<itemDescription>.+)\"\\s*?(^(//).*)");
     private final Pattern setItemWeight = Pattern.compile("\\s*set\\s+item\\s+(?<itemName>.+)\\s+" +
-            "weight\\s+to\\s+(?<itemWeight>(^\\d*\\.\\d+|\\d+\\.\\d*$))\\s*?(^(//).*)");
+            "weight\\s+to\\s+(?<itemWeight>(^\\d*\\.\\d+|\\d+\\.\\d*$))\\s*");
     /////////////////////////////////////////
 
 
+    private String errorCode;
+    public String getErrorCode(){
+        return  errorCode;
+    }
     Hashtable<String, Room> declaredRooms;
     Hashtable<String, Doorway> declaredDoorways;
     Hashtable<String, Item> declaredItems;
@@ -70,7 +77,7 @@ public class MapLoader {
             //create a new Room
             if (declaredRooms.contains(m.group("roomName"))) {
 
-                //ERROR: The Room has already been created
+                errorCode = "The Room has already been created";
                 return -1;
             }
             declaredRooms.put(m.group("roomName"), new Room(m.group("roomName")));
@@ -83,7 +90,7 @@ public class MapLoader {
             //create a new item
             if (declaredItems.contains(m.group("itemName"))) {
 
-                //ERROR: The Item has already been created
+                errorCode =  "The Item has already been created";
                 return -1;
             }
             declaredItems.put(m.group("itemName"), new Item(m.group("itemName")));
@@ -98,13 +105,13 @@ public class MapLoader {
             if (declaredRooms.contains(m.group("fromRoom"))) {
                 fromRoom = declaredRooms.get(m.group("fromRoom"));
             } else {
-                //ERROR: The room does not exist
+                errorCode = "The room does not exist.";
                 return -1;
             }
             if (declaredRooms.contains(m.group("toRoom"))) {
                 toRoom = declaredRooms.get(m.group("toRoom"));
             } else {
-                //ERROR: The room does not exist
+                errorCode = "The room does not exist";
                 return -1;
             }
 
@@ -113,14 +120,14 @@ public class MapLoader {
             if (declaredDoorways.contains(m.group("doorwayName"))) {
                 d = declaredDoorways.get(m.group("doorwayName"));
             } else {
-                //ERROR: The doorway does not exist
+                errorCode = "The doorway does not exist";
                 return -1;
             }
 
             //get the direction
             Directions dir = getDirectionFromString(m.group("direction"));
             if (dir == null) {
-                //ERROR: Invalid direction
+                errorCode = "Invalid direction";
                 return -1;
             }
 
@@ -135,11 +142,11 @@ public class MapLoader {
 
             //make sure both the item and room exist
             if (!declaredItems.contains(m.group("itemName"))) {
-                //ERROR: The item does not exist
+                errorCode = "The item does not exist.";
                 return -1;
             }
             if (!declaredRooms.contains(m.group("roomName"))) {
-                //ERROR: The room does not exist
+                errorCode = "The room does not exist";
                 return -1;
             }
 
@@ -149,9 +156,39 @@ public class MapLoader {
 
             return 0;
         }
+        if ((m = setStartRoomPattern.matcher(line)).find()) {
+
+
+            //make sure both the item and room exist
+            if (!declaredRooms.contains(m.group("roomName"))) {
+                errorCode = "The room does not exist.";
+                return -1;
+            }
+
+
+            //set the maps starting room
+            map.setStartingRoom(declaredRooms.get(m.group("roomName")));
+
+            return 0;
+        }
+        if ((m = setEndRoomPattern.matcher(line)).find()) {
+
+
+            //make sure both the item and room exist
+            if (!declaredRooms.contains(m.group("roomName"))) {
+                errorCode = "The room does not exist.";
+                return -1;
+            }
+
+
+            //set the maps starting room
+            map.setEndingRoom(declaredRooms.get(m.group("roomName")));
+
+            return 0;
+        }
         if ((m = createDoorwayPattern.matcher(line)).find()) {
             if (declaredDoorways.contains(m.group("doorwayName"))) {
-                //ERROR: the doorway exists
+                errorCode =  "The doorway exists.";
                 return -1;
             }
 
@@ -161,7 +198,7 @@ public class MapLoader {
         //set item description
         if ((m = setItemDescription.matcher(line)).find()) {
             if (!declaredItems.contains(m.group("itemName"))) {
-                //ERROR: the item doesn't exist
+                errorCode = "The item doesn't exist.";
                 return -1;
             }
 
@@ -171,14 +208,14 @@ public class MapLoader {
         //set item weight
         if ((m = setItemWeight.matcher(line)).find()) {
             if (!declaredItems.contains(m.group("itemName"))) {
-                //ERROR: the item doesn't exist
+                errorCode = "The item doesn't exist.";
                 return -1;
             }
             try{
                 declaredItems.get(m.group("itemName")).setWeight(Double.parseDouble(m.group("itemWeight")));
             }
             catch (Exception e){
-                //couldn't parse
+                errorCode = "Expected a double for weight value.";
                 return -1;
             }
 
@@ -186,6 +223,7 @@ public class MapLoader {
         }
 
         //ERROR: invalid line
+        errorCode = "Invalid line";
         return -1;
     }
 
@@ -213,6 +251,21 @@ public class MapLoader {
             default:
                 return null;
         }
+    }
+
+
+
+    public Map LoadMap(ArrayList<String> fileLines){
+        int lineNumber = 1;
+        for (String line : fileLines) {
+            if (compileLine(line) == -1){
+                //there was an error
+                errorCode += "\nLine Number: " + lineNumber + ":  " + line;
+                return  null;
+            }
+            lineNumber++;
+        }
+        return map;
     }
 
 }

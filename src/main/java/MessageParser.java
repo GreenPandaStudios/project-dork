@@ -4,6 +4,7 @@ import Items.KeyItem;
 import Items.UsableItem;
 import Players.Player;
 import Quests.*;
+import Quests.Map;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.MessageAttachment;
@@ -14,12 +15,8 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-import java.util.Locale;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.*;
-
-import java.util.Objects;
 
 public class MessageParser {
 
@@ -73,17 +70,34 @@ public class MessageParser {
                 MessageAttachment attachment = event.getMessageAttachments().get(0);
                 String filename = attachment.getFileName();
                 String extension = filename.substring(filename.length() - 6);
-                StringBuilder text = new StringBuilder();
+                ArrayList<String> text = new ArrayList<String>();
                 if (extension.compareTo(".quest") == 0) {
                     try {
                         InputStream stream = attachment.downloadAsInputStream();
                         Scanner scan = new Scanner(stream);
                         while(scan.hasNext()){
-                            text.append(scan.nextLine()).append("\n");
+                            text.add(text.size(),scan.nextLine());
                         }
-                        //DO SOMETHING WITH TEXT
+
+
+                        //try to load the quest
+                        MapLoader loader = new MapLoader();
+                        Map m = loader.LoadMap(text);
+                        if (m == null){
+                            //error loading the quest
+                            sendMessage("There was an error loading the Quest: " + loader.getErrorCode());
+                        }
+                        else{
+                            //we have a new valid quest
+                            sendMessage("Quest loaded successfully!");
+                            currentQuest = new Quest(m, turnManager);
+                        }
+
+
+
                     } catch (IOException ignored){
                         System.out.println("IOException during quest download");
+                        sendMessage("Sorry, but I couldn't load that quest.");
                     }
                 }
             }
