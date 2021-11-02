@@ -36,9 +36,9 @@ public class Room implements Interfaces.IDescriptable, Interfaces.IName {
     }
 
 
-    private String description;
-    private String name;
-    private int playerCount;
+    private String description = "";
+    private String name = "";
+    private int playerCount = 0;
 
     //TODO
     @Override

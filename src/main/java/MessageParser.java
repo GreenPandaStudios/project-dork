@@ -66,42 +66,8 @@ public class MessageParser {
 
         // There is no active quest
         if (currentQuest == null) {
-            for(int i = 0; i < event.getMessageAttachments().size(); i++){
-                MessageAttachment attachment = event.getMessageAttachments().get(0);
-                String filename = attachment.getFileName();
-                String extension = filename.substring(filename.length() - 6);
-                ArrayList<String> text = new ArrayList<String>();
-                if (extension.compareTo(".quest") == 0) {
-                    try {
-                        InputStream stream = attachment.downloadAsInputStream();
-                        Scanner scan = new Scanner(stream);
-                        while(scan.hasNext()){
-                            text.add(text.size(),scan.nextLine());
-                        }
 
-
-                        //try to load the quest
-                        MapLoader loader = new MapLoader();
-                        Map m = loader.LoadMap(text);
-                        if (m == null){
-                            //error loading the quest
-                            sendMessage("There was an error loading the Quest: " + loader.getErrorCode());
-                        }
-                        else{
-                            //we have a new valid quest
-                            sendMessage("Quest loaded successfully!");
-                            currentQuest = new Quest(m, turnManager);
-                        }
-
-
-
-                    } catch (IOException ignored){
-                        System.out.println("IOException during quest download");
-                        sendMessage("Sorry, but I couldn't load that quest.");
-                    }
-                }
-            }
-            preQuestPartyManagement(event.getMessageContent(), event.getMessageAuthor().asUser().get());
+            preQuestPartyManagement(event);
         } else {
             // If it is this player's turn
             if (event.getMessageAuthor().asUser().get().equals(turnManager.currentTurn().getDiscordUser())) {
@@ -132,7 +98,7 @@ public class MessageParser {
             for (Player receiver : turnManager.getPlayers()) {
                 //If player name matches provided name, attempt to give item to reciever
                 if (receiver.getDiscordUser().getDisplayName(server).toLowerCase().equals(m.group("player"))) {
-                    if(turnManager.currentTurn().getRoom() == receiver.getRoom()) {
+                    if (turnManager.currentTurn().getRoom() == receiver.getRoom()) {
                         sendMessage(turnManager.currentTurn().getInventory().giveItem(m.group("item"), receiver));
                         return;
                     }
@@ -237,9 +203,9 @@ public class MessageParser {
 
     private Quest createDefaultQuest() {
         Room startingRoom = new Room("Starting Room").addItem(new Item("Sword",
-                        "A heavy well-made sword",
-                        10.5,
-                        10, false))
+                "A heavy well-made sword",
+                10.5,
+                10, false))
                 .addItem(new HealthItem("Amulet",
                         "A scary looking amulet",
                         2,
@@ -639,23 +605,73 @@ public class MessageParser {
      * <p>
      * Must be done before the quest begins
      */
-    public void preQuestPartyManagement(String messageInput, User discordUser) {
+    public void preQuestPartyManagement(MessageCreateEvent event) {
+
+        String messageInput = event.getMessageContent();
+        User discordUser = event.getMessageAuthor().asUser().get();
+
+
         if (messageInput.equalsIgnoreCase("start quest")) {
 
             //check if anyone has joined to play
             if (turnManager.numberOfPlayers() == 0) {
                 sendMessage(TextConstants.cannotStartQuest);
             } else {
-                clearAllMessages();
-                sendMessage("Starting a new Quest with the following players:\n" + getPartyMembers());
 
-                currentQuest = createDefaultQuest();
-                currentQuest.startQuest();
-                sendMessage(currentQuest.getMap().getStartingRoom().Description());
+
+                //do we make a new quest with a file?
+                if (event.getMessageAttachments().size() > 0) {
+                    for (int i = 0; i < event.getMessageAttachments().size(); i++) {
+                        MessageAttachment attachment = event.getMessageAttachments().get(0);
+                        String filename = attachment.getFileName();
+                        String extension = filename.substring(filename.length() - 6);
+                        ArrayList<String> text = new ArrayList<String>();
+                        if (extension.compareTo(".quest") == 0) {
+                            try {
+                                InputStream stream = attachment.downloadAsInputStream();
+                                Scanner scan = new Scanner(stream);
+                                while (scan.hasNext()) {
+                                    text.add(text.size(), scan.nextLine());
+                                }
+
+
+                                //try to load the quest
+                                MapLoader loader = new MapLoader();
+                                Map m = loader.LoadMap(text);
+                                if (m == null) {
+                                    //error loading the quest
+                                    sendMessage("There was an error loading the Quest: " + loader.getErrorCode());
+                                    return;
+                                } else {
+                                    //we have a new valid quest
+                                    sendMessage("Quest loaded successfully!");
+                                    currentQuest = new Quest(m, turnManager);
+                                }
+
+
+                            } catch (IOException ignored) {
+                                System.out.println("IOException during quest download");
+                                sendMessage("Sorry, but I couldn't load that quest.");
+                            }
+                        }
+                    }
+                }
+                else {
+                    currentQuest = createDefaultQuest();
+                }
+
+                //if there was an error loading the quest file
+                if (currentQuest != null)
+                    clearAllMessages();
+                    sendMessage("Starting a new Quest with the following players:\n" + getPartyMembers());
+                    currentQuest.startQuest();
+                    sendMessage(currentQuest.getMap().getStartingRoom().Description());
+                }
+
             }
 
 
-        } else if (messageInput.equalsIgnoreCase("join")) {
+         else if (messageInput.equalsIgnoreCase("join")) {
             //add this user to the list of users
             if (turnManager.getByUser(discordUser) == null) {
                 turnManager.addPlayer(new Player(discordUser));

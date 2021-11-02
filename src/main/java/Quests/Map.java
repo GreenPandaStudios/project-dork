@@ -42,7 +42,7 @@ public class Map {
 
         //exception if this location is already taken
         if (rooms.containsKey(room.getName())){
-            throw new UnsupportedOperationException();
+            return this;
         }
 
         //update this room's location and add it to the hashmap

@@ -13,17 +13,17 @@ public class MapLoader {
 
     //////////////////////////////REGEX constants
 
-    private final Pattern codeCommentPattern = Pattern.compile("^(\\s*(//))");
+    private final Pattern codeCommentPattern = Pattern.compile("^(\\s*(//))|\\s*");
 
     private final Pattern createRoomPattern = Pattern.compile("\\s*create\\s+room\\s+(?<roomName>.+)\\s*");
     private final Pattern setStartRoomPattern = Pattern.compile("\\s*set\\s+start\\s+room\\s+to\\s+(?<roomName>.+)\\s*");
     private final Pattern setEndRoomPattern = Pattern.compile("\\s*set\\s+end\\s+room\\s+to\\s+(?<roomName>.+)\\s*");
-    private final Pattern createItemPattern = Pattern.compile("\\s*create\\s+item\\s+(?<itemName>.+)\\s*?(^(//).*)");
+    private final Pattern createItemPattern = Pattern.compile("\\s*create\\s+item\\s+(?<itemName>.+)\\s*");
     private final Pattern createDoorwayPattern = Pattern.compile("\\s*create\\s+doorway\\s+(?<doorwayName>.+)\\s*");
     private final Pattern connectRoomsPattern = Pattern.compile("\\s*connect\\s+(?<fromRoom>.+)\\s+to\\s+(?<toRoom>.+)\\s+from\\s+(?<direction>.+)\\s+using\\s+(?<doorwayName>.+)\\s*");
     private final Pattern addItemPattern = Pattern.compile("\\s*add\\s+(?<itemName>.+)\\s+to\\s+(?<roomName>.+)\\s*");
     private final Pattern setItemDescription = Pattern.compile("\\s*set\\s+item\\s+(?<itemName>.+)\\s+" +
-            "description\\s+to\\s+\"(?<itemDescription>.+)\"\\s*?(^(//).*)");
+            "description\\s+to\\s+\"(?<itemDescription>.+)\"\\s*");
     private final Pattern setItemWeight = Pattern.compile("\\s*set\\s+item\\s+(?<itemName>.+)\\s+" +
             "weight\\s+to\\s+(?<itemWeight>(^\\d*\\.\\d+|\\d+\\.\\d*$))\\s*");
     /////////////////////////////////////////
@@ -75,7 +75,7 @@ public class MapLoader {
         //create a new room
         if ((m = createRoomPattern.matcher(line)).find()) {
             //create a new Room
-            if (declaredRooms.contains(m.group("roomName"))) {
+            if (declaredRooms.containsKey(m.group("roomName"))) {
 
                 errorCode = "The Room has already been created";
                 return -1;
@@ -88,7 +88,7 @@ public class MapLoader {
         }
         if ((m = createItemPattern.matcher(line)).find()) {
             //create a new item
-            if (declaredItems.contains(m.group("itemName"))) {
+            if (declaredItems.containsKey(m.group("itemName"))) {
 
                 errorCode =  "The Item has already been created";
                 return -1;
@@ -102,13 +102,13 @@ public class MapLoader {
             Room fromRoom;
             Room toRoom;
             Doorway d;
-            if (declaredRooms.contains(m.group("fromRoom"))) {
+            if (declaredRooms.containsKey(m.group("fromRoom"))) {
                 fromRoom = declaredRooms.get(m.group("fromRoom"));
             } else {
                 errorCode = "The room does not exist.";
                 return -1;
             }
-            if (declaredRooms.contains(m.group("toRoom"))) {
+            if (declaredRooms.containsKey(m.group("toRoom"))) {
                 toRoom = declaredRooms.get(m.group("toRoom"));
             } else {
                 errorCode = "The room does not exist";
@@ -117,7 +117,7 @@ public class MapLoader {
 
             //the rooms exist
             //See if the doorway exists
-            if (declaredDoorways.contains(m.group("doorwayName"))) {
+            if (declaredDoorways.containsKey(m.group("doorwayName"))) {
                 d = declaredDoorways.get(m.group("doorwayName"));
             } else {
                 errorCode = "The doorway does not exist";
@@ -141,11 +141,11 @@ public class MapLoader {
 
 
             //make sure both the item and room exist
-            if (!declaredItems.contains(m.group("itemName"))) {
+            if (!declaredItems.containsKey(m.group("itemName"))) {
                 errorCode = "The item does not exist.";
                 return -1;
             }
-            if (!declaredRooms.contains(m.group("roomName"))) {
+            if (!declaredRooms.containsKey(m.group("roomName"))) {
                 errorCode = "The room does not exist";
                 return -1;
             }
@@ -160,8 +160,8 @@ public class MapLoader {
 
 
             //make sure both the item and room exist
-            if (!declaredRooms.contains(m.group("roomName"))) {
-                errorCode = "The room does not exist.";
+            if (!declaredRooms.containsKey(m.group("roomName"))) {
+                errorCode = "The room \"" + m.group("roomName") +"\" does not exist.";
                 return -1;
             }
 
@@ -175,8 +175,8 @@ public class MapLoader {
 
 
             //make sure both the item and room exist
-            if (!declaredRooms.contains(m.group("roomName"))) {
-                errorCode = "The room does not exist.";
+            if (!declaredRooms.containsKey(m.group("roomName"))) {
+                errorCode = "The room \"" + m.group("roomName") +"\" does not exist.";
                 return -1;
             }
 
@@ -187,7 +187,7 @@ public class MapLoader {
             return 0;
         }
         if ((m = createDoorwayPattern.matcher(line)).find()) {
-            if (declaredDoorways.contains(m.group("doorwayName"))) {
+            if (declaredDoorways.containsKey(m.group("doorwayName"))) {
                 errorCode =  "The doorway exists.";
                 return -1;
             }
@@ -197,7 +197,7 @@ public class MapLoader {
         }
         //set item description
         if ((m = setItemDescription.matcher(line)).find()) {
-            if (!declaredItems.contains(m.group("itemName"))) {
+            if (!declaredItems.containsKey(m.group("itemName"))) {
                 errorCode = "The item doesn't exist.";
                 return -1;
             }
@@ -207,7 +207,7 @@ public class MapLoader {
         }
         //set item weight
         if ((m = setItemWeight.matcher(line)).find()) {
-            if (!declaredItems.contains(m.group("itemName"))) {
+            if (!declaredItems.containsKey(m.group("itemName"))) {
                 errorCode = "The item doesn't exist.";
                 return -1;
             }
@@ -261,9 +261,21 @@ public class MapLoader {
             if (compileLine(line) == -1){
                 //there was an error
                 errorCode += "\nLine Number: " + lineNumber + ":  " + line;
+
                 return  null;
             }
             lineNumber++;
+        }
+
+
+        //make sure the map has a starting and ending room
+        if (map.getStartingRoom() == null){
+            errorCode = "You must specify a start room for a map!";
+            return  null;
+        }
+        if (map.getEndingRoom() == null){
+            errorCode = "You must specify an end room for a map!";
+            return  null;
         }
         return map;
     }
