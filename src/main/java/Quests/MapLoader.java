@@ -13,19 +13,24 @@ public class MapLoader {
 
     //////////////////////////////REGEX constants
 
-    private final Pattern codeCommentPattern = Pattern.compile("^(\\s*(//))|\\s*");
+    private final Pattern codeCommentPattern = Pattern.compile("(^(\\s*(//)))");
+    private final Pattern whitespace = Pattern.compile("^\\s*\\s*$\\s*");
 
-    private final Pattern createRoomPattern = Pattern.compile("\\s*create\\s+room\\s+(?<roomName>.+)\\s*");
-    private final Pattern setStartRoomPattern = Pattern.compile("\\s*set\\s+start\\s+room\\s+to\\s+(?<roomName>.+)\\s*");
-    private final Pattern setEndRoomPattern = Pattern.compile("\\s*set\\s+end\\s+room\\s+to\\s+(?<roomName>.+)\\s*");
+    private final Pattern createRoomPattern = Pattern.compile("\\s*create\\s+room\\s+(?<roomName>.+)");
+    private final Pattern setStartRoomPattern = Pattern.compile("\\s*set\\s+start\\s+room\\s+to\\s+(?<roomName>.+)");
+    private final Pattern setEndRoomPattern = Pattern.compile("\\s*set\\s+end\\s+room\\s+to\\s+(?<roomName>.+)");
     private final Pattern createItemPattern = Pattern.compile("\\s*create\\s+item\\s+(?<itemName>.+)\\s*");
     private final Pattern createDoorwayPattern = Pattern.compile("\\s*create\\s+doorway\\s+(?<doorwayName>.+)\\s*");
-    private final Pattern connectRoomsPattern = Pattern.compile("\\s*connect\\s+(?<fromRoom>.+)\\s+to\\s+(?<toRoom>.+)\\s+from\\s+(?<direction>.+)\\s+using\\s+(?<doorwayName>.+)\\s*");
-    private final Pattern addItemPattern = Pattern.compile("\\s*add\\s+(?<itemName>.+)\\s+to\\s+(?<roomName>.+)\\s*");
+    private final Pattern connectRoomsPattern = Pattern.compile("\\s*set\\s+(?<fromRoom>.+)\\s+direction\\s+(?<direction>.+)\\s+to\\s+(?<toRoom>.+)\\s+via\\s+(?<doorwayName>.+)");
+    private final Pattern addItemPattern = Pattern.compile("\\s*add\\s+(?<itemName>.+)\\s+to\\s+(?<roomName>.+)");
     private final Pattern setItemDescription = Pattern.compile("\\s*set\\s+item\\s+(?<itemName>.+)\\s+" +
-            "description\\s+to\\s+\"(?<itemDescription>.+)\"\\s*");
+            "description\\s+to\\s+\"(?<itemDescription>.+)\"");
+    private final Pattern setRoomDescription = Pattern.compile("\\s*set\\s+room\\s+(?<roomName>.+)\\s+" +
+            "description\\s+to\\s+\"(?<roomDescription>.+)\"");
     private final Pattern setItemWeight = Pattern.compile("\\s*set\\s+item\\s+(?<itemName>.+)\\s+" +
-            "weight\\s+to\\s+(?<itemWeight>(^\\d*\\.\\d+|\\d+\\.\\d*$))\\s*");
+            "weight\\s+to\\s+(?<itemWeight>(^\\d*\\.\\d+|\\d+\\.\\d*$))");
+    private final Pattern setItemValue = Pattern.compile("\\s*set\\s+item\\s+(?<itemName>.+)\\s+" +
+            "value\\s+to\\s+(?<itemWeight>(^\\d*\\.\\d+|\\d+\\.\\d*$))");
     /////////////////////////////////////////
 
 
@@ -67,11 +72,15 @@ public class MapLoader {
     private int compileLine(String line) {
         Matcher m;
 
+
         if ((m = codeCommentPattern.matcher(line)).find()) {
             //ignore, this is a code comment
             return 0;
         }
-
+        if ((m = whitespace.matcher(line)).find()) {
+            //ignore, this is whitespace
+            return 0;
+        }
         //create a new room
         if ((m = createRoomPattern.matcher(line)).find()) {
             //create a new Room
@@ -105,13 +114,13 @@ public class MapLoader {
             if (declaredRooms.containsKey(m.group("fromRoom"))) {
                 fromRoom = declaredRooms.get(m.group("fromRoom"));
             } else {
-                errorCode = "The room does not exist.";
+                errorCode = "The room \"" + m.group("fromRoom") +"\" does not exist";
                 return -1;
             }
             if (declaredRooms.containsKey(m.group("toRoom"))) {
                 toRoom = declaredRooms.get(m.group("toRoom"));
             } else {
-                errorCode = "The room does not exist";
+                errorCode = "The room \"" + m.group("toRoom") +"\" does not exist";
                 return -1;
             }
 
@@ -120,7 +129,7 @@ public class MapLoader {
             if (declaredDoorways.containsKey(m.group("doorwayName"))) {
                 d = declaredDoorways.get(m.group("doorwayName"));
             } else {
-                errorCode = "The doorway does not exist";
+                errorCode = "The doorway \"" +  m.group("doorwayName") + "\" does not exist";
                 return -1;
             }
 
@@ -205,6 +214,15 @@ public class MapLoader {
             declaredItems.get(m.group("itemName")).setDescription(m.group("itemDescription"));
             return 0;
         }
+        if ((m = setRoomDescription.matcher(line)).find()) {
+            if (!declaredRooms.containsKey(m.group("roomName"))) {
+                errorCode = "The room doesn't exist.";
+                return -1;
+            }
+
+            declaredRooms.get(m.group("roomName")).setDescription(m.group("roomDescription"));
+            return 0;
+        }
         //set item weight
         if ((m = setItemWeight.matcher(line)).find()) {
             if (!declaredItems.containsKey(m.group("itemName"))) {
@@ -213,6 +231,21 @@ public class MapLoader {
             }
             try{
                 declaredItems.get(m.group("itemName")).setWeight(Double.parseDouble(m.group("itemWeight")));
+            }
+            catch (Exception e){
+                errorCode = "Expected a double for weight value.";
+                return -1;
+            }
+
+            return 0;
+        }
+        if ((m = setItemValue.matcher(line)).find()) {
+            if (!declaredItems.containsKey(m.group("itemName"))) {
+                errorCode = "The item \"" +m.group("itemName") +  "\" doesn't exist.";
+                return -1;
+            }
+            try{
+                declaredItems.get(m.group("itemName")).setValue(Double.parseDouble(m.group("itemWeight")));
             }
             catch (Exception e){
                 errorCode = "Expected a double for weight value.";
