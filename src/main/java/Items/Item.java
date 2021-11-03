@@ -37,8 +37,9 @@ public class Item implements Interfaces.IName, Interfaces.IDescriptable {
         return scenery;
     }
 
-    public void setScenery(boolean scenery) {
+    public Item setScenery(boolean scenery) {
         this.scenery = scenery;
+        return  this;
     }
 
     private boolean scenery = false;

@@ -7,8 +7,11 @@ import Players.Player;
  */
 public class HealthItem extends UsableItem {
 
-    double health;
+    double health = 0;
 
+    public HealthItem(String name){
+        setName(name);
+    }
     public HealthItem(String name, String description, double weight, double value, boolean scenery, int uses, double health) {
         super(name, description, weight, value, scenery, uses);
         setHealth(health);

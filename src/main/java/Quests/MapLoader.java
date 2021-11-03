@@ -1,6 +1,8 @@
 package Quests;
 
+import Items.HealthItem;
 import Items.Item;
+import Items.UsableItem;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -12,19 +14,27 @@ public class MapLoader {
 
 
     //////////////////////////////REGEX constants
-
     private final Pattern codeCommentPattern = Pattern.compile("(^(\\s*(//)))");
     private final Pattern whitespace = Pattern.compile("^\\s*\\s*$\\s*");
 
     private final Pattern createRoomPattern = Pattern.compile("\\s*create\\s+room\\s+(?<roomName>.+)");
+    private final Pattern setDoorwayLocked = Pattern.compile("\\s*set\\s+(?<doorway>.+)\\s+locked\\s+to\\s+(?<bool>true|false)");
     private final Pattern setStartRoomPattern = Pattern.compile("\\s*set\\s+start\\s+room\\s+to\\s+(?<roomName>.+)");
     private final Pattern setEndRoomPattern = Pattern.compile("\\s*set\\s+end\\s+room\\s+to\\s+(?<roomName>.+)");
     private final Pattern createItemPattern = Pattern.compile("\\s*create\\s+item\\s+(?<itemName>.+)\\s*");
+    private final Pattern createHealthItemPattern = Pattern.compile("\\s*create\\s+healthItem\\s+(?<itemName>.+)\\s*");
+    private final Pattern setHealth = Pattern.compile("\\s*set\\s+healthItem\\s+(?<itemName>.+)\\s+health\\s+to\\s+(?<health>(^\\d*\\.\\d+|\\d+\\.\\d*$))");
+    private final Pattern setUses = Pattern.compile("\\s*set\\s+(?<itemName>.+)\\s+uses\\s+to\\s+(?<uses>(\\d+))");
     private final Pattern createDoorwayPattern = Pattern.compile("\\s*create\\s+doorway\\s+(?<doorwayName>.+)\\s*");
+    private final Pattern createScenery =  Pattern.compile("\\s*create\\s+scenery\\s+(?<itemName>.+)\\s*");
     private final Pattern connectRoomsPattern = Pattern.compile("\\s*set\\s+(?<fromRoom>.+)\\s+direction\\s+(?<direction>.+)\\s+to\\s+(?<toRoom>.+)\\s+via\\s+(?<doorwayName>.+)");
     private final Pattern addItemPattern = Pattern.compile("\\s*add\\s+(?<itemName>.+)\\s+to\\s+(?<roomName>.+)");
     private final Pattern setItemDescription = Pattern.compile("\\s*set\\s+item\\s+(?<itemName>.+)\\s+" +
             "description\\s+to\\s+\"(?<itemDescription>.+)\"");
+    private final Pattern setlockedDescr = Pattern.compile("\\s*set\\s+doorway\\s+(?<doorway>.+)\\s+" +
+            "locked\\s+description\\s+to\\s+\"(?<descr>.+)\"");
+    private final Pattern setUnlockedDesc = Pattern.compile("\\s*set\\s+doorway\\s+(?<doorway>.+)\\s+" +
+            "unlocked\\s+description\\s+to\\s+\"(?<descr>.+)\"");
     private final Pattern setRoomDescription = Pattern.compile("\\s*set\\s+room\\s+(?<roomName>.+)\\s+" +
             "description\\s+to\\s+\"(?<roomDescription>.+)\"");
     private final Pattern setItemWeight = Pattern.compile("\\s*set\\s+item\\s+(?<itemName>.+)\\s+" +
@@ -103,6 +113,74 @@ public class MapLoader {
                 return -1;
             }
             declaredItems.put(m.group("itemName"), new Item(m.group("itemName")));
+            return 0;
+        }
+        if ((m = createHealthItemPattern.matcher(line)).find()) {
+            //create a new item
+            if (declaredItems.containsKey(m.group("itemName"))) {
+
+                errorCode =  "The Item has already been created";
+                return -1;
+            }
+            declaredItems.put(m.group("itemName"), new HealthItem(m.group("itemName")));
+            return 0;
+        }
+        if ((m = setHealth.matcher(line)).find()) {
+            //create a new item
+            if (!declaredItems.containsKey(m.group("itemName"))) {
+
+                errorCode =  "The health item does not exist";
+                return -1;
+            }
+
+            if (declaredItems.get(m.group("itemName")) instanceof HealthItem){
+                try{
+                    ((HealthItem) declaredItems.get(m.group("itemName"))).setHealth(Double.parseDouble(m.group("health")));
+                    return  0;
+                }
+                catch (Exception e){
+                    errorCode =  "Expected health as double.";
+                    return -1;
+                }
+
+            }
+            else{
+                errorCode =  "The item is not a health item.";
+                return -1;
+            }
+        }
+        if ((m = setUses.matcher(line)).find()) {
+            //create a new item
+            if (!declaredItems.containsKey(m.group("itemName"))) {
+
+                errorCode =  "The usable item does not exist";
+                return -1;
+            }
+
+            if (declaredItems.get(m.group("itemName")) instanceof UsableItem){
+                try{
+                    ((UsableItem) declaredItems.get(m.group("itemName"))).setUsesLeft(Integer.parseInt(m.group("uses")));
+                    return  0;
+                }
+                catch (Exception e){
+                    errorCode =  "Expected uses as an integer.";
+                    return -1;
+                }
+
+            }
+            else{
+                errorCode =  "The item is not a usable item.";
+                return -1;
+            }
+        }
+        if ((m = createScenery.matcher(line)).find()) {
+            //create a new item
+            if (declaredItems.containsKey(m.group("itemName"))) {
+
+                errorCode =  "The Item has already been created";
+                return -1;
+            }
+            declaredItems.put(m.group("itemName"), new Item(m.group("itemName")).setScenery(true));
             return 0;
         }
         if ((m = connectRoomsPattern.matcher(line)).find()) {
@@ -254,7 +332,49 @@ public class MapLoader {
 
             return 0;
         }
+        if ((m = setDoorwayLocked.matcher(line)).find()) {
+            if (!declaredDoorways.containsKey(m.group("doorway"))){
+                errorCode = "Doorway \""+ m.group("doorway")+"\" does not exist.";
+                return -1;
+            }
 
+            if (m.group("bool").equalsIgnoreCase("true")){
+                declaredDoorways.get(m.group("doorway")).setLocked(true);
+
+            }
+            else if (m.group("bool").equalsIgnoreCase("false")){
+                declaredDoorways.get(m.group("doorway")).setLocked(false);
+
+            }
+            else{
+                errorCode = "Expected a boolean value, either 'true' or 'false'.";
+                return -1;
+            }
+
+
+            return 0;
+
+        }
+        if ((m = setlockedDescr.matcher(line)).find()) {
+            if (!declaredDoorways.containsKey(m.group("doorway"))){
+                errorCode = "Doorway \""+ m.group("doorway")+"\" does not exist.";
+                return -1;
+            }
+                declaredDoorways.get(m.group("doorway")).setLockedDesc(m.group("descr"));
+
+            return 0;
+
+        }
+        if ((m = setUnlockedDesc.matcher(line)).find()) {
+            if (!declaredDoorways.containsKey(m.group("doorway"))){
+                errorCode = "Doorway \""+ m.group("doorway")+"\" does not exist.";
+                return -1;
+            }
+            declaredDoorways.get(m.group("doorway")).setUnlockedDesc(m.group("descr"));
+
+            return 0;
+
+        }
         //ERROR: invalid line
         errorCode = "Invalid line";
         return -1;
