@@ -99,7 +99,7 @@ public class MessageParser {
                 //If player name matches provided name, attempt to give item to reciever
                 if (receiver.getDiscordUser().getDisplayName(server).toLowerCase().equals(m.group("player"))) {
                     if (turnManager.currentTurn().getRoom() == receiver.getRoom()) {
-                        sendMessage(turnManager.currentTurn().getInventory().giveItem(m.group("item"), receiver));
+                        sendMessage(turnManager.currentTurn().getInventory().giveItem(m.group("item"), receiver, server));
                         return;
                     }
                     sendMessage("The two of you aren't in the same room!");

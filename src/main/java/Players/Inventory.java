@@ -1,6 +1,7 @@
 package Players;
 
 import Items.Item;
+import org.javacord.api.entity.server.Server;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,11 +87,11 @@ public class Inventory {
         return listOfItems;
     }
 
-    public String giveItem(String item, Player p){
+    public String giveItem(String item, Player p, Server server){
         if(items.containsKey(item)){
             if(p.getInventory().addItem(items.get(item))){
                 removeItem(item);
-                return "You gave your " + item + " to " + p.getDiscordUser().getDiscriminatedName() + "!";
+                return "You gave your " + item + " to " + p.getDiscordUser().getDisplayName(server) + "!";
             }
             return "Unable to give item to player.";
         }
