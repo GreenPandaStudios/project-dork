@@ -45,6 +45,8 @@ public class QuestTest {
 
         final String[] message = new String[1];
 
+        boolean readyToAssert = false;
+
         testBot.getServer().getTextChannelsByName(BotChannelName).get(0).getMessages(1).thenApplyAsync((messages) -> {
             if (messages.getNewestMessage().isPresent()) {
                 message[0] = messages.getNewestMessage().get().getContent();
@@ -53,6 +55,8 @@ public class QuestTest {
             assert("The current party members are:\n" + "    DORK Tester" == message[0]);
             return null;
         });
+
+        
 
         lock.await(2, TimeUnit.SECONDS);
     }
