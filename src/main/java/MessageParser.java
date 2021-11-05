@@ -28,17 +28,17 @@ public class MessageParser {
 
     //////////////////////////////REGEX constants
 
-    private final Pattern inspectObjectPattern = Pattern.compile("(look|examine|study|inspect|peek)(\\s*)(?<item>.*)");
+    private final Pattern inspectObjectPattern = Pattern.compile("^(look|examine|study|inspect|peek)(\\s*)(?<item>.*)$");
 
-    private final Pattern takePattern = Pattern.compile("(grab|collect|store|steal|take)(\\s*)(?<item>.*)");
-    private final Pattern movePattern = Pattern.compile("(run|walk|go|travel|move)(\\s*)(?<direction>.*)");
-    private final Pattern dropPattern = Pattern.compile("(drop|throw|remove|leave)(\\s*)(?<item>.*)");
-    private final Pattern endTurnPattern = Pattern.compile("end|done|next|finish(\\s*turn|my turn|move|my move|\\s)*");
-    private final Pattern usePattern = Pattern.compile("(use|activate)(\\s*)(?<item>.*)");
-    private final Pattern inventoryPattern = Pattern.compile("(inventory|i|items)");
-    private final Pattern statusPattern = Pattern.compile("(what is my)?(status|health)");
-    private final Pattern helpPattern = Pattern.compile("(((I (need|want))?help)|(I'm)?confused|(What are the)?commands)([?])?");
-    private final Pattern givePattern = Pattern.compile("(give)(\\s*)(?<item>.*)(?= to )( to )(?<player>.*)");
+    private final Pattern takePattern = Pattern.compile("^(grab|collect|store|steal|take)(\\s*)(?<item>.*)$");
+    private final Pattern movePattern = Pattern.compile("^(run|walk|go|travel|move)(\\s*)(?<direction>.*)$");
+    private final Pattern dropPattern = Pattern.compile("^(drop|throw|remove|leave)(\\s*)(?<item>.*)$");
+    private final Pattern endTurnPattern = Pattern.compile("^(end|done|next|finish)(\\s*turn|my turn|move|my move|\\s)*$");
+    private final Pattern usePattern = Pattern.compile("^(use|activate)(\\s*)(?<item>.*)$");
+    private final Pattern inventoryPattern = Pattern.compile("^(inventory|i|items)$");
+    private final Pattern statusPattern = Pattern.compile("^(what is my)?(status|health)$");
+    private final Pattern helpPattern = Pattern.compile("^(((I (need|want))?help)|(I'm)?confused|(What are the)?commands)$([?])?");
+    private final Pattern givePattern = Pattern.compile("^(give)(\\s*)(?<item>.*)(?= to )( to )(?<player>.*)$");
     /////////////////////////////////////////
 
 
