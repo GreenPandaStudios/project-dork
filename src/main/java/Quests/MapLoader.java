@@ -2,6 +2,7 @@ package Quests;
 
 import Items.HealthItem;
 import Items.Item;
+import Items.KeyItem;
 import Items.UsableItem;
 
 import java.text.ParseException;
@@ -30,9 +31,10 @@ public class MapLoader {
     //endregion
     //region Item commands
 
-    private final String allItemFunction = "(item|healthItem)";
+    private final String allItemFunction = "(item|healthItem|key)";
 
     private final Pattern createItemPattern = Pattern.compile("\\s*create\\s+item\\s+(?<itemName>.+)\\s*");
+    private final Pattern createKeyPattern = Pattern.compile("\\s*create\\s+key\\s+(?<itemName>.+)\\s*");
     private final Pattern createHealthItemPattern = Pattern.compile("\\s*create\\s+healthItem\\s+(?<itemName>.+)\\s*");
 
     private final Pattern setHealth = Pattern.compile("\\s*^set\\s+healthItem\\s+(?<itemName>.+)\\s+health\\s+to\\s+(?<health>(^\\d*\\.\\d+|\\d+\\.\\d*$))");
@@ -51,16 +53,27 @@ public class MapLoader {
 
 
     //endregion Item
+
+
+    //region Doorway commands
     private final Pattern setDoorwayLocked = Pattern.compile("^\\s*set\\s+(?<doorway>.+)\\s+locked\\s+to\\s+(?<bool>true|false)$");
 
 
     private final Pattern createDoorwayPattern = Pattern.compile("\\s*create\\s+doorway\\s+(?<doorwayName>.+)\\s*");
 
 
-    private final Pattern setlockedDescr = Pattern.compile("\\s*set\\s+doorway\\s+(?<doorway>.+)\\s+" +
+    private final Pattern setlockedDescr = Pattern.compile("\\s*set\\s+(?<doorway>.+)\\s+" +
             "locked\\s+description\\s+to\\s+\"(?<descr>.+)\"");
-    private final Pattern setUnlockedDesc = Pattern.compile("\\s*set\\s+doorway\\s+(?<doorway>.+)\\s+" +
+
+    private final Pattern setUnlockedDesc = Pattern.compile("\\s*set\\s+(?<doorway>.+)\\s+" +
             "unlocked\\s+description\\s+to\\s+\"(?<descr>.+)\"");
+
+    private final Pattern setKey = Pattern.compile("\\s*set\\s+(?<doorway>.+)\\s+" +
+            "key\\s+to\\s+(?<key>.+)");
+
+
+    //endregion
+
 
 
     /////////////////////////////////////////
@@ -119,6 +132,16 @@ public class MapLoader {
                 return -1;
             }
             declaredItems.put(m.group("itemName"), new Item(m.group("itemName")));
+            return 0;
+        }
+        if ((m = createKeyPattern.matcher(line)).find()) {
+            //create a new key
+            if (declaredItems.containsKey(m.group("itemName"))) {
+
+                errorCode = "The key has already been created";
+                return -1;
+            }
+            declaredItems.put(m.group("itemName"), new KeyItem(m.group("itemName")));
             return 0;
         }
         if ((m = createHealthItemPattern.matcher(line)).find()) {
@@ -286,6 +309,27 @@ public class MapLoader {
             }
 
             declaredDoorways.put(m.group("doorwayName"), new Doorway());
+            return 0;
+        }
+        if ((m = setKey.matcher(line)).find()) {
+            if (!declaredDoorways.containsKey(m.group("doorway"))) {
+                errorCode = "The doorway \""  +m.group("doorway") +  "\" does not exist.";
+                return -1;
+            }
+            if (!declaredItems.containsKey(m.group("key"))) {
+                errorCode = "The item \""  +m.group("key") +  "\" does not exist.";
+
+                return -1;
+            }
+
+            //is this item a key?
+            if ( !(declaredItems.get(m.group("key"))  instanceof KeyItem)){
+                errorCode = "The item \""  +m.group("key") +  "\" is not a key.";
+
+                return -1;
+            }
+
+            declaredDoorways.get(m.group("doorway")).setKeyName(m.group("key"));
             return 0;
         }
         //set item description
