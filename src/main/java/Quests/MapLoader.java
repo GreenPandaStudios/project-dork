@@ -17,7 +17,6 @@ public class MapLoader {
     //////////////////////////////REGEX constants
     private final Pattern codeCommentPattern = Pattern.compile("(^(\\s*(//)))");
     private final Pattern whitespace = Pattern.compile("^\\s*\\s*$\\s*");
-
     //region Room commands
 
     private final Pattern createRoomPattern = Pattern.compile("^\\s*create\\s+room\\s+(?<roomName>.+)$");
@@ -37,7 +36,7 @@ public class MapLoader {
     private final Pattern createKeyPattern = Pattern.compile("\\s*create\\s+key\\s+(?<itemName>.+)\\s*");
     private final Pattern createHealthItemPattern = Pattern.compile("\\s*create\\s+healthItem\\s+(?<itemName>.+)\\s*");
 
-    private final Pattern setHealth = Pattern.compile("\\s*^set\\s+healthItem\\s+(?<itemName>.+)\\s+health\\s+to\\s+(?<health>(^\\d*\\.\\d+|\\d+\\.\\d*$))");
+    private final Pattern setHealth = Pattern.compile("\\s*^set\\s+healthItem\\s+(?<itemName>.+)\\s+health\\s+to\\s+(?<health>(\\d+((.|,)\\d+))?)");
     private final Pattern setUses = Pattern.compile("\\s*^set\\s+(?<itemName>.+)\\s+uses\\s+to\\s+(?<uses>(\\d+))");
     private final Pattern setScenery = Pattern.compile("\\s*^set\\s+(?<itemName>.+)\\s+scenery\\s+to\\s+(?<bool>(true|false))$");
 
@@ -45,7 +44,7 @@ public class MapLoader {
     private final Pattern setItemDescription = Pattern.compile("\\s*set\\s+" + allItemFunction + "\\s+(?<itemName>.+)\\s+" +
             "description\\s+to\\s+\"(?<itemDescription>.+)\"");
     private final Pattern setItemWeight = Pattern.compile("\\s*set\\s+" + allItemFunction + "\\s+(?<itemName>.+)\\s+" +
-            "weight\\s+to\\s+(?<itemWeight>(^\\d*\\.\\d+|\\d+\\.\\d*$))");
+            "weight\\s+to\\s+(?<itemWeight>(\\d+((.|,)\\d+))?)");
     private final Pattern setItemValue = Pattern.compile("\\s*set\\s+" + allItemFunction + "\\s+(?<itemName>.+)\\s+" +
             "value\\s+to\\s+(?<itemWeight>(^\\d*\\.\\d+|\\d+\\.\\d*$))");
 

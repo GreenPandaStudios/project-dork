@@ -102,12 +102,12 @@ public class MessageParser {
                         sendMessage(turnManager.currentTurn().getInventory().giveItem(m.group("item"), receiver, server));
                         return;
                     }
-                    sendMessage("The two of you aren't in the same room!");
+                    sendMessage("The two of you aren't in the same room!\n");
                     return;
                 }
             }
 
-            sendMessage("No player with that name is currently in the game.");
+            sendMessage("No player with that name is currently in the game.\n");
             return;
         }
 
@@ -121,7 +121,7 @@ public class MessageParser {
                 }
             } else {
                 //assume we are talking about the room
-                sendMessage("You take in your surroundings. " + currentQuest.currentRoom().Description());
+                sendMessage("You take in your surroundings.\n" + currentQuest.currentRoom().Description());
             }
             return;
         }
