@@ -16,6 +16,12 @@ public class Item implements Interfaces.IName, Interfaces.IDescriptable {
         name = description = "";
     }
 
+    public Item(String name) {
+        weight = value = 0;
+        description = "";
+        setName(name);
+    }
+
     private double weight = 0;
     private double value = 0;
     private String name = "";
@@ -32,8 +38,9 @@ public class Item implements Interfaces.IName, Interfaces.IDescriptable {
         return scenery;
     }
 
-    public void setScenery(boolean scenery) {
+    public Item setScenery(boolean scenery) {
         this.scenery = scenery;
+        return this;
     }
 
     private boolean scenery = false;
@@ -41,7 +48,10 @@ public class Item implements Interfaces.IName, Interfaces.IDescriptable {
 
     @Override
     public String Description() {
-        return description;
+        String desc = description;
+        if (!scenery)
+            desc += ".\n" + "It weighs " + getWeight() + " lbs. and has a value of " + getValue();
+        return desc;
     }
 
     @Override

@@ -36,9 +36,9 @@ public class Room implements Interfaces.IDescriptable, Interfaces.IName {
     }
 
 
-    private String description;
-    private String name;
-    private int playerCount;
+    private String description = "";
+    private String name = "";
+    private int playerCount = 0;
 
     //TODO
     @Override
@@ -48,7 +48,7 @@ public class Room implements Interfaces.IDescriptable, Interfaces.IName {
 
         //now print out the doorways
         if (doorways[Directions.North.ordinal()] != null) {
-            descr += "\nTo the north you see " + doorways[Directions.North.ordinal()].Description().toLowerCase();
+            descr += "\nTo the north you see " + doorways[Directions.North.ordinal()].Description();
         }
         if (doorways[Directions.South.ordinal()] != null) {
             descr += "\n\nTo the south you see " + doorways[Directions.South.ordinal()].Description();

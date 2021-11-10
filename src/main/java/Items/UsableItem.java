@@ -3,7 +3,7 @@ package Items;
 import Players.Player;
 
 public abstract class UsableItem extends Item {
-
+    public UsableItem(){};
     public UsableItem(String name, String description, double weight, double value, boolean scenery, int uses) {
         super(name, description, weight, value, scenery);
         setUsesLeft(uses);
@@ -13,7 +13,7 @@ public abstract class UsableItem extends Item {
         return usesLeft;
     }
 
-    protected void setUsesLeft(int uses) {
+    public void setUsesLeft(int uses) {
         usesLeft = uses;
     }
 

@@ -1,6 +1,7 @@
 package Players;
 
 import Items.Item;
+import org.javacord.api.entity.server.Server;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,9 +81,22 @@ public class Inventory {
         }
         String listOfItems = "Your inventory contains:\n";
         for (Item i : items.values()) {
-            listOfItems += "\t-" + i.getName() + "\n";
+            listOfItems += "\t-" + i.getName() + "\n"
+            + "\t\t Weight: " + i.getWeight() + ", Value: " + i.getValue() + "\n";
         }
         return listOfItems;
+    }
+
+    public String giveItem(String item, Player p, Server server){
+        if(items.containsKey(item)){
+            if(p.getInventory().addItem(items.get(item))){
+                removeItem(item);
+                return "You gave your " + item + " to " + p.getDiscordUser().getDisplayName(server) + "!";
+            }
+            return "Unable to give item to player.";
+        }
+
+        return "You do not have that item in your inventory!";
     }
 
     public String displayWeight(){
