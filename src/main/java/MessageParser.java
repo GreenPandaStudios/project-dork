@@ -23,6 +23,7 @@ public class MessageParser {
     private final Server server;
     private final TextChannel validTextChannel;
     private final TurnManager turnManager = new TurnManager();
+    private final DefaultQuestLoader defaultQuestLoader = new DefaultQuestLoader();
     DiscordApi api;
     private Quest currentQuest = null;
 
@@ -39,6 +40,7 @@ public class MessageParser {
     private final Pattern statusPattern = Pattern.compile("^(what is my)?(status|health)$");
     private final Pattern helpPattern = Pattern.compile("^(((I (need|want))?help)|(I'm)?confused|(What are the)?commands)$([?])?");
     private final Pattern givePattern = Pattern.compile("^(give)(\\s+)(?<item>.*)(?= to )( to )(?<player>.*)$");
+    private final Pattern startPattern = Pattern.compile("^(start quest)(\\s+)(?<quest>.*)|(start quest)$");
     /////////////////////////////////////////
 
 
@@ -201,6 +203,8 @@ public class MessageParser {
 
     }
 
+    //Depreciated
+    /*
     private Quest createDefaultQuest() {
         Room startingRoom = new Room("Starting Room").addItem(new Item("Sword",
                 "A heavy well-made sword",
@@ -266,6 +270,7 @@ public class MessageParser {
 
         return new Quest(m, turnManager);
     }
+     */
 
     //DEPRECATED
     /* DEPRECATED
@@ -610,8 +615,10 @@ public class MessageParser {
         String messageInput = event.getMessageContent();
         User discordUser = event.getMessageAuthor().asUser().get();
 
+        Matcher ma;
 
-        if (messageInput.equalsIgnoreCase("start quest")) {
+
+        if (/*messageInput.equalsIgnoreCase("start quest")*/ (ma = startPattern.matcher(messageInput)).find()) {
 
             //check if anyone has joined to play
             if (turnManager.numberOfPlayers() == 0) {
@@ -657,7 +664,8 @@ public class MessageParser {
                     }
                 }
                 else {
-                    currentQuest = createDefaultQuest();
+                    System.out.println(ma.group("quest"));
+                    currentQuest = defaultQuestLoader.createDefaultQuest(ma.group("quest"), turnManager);
                 }
 
                 //if there was an error loading the quest file
