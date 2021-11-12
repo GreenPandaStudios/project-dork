@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 public class Quest {
 
+
+
     public Quest(Map map, TurnManager turnManager) {
         this.map = map;
         this.turnManager = turnManager;

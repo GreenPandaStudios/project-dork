@@ -1,9 +1,17 @@
 package Quests;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Map {
 
-
+    //These are the "tags" for images/audio associated with this map
+    private ArrayList<String> metaTags = new ArrayList<>();
+    public void AddTag(String tag){
+        metaTags.add( tag);
+    }
+    public void RemoveTag(String tag){
+        metaTags.remove(tag);
+    }
     public Map(){
 
     };

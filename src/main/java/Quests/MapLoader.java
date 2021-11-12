@@ -17,6 +17,7 @@ public class MapLoader {
     //////////////////////////////REGEX constants
     private final Pattern codeCommentPattern = Pattern.compile("(^(\\s*(//)))");
     private final Pattern whitespace = Pattern.compile("^\\s*\\s*$\\s*");
+    private final Pattern metaTagPattern = Pattern.compile("^#(?<tag>.+)");
     //region Room commands
 
     private final Pattern createRoomPattern = Pattern.compile("^\\s*create\\s+room\\s+(?<roomName>.+)$");
@@ -109,6 +110,12 @@ public class MapLoader {
             //ignore, this is whitespace
             return 0;
         }
+        if ((m = metaTagPattern.matcher(line)).find()) {
+            //this is a meta tag, add it to the map
+            map.AddTag(m.group("tag"));
+            return 0;
+        }
+
         //create a new room
         if ((m = createRoomPattern.matcher(line)).find()) {
             //create a new Room
