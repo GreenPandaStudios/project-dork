@@ -8,13 +8,20 @@ import Quests.Map;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.MessageAttachment;
+import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.*;
 import java.util.regex.*;
 
@@ -124,6 +131,7 @@ public class MessageParser {
             } else {
                 //assume we are talking about the room
                 sendMessage("You take in your surroundings.\n" + currentQuest.currentRoom().Description());
+                sendImage(currentQuest.currentRoom());
             }
             return;
         }
@@ -559,6 +567,56 @@ public class MessageParser {
      */
     private void sendMessage(String message) {
         validTextChannel.sendMessage(message);
+    }
+
+    /**
+     * Sends an image to Discord
+     *
+     * @param room to describe with an image
+    */
+    private void sendImage(Room room) {
+        ArrayList<String> descriptors = new ArrayList<>(currentQuest.getMap().getMetaTags());
+        Collections.addAll(descriptors, room.getName().toLowerCase().split(" "));
+        StringBuilder searchURL = new StringBuilder("https://www.istockphoto.com/photos/");
+        for(int i = 0; i < descriptors.size()-1; i++){
+            searchURL.append(descriptors.get(i)).append("-");
+        }
+        searchURL.append(descriptors.get(descriptors.size()-1));
+        try {
+            URLConnection connection = new URL(searchURL.toString()).openConnection();
+            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+            connection.connect();
+            URL url = new URL(searchURL.toString());
+            Scanner scan = new Scanner(connection.getInputStream());
+            System.out.println("URL: "+searchURL.toString());
+            String imgstr = null;
+            while(scan.hasNextLine()){
+                String str = scan.nextLine();
+                if(str.contains("class=\"GatewayAsset-module__thumb___wN0AR\"")){
+                    //System.out.println(str);
+                    Scanner scan2 = new Scanner(str);
+                    while(scan2.hasNext()){
+                        String str2 = scan2.next();
+                        if(str2.startsWith("src=\"https://media.istockphoto.com/")){
+                            imgstr = ""+str2.substring(5,str2.length()-1);
+                            //System.out.println(imgstr);
+                            break;
+                        }
+                    }
+                }
+            }
+            if(imgstr!=null) {
+                BufferedImage image = ImageIO.read(new URL(imgstr));
+                new MessageBuilder()
+                        .addAttachment(image, "out.png")
+                        .send(validTextChannel);
+            }
+        } catch(MalformedURLException mue) {
+            System.out.println("This shouldn't happen");
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+        }
+
     }
 
     /**

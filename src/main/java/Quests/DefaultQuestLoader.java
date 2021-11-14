@@ -69,6 +69,7 @@ public class DefaultQuestLoader {
 
 
         Map m = new Map(startingRoom, endingRoom);
+        m.AddTag("dungeon");
 
         return new Quest(m, turnManager);
     }

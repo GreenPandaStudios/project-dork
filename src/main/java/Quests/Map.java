@@ -16,6 +16,10 @@ public class Map {
 
     };
 
+    public ArrayList<String> getMetaTags() {
+        return metaTags;
+    }
+
     public  Map(Room startingRoom, Room endingRoom){
         setStartingRoom(startingRoom);
         setEndingRoom(endingRoom);
