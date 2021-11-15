@@ -70,6 +70,7 @@ public class DefaultQuestLoader {
 
         Map m = new Map(startingRoom, endingRoom);
         m.AddTag("dungeon");
+        m.locateImages();
 
         return new Quest(m, turnManager);
     }

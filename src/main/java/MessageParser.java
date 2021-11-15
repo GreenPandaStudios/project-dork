@@ -575,38 +575,9 @@ public class MessageParser {
      * @param room to describe with an image
     */
     private void sendImage(Room room) {
-        ArrayList<String> descriptors = new ArrayList<>(currentQuest.getMap().getMetaTags());
-        Collections.addAll(descriptors, room.getName().toLowerCase().split(" "));
-        StringBuilder searchURL = new StringBuilder("https://www.istockphoto.com/photos/");
-        for(int i = 0; i < descriptors.size()-1; i++){
-            searchURL.append(descriptors.get(i)).append("-");
-        }
-        searchURL.append(descriptors.get(descriptors.size()-1));
         try {
-            URLConnection connection = new URL(searchURL.toString()).openConnection();
-            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
-            connection.connect();
-            URL url = new URL(searchURL.toString());
-            Scanner scan = new Scanner(connection.getInputStream());
-            System.out.println("URL: "+searchURL.toString());
-            String imgstr = null;
-            while(scan.hasNextLine()){
-                String str = scan.nextLine();
-                if(str.contains("class=\"GatewayAsset-module__thumb___wN0AR\"")){
-                    //System.out.println(str);
-                    Scanner scan2 = new Scanner(str);
-                    while(scan2.hasNext()){
-                        String str2 = scan2.next();
-                        if(str2.startsWith("src=\"https://media.istockphoto.com/")){
-                            imgstr = ""+str2.substring(5,str2.length()-1);
-                            //System.out.println(imgstr);
-                            break;
-                        }
-                    }
-                }
-            }
-            if(imgstr!=null) {
-                BufferedImage image = ImageIO.read(new URL(imgstr));
+            if(room.getImgUrl()!=null) {
+                BufferedImage image = ImageIO.read(new URL(room.getImgUrl()));
                 new MessageBuilder()
                         .addAttachment(image, "out.png")
                         .send(validTextChannel);

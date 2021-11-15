@@ -4,21 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="21e12942-95f0-4143-86d6-e399e0cda36f" name="Default Changelist" comment="Added ability for bot to scan in text files">
+    <list default="true" id="21e12942-95f0-4143-86d6-e399e0cda36f" name="Default Changelist" comment="Added Image Display and connected it to the MetaTags system.">
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/classAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/classAnalysis.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/javaCompile.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/taskHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/resources/main/QuesterLanguage.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/MessageParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MessageParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Quests/DefaultQuestLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Quests/DefaultQuestLoader.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Quests/Map.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Quests/Map.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Quests/Room.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Quests/Room.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -240,7 +239,14 @@
       <option name="project" value="LOCAL" />
       <updated>1634778950213</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Added Image Display and connected it to the MetaTags system.">
+      <created>1636928613177</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1636928613177</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -262,7 +268,8 @@
     <MESSAGE value="Created test module, implemented Player health, and made test class for health (passes all)" />
     <MESSAGE value="Created win/lose conditions (not tested yet)" />
     <MESSAGE value="Health Items can now deal damage (upon picking up) and heal players (upon usage)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Health Items can now deal damage (upon picking up) and heal players (upon usage)" />
+    <MESSAGE value="Added Image Display and connected it to the MetaTags system." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added Image Display and connected it to the MetaTags system." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

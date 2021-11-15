@@ -16,6 +16,12 @@ public class Map {
 
     };
 
+    public void locateImages() {
+        for(Room room : rooms.values()) {
+            room.createImgUrl(metaTags);
+        }
+    }
+
     public ArrayList<String> getMetaTags() {
         return metaTags;
     }
@@ -59,7 +65,8 @@ public class Map {
 
         //update this room's location and add it to the hashmap
         rooms.put(room.getName(), room);
-        return  this;
+
+        return this;
     }
 
 
