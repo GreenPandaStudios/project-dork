@@ -58,8 +58,9 @@ public class Bot {
         // Start audio
         AudioManager.startAudio(api, botVoiceChannel);
 
+
         // Create a message listener to parse messages
-        parser = new MessageParser(api, botTextChannel, botVoiceChannel, server);
+        parser = new MessageParser(api, botTextChannel, server);
     }
 
     public Server getServer() {
@@ -89,6 +90,4 @@ public class Bot {
     public MessageParser getParser() {
         return parser;
     }
-
-
 }

@@ -4,17 +4,7 @@ import Items.KeyItem;
 import Items.UsableItem;
 import Players.Player;
 import Quests.*;
-import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
-import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import org.javacord.api.DiscordApi;
-import org.javacord.api.audio.AudioSource;
-import org.javacord.api.entity.channel.ServerVoiceChannel;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.MessageAttachment;
 import org.javacord.api.entity.message.MessageBuilder;
@@ -37,7 +27,6 @@ public class MessageParser {
 
     private final Server server;
     private final TextChannel validTextChannel;
-    private final ServerVoiceChannel validVoiceChannel;
     private final TurnManager turnManager = new TurnManager();
     private final DefaultQuestLoader defaultQuestLoader = new DefaultQuestLoader();
     private final Pattern inspectObjectPattern = Pattern.compile("^(look|examine|study|inspect|peek)(\\s*)(?<item>.*)$");
@@ -58,13 +47,12 @@ public class MessageParser {
     /////////////////////////////////////////
 
 
-    public MessageParser(DiscordApi api, TextChannel validTextChannel, ServerVoiceChannel validVoiceChannel, Server server) {
+    public MessageParser(DiscordApi api, TextChannel validTextChannel, Server server) {
 
         // Hook up the listeners
         api.addMessageCreateListener(this::onMessageCreate);
 
         this.validTextChannel = validTextChannel;
-        this.validVoiceChannel = validVoiceChannel;
         this.api = api;
         this.server = server;
     }
