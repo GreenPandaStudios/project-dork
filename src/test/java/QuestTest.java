@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 public class QuestTest {
 
     final String BotChannelName = Main.BotChannelName;
-    final String TestBotToken = "OTAwNzk2NDgzMzQ1OTczMzcw.YXGiGQ.Xo4H4bKJ8murCf-CKWtVfxxmoD0";
+    final String TestBotToken = "";
     TestBot testBot;
     DiscordApi testApi;
 

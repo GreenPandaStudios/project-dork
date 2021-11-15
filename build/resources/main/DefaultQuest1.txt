@@ -1,0 +1,127 @@
+
+//This needs to be checked over to make sure I translated it right.
+//I am not sure if I got the doorways correct.
+//-Sean
+
+create room startingRoom
+set room startingRoom description to {
+"You are standing in a dark stone chamber.
+There is a single torch on the wall beside you."
+}
+
+create room endingRoom
+set room endingRoom description to {
+"You are in a very dark room."
+}
+
+create room hallway
+set room hallway description to {
+"A long expanding hallway covered in paintings"
+}
+
+set start room to startingRoom
+set end room to endingRoom
+
+
+
+
+create item Sword
+set item Sword description to {
+"A heavy well-made sword"
+}
+set item Sword weight to 10.5
+set item Sword value to 10
+set Sword scenery to false
+add Sword to startingRoom
+
+create healthItem Amulet
+set item Amulet description to {
+"A scary looking amulet"
+}
+set item Amulet weight to 2
+set item Amulet value to 20
+set Amulet scenery to false
+set item Amulet uses to 1
+set healthItem Amulet health to -10
+add item Amulet to startingRoom
+
+create healthItem Potion
+set item Potion description to {
+"Restores 5 health points"
+}
+set item Potion weight to 3
+set item Potion value to 15
+set Potion scenery to false
+set item Potion uses to 1
+set healthItem Amulet health to 5
+add Potion to startingRoom
+
+create key RustyKey
+
+create item Torch
+set item Torch description to {
+"A flickering torch cemented firmly into the wall."
+}
+set Torch scenery to true
+add Torch to startingRoom
+
+create item paintings
+set paintings scenery to true
+set item paintings description to {
+"They are paintings of people.
+Their eyes seem to follow you as you move."
+}
+add paintings to hallway
+
+create item Golden Apple
+set item Golden Apple description to {
+"A curious golden apple"
+}
+set item Golden Apple weight to 50
+set item Golden Apple value to 1000
+set Golden Apple scenery to false
+add Golden Apple to hallway
+
+create key rustyKey
+set item rustyKey description to {
+"A heavy, rusty key."
+}
+set item rustyKey weight to 1.0
+set item rustyKey value to 1.0
+
+
+create doorway hallDoorway1
+set hallDoorway1 unlocked description to {
+"It is open."
+}
+
+create doorway hallDoorway2
+set hallDoorway2 unlocked description to {
+"Nothing blocks your way"
+}
+
+create doorway backUp
+set backUp unlocked description to {
+"A stair-way winds its way upward."
+}
+
+create doorway d
+set d locked description to {
+"An old rusty and heavy looking door with a large padlock."
+}
+set d unlocked description to {
+"An old heavy door leaning open.
+There is a padlock on the ground beside it."
+}
+
+create doorway d1
+set d1 unlocked description {
+"Stairs winding down to nearly complete darkness. There is an ever-so faint light just beyond the point of complete darkness."
+}
+
+
+set hallway direction south to endingRoom via hallDoorway1
+set hallway direction north to startingRoom via hallDoorway2
+set startingRoom direction south to hallway via d
+set startingRoom direction down to hallway via d1
+set hallway direction north to startingRoom via backUp

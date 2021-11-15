@@ -4,8 +4,17 @@ import Items.KeyItem;
 import Items.UsableItem;
 import Players.Player;
 import Quests.*;
-import Quests.Map;
+import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
+import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import org.javacord.api.DiscordApi;
+import org.javacord.api.audio.AudioSource;
+import org.javacord.api.entity.channel.ServerVoiceChannel;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.MessageAttachment;
 import org.javacord.api.entity.message.MessageBuilder;
@@ -14,31 +23,27 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.util.*;
-import java.util.regex.*;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MessageParser {
 
     private final Server server;
     private final TextChannel validTextChannel;
+    private final ServerVoiceChannel validVoiceChannel;
     private final TurnManager turnManager = new TurnManager();
     private final DefaultQuestLoader defaultQuestLoader = new DefaultQuestLoader();
-    DiscordApi api;
-    private Quest currentQuest = null;
+    private final Pattern inspectObjectPattern = Pattern.compile("^(look|examine|study|inspect|peek)(\\s*)(?<item>.*)$");
+    private final Pattern takePattern = Pattern.compile("^(grab|collect|store|steal|take)(\\s+)(?<item>.*)$");
 
     //////////////////////////////REGEX constants
-
-    private final Pattern inspectObjectPattern = Pattern.compile("^(look|examine|study|inspect|peek)(\\s*)(?<item>.*)$");
-
-    private final Pattern takePattern = Pattern.compile("^(grab|collect|store|steal|take)(\\s+)(?<item>.*)$");
     private final Pattern movePattern = Pattern.compile("^(run|walk|go|travel|move)(\\s+)(?<direction>.*)$");
     private final Pattern dropPattern = Pattern.compile("^(drop|throw|remove|leave)(\\s+)(?<item>.*)$");
     private final Pattern endTurnPattern = Pattern.compile("^(end|done|next|finish)(\\s+turn|my turn|move|my move|\\s)*$");
@@ -48,15 +53,18 @@ public class MessageParser {
     private final Pattern helpPattern = Pattern.compile("^(((I (need|want))?help)|(I'm)?confused|(What are the)?commands)$([?])?");
     private final Pattern givePattern = Pattern.compile("^(give)(\\s+)(?<item>.*)(?= to )( to )(?<player>.*)$");
     private final Pattern startPattern = Pattern.compile("^(start quest)(\\s+)(?<quest>.*)|(start quest)$");
+    DiscordApi api;
+    private Quest currentQuest = null;
     /////////////////////////////////////////
 
 
-    public MessageParser(DiscordApi api, TextChannel validTextChannel, Server server) {
+    public MessageParser(DiscordApi api, TextChannel validTextChannel, ServerVoiceChannel validVoiceChannel, Server server) {
 
         // Hook up the listeners
         api.addMessageCreateListener(this::onMessageCreate);
 
         this.validTextChannel = validTextChannel;
+        this.validVoiceChannel = validVoiceChannel;
         this.api = api;
         this.server = server;
     }
@@ -573,18 +581,18 @@ public class MessageParser {
      * Sends an image to Discord
      *
      * @param room to describe with an image
-    */
+     */
     private void sendImage(Room room) {
         try {
-            if(room.getImgUrl()!=null) {
+            if (room.getImgUrl() != null) {
                 BufferedImage image = ImageIO.read(new URL(room.getImgUrl()));
                 new MessageBuilder()
                         .addAttachment(image, "out.png")
                         .send(validTextChannel);
             }
-        } catch(MalformedURLException mue) {
+        } catch (MalformedURLException mue) {
             System.out.println("This shouldn't happen");
-        } catch(IOException ioe) {
+        } catch (IOException ioe) {
             ioe.printStackTrace();
         }
 
@@ -691,8 +699,7 @@ public class MessageParser {
                             }
                         }
                     }
-                }
-                else {
+                } else {
                     System.out.println(ma.group("quest"));
                     currentQuest = defaultQuestLoader.createDefaultQuest(ma.group("quest"), turnManager);
                 }
@@ -700,15 +707,12 @@ public class MessageParser {
                 //if there was an error loading the quest file
                 if (currentQuest != null)
                     clearAllMessages();
-                    sendMessage("Starting a new Quest with the following players:\n" + getPartyMembers());
-                    currentQuest.startQuest();
-                    sendMessage(currentQuest.getMap().getStartingRoom().Description());
-                }
-
+                sendMessage("Starting a new Quest with the following players:\n" + getPartyMembers());
+                currentQuest.startQuest();
+                sendMessage(currentQuest.getMap().getStartingRoom().Description());
             }
 
-
-         else if (messageInput.equalsIgnoreCase("join")) {
+        } else if (messageInput.equalsIgnoreCase("join")) {
             //add this user to the list of users
             if (turnManager.getByUser(discordUser) == null) {
                 turnManager.addPlayer(new Player(discordUser));
