@@ -1,34 +1,41 @@
 package Quests;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Map {
 
+    Room startingRoom;
+    Room endingRoom;
+    HashMap<String, Room> rooms = new HashMap<>();
     //These are the "tags" for images/audio associated with this map
     private ArrayList<String> metaTags = new ArrayList<>();
-    public void AddTag(String tag){
-        metaTags.add( tag);
+
+    public Map() {
+
     }
-    public void RemoveTag(String tag){
+
+    public Map(Room startingRoom, Room endingRoom) {
+        setStartingRoom(startingRoom);
+        setEndingRoom(endingRoom);
+    }
+
+    public void AddTag(String tag) {
+        metaTags.add(tag);
+    }
+
+    public void RemoveTag(String tag) {
         metaTags.remove(tag);
     }
-    public Map(){
-
-    };
 
     public void locateImages() {
-        for(Room room : rooms.values()) {
+        for (Room room : rooms.values()) {
             room.createImgUrl(metaTags);
         }
     }
 
     public ArrayList<String> getMetaTags() {
         return metaTags;
-    }
-
-    public  Map(Room startingRoom, Room endingRoom){
-        setStartingRoom(startingRoom);
-        setEndingRoom(endingRoom);
     }
 
     public Room getStartingRoom() {
@@ -40,8 +47,6 @@ public class Map {
         addRoom(startingRoom);
     }
 
-    Room startingRoom;
-
     public Room getEndingRoom() {
         return endingRoom;
     }
@@ -52,14 +57,10 @@ public class Map {
         addRoom(endingRoom);
     }
 
-    Room endingRoom;
-
-    HashMap<String, Room> rooms = new HashMap<>();
-
-    public Map addRoom(Room room){
+    public Map addRoom(Room room) {
 
         //exception if this location is already taken
-        if (rooms.containsKey(room.getName())){
+        if (rooms.containsKey(room.getName())) {
             return this;
         }
 
@@ -68,7 +69,6 @@ public class Map {
 
         return this;
     }
-
 
 
 }

@@ -5,7 +5,6 @@ import Items.Item;
 import Items.KeyItem;
 import Items.UsableItem;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
@@ -75,21 +74,12 @@ public class MapLoader {
     //endregion
 
 
-
     /////////////////////////////////////////
-
-
-    private String errorCode;
-
-    public String getErrorCode() {
-        return errorCode;
-    }
-
     Hashtable<String, Room> declaredRooms;
     Hashtable<String, Doorway> declaredDoorways;
     Hashtable<String, Item> declaredItems;
+    private String errorCode;
     private Map map;
-
     public MapLoader() {
         map = new Map();
         declaredRooms = new Hashtable<>();
@@ -97,6 +87,9 @@ public class MapLoader {
         declaredItems = new Hashtable<>();
     }
 
+    public String getErrorCode() {
+        return errorCode;
+    }
 
     private int compileLine(String line) {
         Matcher m;
@@ -319,18 +312,18 @@ public class MapLoader {
         }
         if ((m = setKey.matcher(line)).find()) {
             if (!declaredDoorways.containsKey(m.group("doorway"))) {
-                errorCode = "The doorway \""  +m.group("doorway") +  "\" does not exist.";
+                errorCode = "The doorway \"" + m.group("doorway") + "\" does not exist.";
                 return -1;
             }
             if (!declaredItems.containsKey(m.group("key"))) {
-                errorCode = "The item \""  +m.group("key") +  "\" does not exist.";
+                errorCode = "The item \"" + m.group("key") + "\" does not exist.";
 
                 return -1;
             }
 
             //is this item a key?
-            if ( !(declaredItems.get(m.group("key"))  instanceof KeyItem)){
-                errorCode = "The item \""  +m.group("key") +  "\" is not a key.";
+            if (!(declaredItems.get(m.group("key")) instanceof KeyItem)) {
+                errorCode = "The item \"" + m.group("key") + "\" is not a key.";
 
                 return -1;
             }

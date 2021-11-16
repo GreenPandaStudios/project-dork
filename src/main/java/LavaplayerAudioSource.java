@@ -12,7 +12,7 @@ public class LavaplayerAudioSource extends AudioSourceBase {
     /**
      * Creates a new lavaplayer audio source.
      *
-     * @param api A discord api instance.
+     * @param api         A discord api instance.
      * @param audioPlayer An audio player from Lavaplayer.
      */
     public LavaplayerAudioSource(DiscordApi api, AudioPlayer audioPlayer) {
