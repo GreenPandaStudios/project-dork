@@ -689,7 +689,7 @@ public class MessageParser {
                     }
                 } else {
                     System.out.println(ma.group("quest"));
-                    currentQuest = defaultQuestLoader.createDefaultQuest(ma.group("quest"), turnManager);
+                    currentQuest = defaultQuestLoader.loadDefaultQuest(ma.group("quest"), turnManager);
                 }
 
                 //if there was an error loading the quest file

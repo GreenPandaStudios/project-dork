@@ -4,10 +4,59 @@ import Items.HealthItem;
 import Items.Item;
 import Items.KeyItem;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Scanner;
+
 public class DefaultQuestLoader {
 
+    public Quest loadDefaultQuest(String questToLoad, TurnManager turnManager){
 
-    public Quest createDefaultQuest(String quest, TurnManager turnManager) {
+        String fileName = "src/main/resources/defaultQuests/";
+
+        if(questToLoad == null){
+            fileName += "DefaultQuest1";
+        } else {
+            switch (questToLoad) {
+                case ("1"):
+                case ("default"):
+                case (""):
+                    fileName += "DefaultQuest1";
+                    break;
+                default:
+                    fileName += "DefaultQuest1";
+                    break;
+            }
+        }
+        fileName += ".txt";
+
+        ArrayList<String> text = new ArrayList<>();
+        try{
+            File file = new File(fileName);
+            Scanner scan = new Scanner(file);
+            while (scan.hasNext()) {
+                text.add(text.size(), scan.nextLine());
+            }
+
+            MapLoader loader = new MapLoader();
+            Map m = loader.LoadMap(text);
+            System.out.println(loader.getErrorCode());
+            if (m == null) {
+                return createDefaultQuest(turnManager);
+            } else {
+                m.locateImages();
+                return new Quest(m, turnManager);
+            }
+        } catch (IOException e) {
+            return createDefaultQuest(turnManager);
+        }
+    }
+
+
+
+    public Quest createDefaultQuest(TurnManager turnManager) {
         Room startingRoom = new Room("Starting Room").addItem(new Item("Sword",
                 "A heavy well-made sword",
                 10.5,

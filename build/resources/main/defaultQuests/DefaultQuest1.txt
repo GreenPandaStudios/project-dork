@@ -1,8 +1,4 @@
-
-//This needs to be checked over to make sure I translated it right.
-//I am not sure if I got the doorways correct.
-//-Sean
-
+#dungeon
 create room startingRoom
 set room startingRoom description to {
 "You are standing in a dark stone chamber.
@@ -30,7 +26,7 @@ set item Sword description to {
 "A heavy well-made sword"
 }
 set item Sword weight to 10.5
-set item Sword value to 10
+set item Sword value to 10.0
 set Sword scenery to false
 add Sword to startingRoom
 
@@ -38,25 +34,24 @@ create healthItem Amulet
 set item Amulet description to {
 "A scary looking amulet"
 }
-set item Amulet weight to 2
-set item Amulet value to 20
+set item Amulet weight to 2.0
+set item Amulet value to 20.0
 set Amulet scenery to false
+set healthItem Amulet health to 10.0
 set item Amulet uses to 1
-set healthItem Amulet health to -10
-add item Amulet to startingRoom
+add Amulet to startingRoom
+
 
 create healthItem Potion
 set item Potion description to {
 "Restores 5 health points"
 }
-set item Potion weight to 3
-set item Potion value to 15
+set item Potion weight to 3.0
+set item Potion value to 15.0
 set Potion scenery to false
 set item Potion uses to 1
-set healthItem Amulet health to 5
+set healthItem Potion health to 5.0
 add Potion to startingRoom
-
-create key RustyKey
 
 create item Torch
 set item Torch description to {
@@ -77,17 +72,18 @@ create item Golden Apple
 set item Golden Apple description to {
 "A curious golden apple"
 }
-set item Golden Apple weight to 50
-set item Golden Apple value to 1000
+set item Golden Apple weight to 50.0
+set item Golden Apple value to 1000.0
 set Golden Apple scenery to false
 add Golden Apple to hallway
 
-create key rustyKey
-set item rustyKey description to {
+create key Rusty Key
+set item Rusty Key description to {
 "A heavy, rusty key."
 }
-set item rustyKey weight to 1.0
-set item rustyKey value to 1.0
+set item Rusty Key weight to 1.0
+set item Rusty Key value to 1.0
+add Rusty Key to startingRoom
 
 
 create doorway hallDoorway1
@@ -106,6 +102,7 @@ set backUp unlocked description to {
 }
 
 create doorway d
+set d locked to true
 set d locked description to {
 "An old rusty and heavy looking door with a large padlock."
 }
@@ -113,10 +110,12 @@ set d unlocked description to {
 "An old heavy door leaning open.
 There is a padlock on the ground beside it."
 }
+set d key to Rusty Key
 
 create doorway d1
-set d1 unlocked description {
-"Stairs winding down to nearly complete darkness. There is an ever-so faint light just beyond the point of complete darkness."
+set d1 unlocked description to {
+"Stairs winding down to nearly complete darkness.
+There is an ever-so faint light just beyond the point of complete darkness."
 }
 
 
