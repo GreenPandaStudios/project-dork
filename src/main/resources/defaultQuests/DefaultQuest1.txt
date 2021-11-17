@@ -36,9 +36,8 @@ set item Amulet description to {
 }
 set item Amulet weight to 2.0
 set item Amulet value to 20.0
-set Amulet scenery to false
-set healthItem Amulet health to 10.0
-set item Amulet uses to 1
+set healthItem Amulet health to -10.0
+set Amulet uses to 1
 add Amulet to startingRoom
 
 
@@ -48,8 +47,9 @@ set item Potion description to {
 }
 set item Potion weight to 3.0
 set item Potion value to 15.0
+set Potion uses to 1
 set Potion scenery to false
-set item Potion uses to 1
+
 set healthItem Potion health to 5.0
 add Potion to startingRoom
 

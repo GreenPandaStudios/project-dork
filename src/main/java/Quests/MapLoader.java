@@ -36,7 +36,7 @@ public class MapLoader {
     private final Pattern createKeyPattern = Pattern.compile("\\s*create\\s+key\\s+(?<itemName>.+)\\s*");
     private final Pattern createHealthItemPattern = Pattern.compile("\\s*create\\s+healthItem\\s+(?<itemName>.+)\\s*");
 
-    private final Pattern setHealth = Pattern.compile("\\s*^set\\s+healthItem\\s+(?<itemName>.+)\\s+health\\s+to\\s+(?<health>(\\d+((.|,)\\d+))?)");
+    private final Pattern setHealth = Pattern.compile("\\s*^set\\s+healthItem\\s+(?<itemName>.+)\\s+health\\s+to\\s+(?<health>(-*\\d+((.|,)\\d+))?)");
     private final Pattern setUses = Pattern.compile("\\s*^set\\s+(?<itemName>.+)\\s+uses\\s+to\\s+(?<uses>(\\d+))");
     private final Pattern setScenery = Pattern.compile("\\s*^set\\s+(?<itemName>.+)\\s+scenery\\s+to\\s+(?<bool>(true|false))$");
 
