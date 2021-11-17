@@ -532,8 +532,16 @@ public class MessageParser {
                 sendMessage("That way is locked.");
             } else {
                 //move the player the correct direction
-                turnManager.currentTurn().setRoom(door.getToRoom());
+
                 sendMessage("You move " + d.name() + ".");
+                if(door.getTrap() != null) {
+                    if(door.getTrap().getUsesLeft() != 0) {
+                        door.getTrap().useItem(turnManager.currentTurn());
+                        sendMessage("The doorway is trapped! " + door.getTrap().getTrapMessage());
+                    }
+                }
+                turnManager.currentTurn().setRoom(door.getToRoom());
+
 
                 endTurn();
             }

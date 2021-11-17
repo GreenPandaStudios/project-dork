@@ -2,6 +2,7 @@ package Quests;
 
 
 import Interfaces.IDescriptable;
+import Items.TrapItem;
 
 public class Doorway implements IDescriptable {
     /**
@@ -26,6 +27,7 @@ public class Doorway implements IDescriptable {
 
     ;
 
+    TrapItem trap = null;
 
     private Room toRoom;
 
@@ -84,5 +86,13 @@ public class Doorway implements IDescriptable {
 
     public void setKeyName(String keyName) {
         this.keyName = keyName;
+    }
+
+    public void setTrap(TrapItem newTrap) {
+        trap = newTrap;
+    }
+
+    public TrapItem getTrap() {
+        return trap;
     }
 }
