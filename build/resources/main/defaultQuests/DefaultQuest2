@@ -1,0 +1,512 @@
+create room a1
+set room a1 description to {"
+You are in a dark room."}
+
+create room a2
+set room a2 description to {"
+You are in a dark room."}
+
+create room a3
+set room a3 description to {"
+You are in a dark room."}
+
+create room a4
+set room a4 description to {"
+You are in a dark room."}
+
+create room a5
+set room a5 description to {"
+You are in a dark room."}
+
+create room a6
+set room a6 description to {"
+You are in a dark room."}
+
+create room a7
+set room a7 description to {"
+You are in a dark room."}
+
+create room a8
+set room a8 description to {"
+You are in a dark room."}
+
+create room b1
+set room b1 description to {"
+You are in a dark room."}
+
+create room b2
+set room b2 description to {"
+You are in a dark room."}
+
+create room b3
+set room b3 description to {"
+You are in a dark room."}
+
+create room b4
+set room b4 description to {"
+You are in a dark room."}
+
+create room b5
+set room b5 description to {"
+You are in a dark room."}
+
+create room b6
+set room b6 description to {"
+You are in a dark room."}
+
+create room b7
+set room b7 description to {"
+You are in a dark room."}
+
+create room b8
+set room b8 description to {"
+You are in a dark room."}
+
+create room c1
+set room c1 description to {"
+You are in a dark room."}
+
+create room c2
+set room c2 description to {"
+You are in a dark room."}
+
+create room c3
+set room c3 description to {"
+You are in a dark room."}
+
+create room c4
+set room c4 description to {"
+You are in a dark room."}
+
+create room c5
+set room c5 description to {"
+You are in a dark room."}
+
+create room c6
+set room c6 description to {"
+You are in a dark room."}
+
+create room c7
+set room c7 description to {"
+You are in a dark room."}
+
+create room c8
+set room c8 description to {"
+You are in a dark room."}
+
+create room d1
+set room d1 description to {"
+You are in a dark room."}
+
+create room d2
+set room d2 description to {"
+You are in a dark room."}
+
+create room d3
+set room d3 description to {"
+You are in a dark room."}
+
+create room d4
+set room d4 description to {"
+You are in a dark room."}
+
+create room d5
+set room d5 description to {"
+You are in a dark room."}
+
+create room d6
+set room d6 description to {"
+You are in a dark room."}
+
+create room d7
+set room d7 description to {"
+You are in a dark room."}
+
+create room d8
+set room d8 description to {"
+You are in a dark room."}
+
+create room e1
+set room e1 description to {"
+You are in a dark room."}
+
+create room e2
+set room e2 description to {"
+You are in a dark room."}
+
+create room e3
+set room e3 description to {"
+You are in a dark room."}
+
+create room e4
+set room e4 description to {"
+You are in a dark room."}
+
+create room e5
+set room e5 description to {"
+You are in a dark room."}
+
+create room e6
+set room e6 description to {"
+You are in a dark room."}
+
+create room e7
+set room e7 description to {"
+You are in a dark room."}
+
+create room e8
+set room e8 description to {"
+You are in a dark room."}
+
+create room end1
+set room end1 description to {"
+You find yourself in a slightly brighter room.
+To the north is a large, iron door, with a bright light peeking in from around the cracks."}
+
+
+create room end2
+set room end2 description to {"
+You've made it out of the dungeon!. "}
+
+
+set start room to e5
+
+
+set end room to end2
+
+create doorway a1a2
+set a1a2 unlocked description to {"
+a dark opening"}
+set a1 direction east to a2 via a1a2
+create doorway a2a1
+set a2a1 unlocked description to {"
+a dark opening"}
+set a2 direction west to a1 via a2a1
+
+create doorway a2a3
+set a2 direction east to a3 via a2a3
+create doorway a3a2
+set a3 direction west to a2 via a3a2
+
+create doorway a4a5
+set a4 direction east to a5 via a4a5
+create doorway a5a4
+set a5 direction west to a4 via a5a4
+
+create doorway a6a7
+set a6 direction east to a7 via a6a7
+create doorway a7a6
+set a7 direction west to a6 via a7a6
+
+create doorway a7a8
+set a7 direction east to a8 via a7a8
+create doorway a8a7
+set a8 direction west to a7 via a8a7
+
+create doorway b2b3
+set b2 direction east to b3 via b2b3
+create doorway b3b2
+set b3 direction west to b2 via b3b2
+
+create doorway b5b6
+set b5 direction east to b6 via b5b6
+create doorway b6b5
+set b6 direction west to b5 via b6b5
+
+create doorway b7b8
+set b7 direction east to b8 via b7b8
+create doorway b8b7
+set b8 direction west to b7 via b8b7
+
+create doorway c2c3
+set c2 direction east to c3 via c2c3
+create doorway c3c2
+set c3 direction west to c2 via c3c2
+
+create doorway c3c4
+set c3 direction east to c4 via c3c4
+create doorway c4c3
+set c4 direction west to c3 via c4c3
+
+create doorway c4c5
+set c4 direction east to c5 via c4c5
+create doorway c5c4
+set c5 direction west to c4 via c5c4
+
+create doorway c6c7
+set c6 direction east to c7 via c6c7
+create doorway c7c6
+set c7 direction west to c6 via c7c6
+
+create doorway d2d3
+set d2 direction east to d3 via d2d3
+create doorway d3d2
+set d3 direction west to d2 via d3d2
+
+create doorway d4d5
+set d4 direction east to d5 via d4d5
+create doorway d5d4
+set d5 direction west to d4 via d5d4
+
+create doorway e1e2
+set e1 direction east to e2 via e1e2
+create doorway e2e1
+set e2 direction west to e1 via e2e1
+
+create doorway e3e4
+set e3 direction east to e4 via e3e4
+create doorway e4e3
+set e4 direction west to e3 via e4e3
+
+create doorway e5e6
+set e5e6 unlocked description to {"
+a dark opening."}
+set e5 direction east to e6 via e5e6
+create doorway e6e5
+set e6e5 unlocked description to {"
+a dark opening."}
+set e6 direction west to e5 via e6e5
+
+create doorway e6e7
+set e6e7 unlocked description to {"
+a dark opening."}
+set e6 direction east to e7 via e6e7
+create doorway e7e6
+set e7e6 unlocked description to {"
+a dark opening."}
+set e7 direction west to e6 via e7e6
+
+create doorway e7e8
+set e7e8 unlocked description to {"
+a dark opening."}
+set e7 direction east to e8 via e7e8
+create doorway e8e7
+set e8e7 unlocked description to {"
+a dark opening."}
+set e8 direction west to e7 via e8e7
+
+create doorway a1b1
+set a1b1 unlocked description to {"
+a dark opening."}
+set a1 direction south to b1 via a1b1
+create doorway b1a1
+set b1a1 unlocked description to {"
+a dark opening."}
+set b1 direction north to a1 via b1a1
+
+create doorway b1c1
+set b1c1 unlocked description to {"
+a dark opening."}
+set b1 direction south to c1 via b1c1
+create doorway c1b1
+set c1b1 unlocked description to {"
+a dark opening."}
+set c1 direction north to b1 via c1b1
+
+create doorway c1d1
+set c1d1 unlocked description to {"
+a dark opening."}
+set c1 direction south to d1 via c1d1
+create doorway d1c1
+set d1c1 unlocked description to {"
+a dark opening."}
+set d1 direction north to c1 via d1c1
+
+create doorway d1e1
+set d1e1 unlocked description to {"
+a dark opening."}
+set d1 direction south to e1 via d1e1
+create doorway e1d1
+set e1d1 unlocked description to {"
+a dark opening."}
+set e1 direction north to d1 via e1d1
+
+create doorway b2c2
+set b2c2 unlocked description to {"
+a dark opening."}
+set b2 direction south to c2 via b2c2
+create doorway c2b2
+set c2b2 unlocked description to {"
+a dark opening."}
+set c2 direction north to b2 via c2b2
+
+create doorway d2e2
+set d2e2 unlocked description to {"
+a dark opening."}
+set d2 direction south to e2 via d2e2
+create doorway e2d2
+set e2d2 unlocked description to {"
+a dark opening."}
+set e2 direction north to d2 via e2d2
+
+create doorway a3b3
+set a3b3 unlocked description to {"
+a dark opening."}
+set a3 direction south to b3 via a3b3
+create doorway b3a3
+set b3a3 unlocked description to {"
+a dark opening."}
+set b3 direction north to a3 via b3a3
+
+create doorway d3e3
+set d3e3 unlocked description to {"
+a dark opening."}
+set d3 direction south to e3 via d3e3
+create doorway e3d3
+set e3d3 unlocked description to {"
+a dark opening."}
+set e3 direction north to d3 via e3d3
+
+create doorway end1a4
+set end1a4 unlocked description to {"
+a dark opening."}
+set end1 direction south to a4 via end1a4
+create doorway a4end1
+set a4end1 unlocked description to {"
+a dark opening."}
+set a4 direction north to end1 via a4end1
+
+create doorway b4c4
+set b4c4 unlocked description to {"
+a dark opening."}
+set b4 direction south to c4 via b4c4
+create doorway c4b4
+set c4b4 unlocked description to {"
+a dark opening."}
+set c4 direction north to b4 via c4b4
+
+create doorway c4d4
+set c4d4 unlocked description to {"
+a dark opening."}
+set c4 direction south to d4 via c4d4
+create doorway d4c4
+set d4c4 unlocked description to {"
+a dark opening."}
+set d4 direction north to c4 via d4c4
+
+create doorway a5b5
+set a5b5 unlocked description to {"
+a dark opening."}
+set a5 direction south to b5 via a5b5
+create doorway b5a5
+set b5a5 unlocked description to {"
+a dark opening."}
+set b5 direction north to a5 via b5a5
+
+create doorway d5e5
+set d5e5 unlocked description to {"
+a dark opening."}
+set d5 direction south to e5 via d5e5
+create doorway e5d5
+set e5d5 unlocked description to {"
+a dark opening."}
+set e5 direction north to d5 via e5d5
+
+create doorway a6b6
+set a6b6 unlocked description to {"
+a dark opening."}
+set a6 direction south to b6 via a6b6
+create doorway b6a6
+set b6a6 unlocked description to {"
+a dark opening."}
+set b6 direction north to a6 via b6a6
+
+create doorway c6d6
+set c6d6 unlocked description to {"
+a dark opening."}
+set c6 direction south to d6 via c6d6
+create doorway d6c6
+set d6c6 unlocked description to {"
+a dark opening."}
+set d6 direction north to c6 via d6c6
+
+create doorway d6e6
+set d6e6 unlocked description to {"
+a dark opening."}
+set d6 direction south to e6 via d6e6
+create doorway e6d6
+set e6d6 unlocked description to {"
+a dark opening."}
+set e6 direction north to d6 via e6d6
+
+create doorway b7c7
+set b7c7 unlocked description to {"
+a dark opening."}
+set b7 direction south to c7 via b7c7
+create doorway c7b7
+set c7b7 unlocked description to {"
+a dark opening."}
+set c7 direction north to b7 via c7b7
+
+create doorway d7e7
+set d7e7 unlocked description to {"
+a dark opening."}
+set d7 direction south to e7 via d7e7
+create doorway e7d7
+set e7d7 unlocked description to {"
+a dark opening."}
+set e7 direction north to d7 via e7d7
+
+create doorway a8b8
+set a8b8 unlocked description to {"
+a dark opening."}
+set a8 direction south to b8 via a8b8
+create doorway b8a8
+set b8a8 unlocked description to {"
+a dark opening."}
+set b8 direction north to a8 via b8a8
+
+create doorway c8d8
+set c8d8 unlocked description to {"
+a dark opening."}
+set c8 direction south to d8 via c8d8
+create doorway d8c8
+set d8c8 unlocked description to {"
+a dark opening."}
+set d8 direction north to c8 via d8c8
+
+create doorway d8e8
+set d8e8 unlocked description to {"
+a dark opening."}
+set d8 direction south to e8 via d8e8
+create doorway e8d8
+set e8d8 unlocked description to {"
+a dark opening."}
+set e8 direction north to d8 via e8d8
+
+create key Large Key
+set item Large Key weight to 1.0
+set item Large Key value to 1.0
+set item Large Key description to {"
+An iron skeleton key."
+}
+add Large Key to e5
+
+create doorway end2end1
+set end2end1 unlocked description to {"
+a dark opening."}
+set end2 direction south to end1 via end2end1
+create doorway end1end2
+set end1end2 locked description to {"
+A large iron door blocks your path. It appears to be locked."}
+set end1end2 unlocked description to {"
+A large iron door stands in front of you. It is unlocked."}
+set end1 direction north to end2 via end1end2
+set end1end2 locked to true
+set end1end2 key to Large Key
+
+create item Map
+set item Map description to {"
+An old paper map with the following drawing:
+```__ _ _ ^ _ _ _ _\r\n
+| __  |_  |  _  |\r\n
+| | __| |___|  _|\r\n
+| |___   _|  _| |\r\n
+| |   |__ | | | |\r\n
+|___|__X|_______|```
+ 
+"
+}
+set item Map weight to 1.0
+set item Map value to 50.0
+add Map to e5

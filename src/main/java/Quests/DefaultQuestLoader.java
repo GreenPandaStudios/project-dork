@@ -25,12 +25,15 @@ public class DefaultQuestLoader {
                 case (""):
                     fileName += "DefaultQuest1";
                     break;
+                case ("2"):
+                case ("maze"):
+                    fileName += "DefaultQuest2";
+                    break;
                 default:
                     fileName += "DefaultQuest1";
                     break;
             }
         }
-        fileName += ".txt";
 
         ArrayList<String> text = new ArrayList<>();
         try{
@@ -50,6 +53,7 @@ public class DefaultQuestLoader {
                 return new Quest(m, turnManager);
             }
         } catch (IOException e) {
+            e.printStackTrace();
             return createDefaultQuest(turnManager);
         }
     }
