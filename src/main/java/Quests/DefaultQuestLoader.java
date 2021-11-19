@@ -29,6 +29,10 @@ public class DefaultQuestLoader {
                 case ("maze"):
                     fileName += "DefaultQuest2";
                     break;
+                case ("3"):
+                case ("bear"):
+                    fileName += "DefaultQuest3";
+                    break;
                 default:
                     fileName += "DefaultQuest1";
                     break;
