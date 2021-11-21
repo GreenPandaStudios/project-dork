@@ -2,6 +2,7 @@ package Items;
 
 import Players.Player;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class TrapItem extends UsableItem{
@@ -9,6 +10,7 @@ public class TrapItem extends UsableItem{
     double damage = 0;
     String trapMessage = "";
     double chance = 100;
+    ArrayList<String> disarmItems = new ArrayList<>();
 
     public TrapItem(String name, String description, String trapMessage, int uses, double damage) {
         this(name, description, trapMessage, uses, damage, 100);
@@ -19,6 +21,20 @@ public class TrapItem extends UsableItem{
         this.damage = damage;
         this.trapMessage = trapMessage;
         this.chance = chance;
+    }
+
+    public void addDisarmItemName(String itemName) {
+        disarmItems.add(itemName);
+    }
+
+    public boolean attemptDisarm(String itemName) {
+        for (String disarmItem : disarmItems) {
+            if(itemName.equalsIgnoreCase(disarmItem)) {
+                usesLeft = 0;
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

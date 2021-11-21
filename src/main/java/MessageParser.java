@@ -494,35 +494,41 @@ public class MessageParser {
 
     private void moveAction(String direction) {
         Directions d;
+//replaced this code with the parseDirection method
+//        switch (direction.toLowerCase()) {
+//            case "north":
+//            case "n":
+//                d = Directions.North;
+//                break;
+//            case "south":
+//            case "s":
+//                d = Directions.South;
+//                break;
+//            case "east":
+//            case "e":
+//                d = Directions.East;
+//                break;
+//            case "up":
+//            case "u":
+//                d = Directions.Up;
+//                break;
+//            case "down":
+//            case "d":
+//                d = Directions.Down;
+//                break;
+//            case "west":
+//            case "w":
+//                d = Directions.West;
+//                break;
+//            default:
+//                sendMessage(direction + " is not a valid direction.");
+//                return;
+//        }
 
-        switch (direction.toLowerCase()) {
-            case "north":
-            case "n":
-                d = Directions.North;
-                break;
-            case "south":
-            case "s":
-                d = Directions.South;
-                break;
-            case "east":
-            case "e":
-                d = Directions.East;
-                break;
-            case "up":
-            case "u":
-                d = Directions.Up;
-                break;
-            case "down":
-            case "d":
-                d = Directions.Down;
-                break;
-            case "west":
-            case "w":
-                d = Directions.West;
-                break;
-            default:
-                sendMessage(direction + " is not a valid direction.");
-                return;
+        d = parseDirection(direction);
+        if(d == null) {
+            sendMessage(direction + " is not a valid direction.");
+            return;
         }
 
         //we have a valid direction
@@ -547,6 +553,63 @@ public class MessageParser {
             }
         } else {
             sendMessage("There is nothing that way.");
+        }
+    }
+
+    private void disarmAction(String direction, Item item) {
+        Directions d;
+
+        d = parseDirection(direction);
+        if(d == null) {
+            sendMessage(direction + " is not a valid direction.");
+            return;
+        }
+        //we have a valid direction
+        Doorway door = currentQuest.currentRoom().getDoorway(d);
+        if (door != null) {
+            if (currentQuest.currentRoom().getDoorway(d).getLocked()) {
+                sendMessage("That way is locked.");
+            } else {
+                //attempt to disarm the trap, will always take a turn
+                if(door.getTrap() != null) {
+                    if(door.getTrap().attemptDisarm(item.getName())) {
+                        sendMessage("It takes a while, but you successfully disarm the " + door.getTrap().getName());
+                    } else {
+                        sendMessage("You spent a while carefully trying, but you couldn't disarm the " + door.getTrap().getName() + " with that item.");
+                    }
+                } else {
+                    sendMessage("You spend a while carefully searching the doorway, but you can't find anything to disarm in the first place.");
+                }
+                endTurn();
+            }
+        } else {
+            sendMessage("There is nothing that way.");
+        }
+    }
+
+    //Gets a direction from a string input, returns null if input is not valid
+    private Directions parseDirection(String direction) {
+        switch (direction.toLowerCase()) {
+            case "north":
+            case "n":
+                return Directions.North;
+            case "south":
+            case "s":
+                return Directions.South;
+            case "east":
+            case "e":
+                return Directions.East;
+            case "up":
+            case "u":
+                return Directions.Up;
+            case "down":
+            case "d":
+                return Directions.Down;
+            case "west":
+            case "w":
+                return Directions.West;
+            default:
+                return null;
         }
     }
 
