@@ -8,6 +8,7 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.MessageAttachment;
 import org.javacord.api.entity.message.MessageBuilder;
+import org.javacord.api.entity.message.MessageSet;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -526,7 +527,7 @@ public class MessageParser {
 //        }
 
         d = parseDirection(direction);
-        if(d == null) {
+        if (d == null) {
             sendMessage(direction + " is not a valid direction.");
             return;
         }
@@ -540,8 +541,8 @@ public class MessageParser {
                 //move the player the correct direction
 
                 sendMessage("You move " + d.name() + ".");
-                if(door.getTrap() != null) {
-                    if(door.getTrap().getUsesLeft() != 0) {
+                if (door.getTrap() != null) {
+                    if (door.getTrap().getUsesLeft() != 0) {
                         door.getTrap().useItem(turnManager.currentTurn());
                         sendMessage("The doorway is trapped! " + door.getTrap().getTrapMessage());
                     }
@@ -560,7 +561,7 @@ public class MessageParser {
         Directions d;
 
         d = parseDirection(direction);
-        if(d == null) {
+        if (d == null) {
             sendMessage(direction + " is not a valid direction.");
             return;
         }
@@ -571,8 +572,8 @@ public class MessageParser {
                 sendMessage("That way is locked.");
             } else {
                 //attempt to disarm the trap, will always take a turn
-                if(door.getTrap() != null) {
-                    if(door.getTrap().attemptDisarm(item.getName())) {
+                if (door.getTrap() != null) {
+                    if (door.getTrap().attemptDisarm(item.getName())) {
                         sendMessage("It takes a while, but you successfully disarm the " + door.getTrap().getName());
                     } else {
                         sendMessage("You spent a while carefully trying, but you couldn't disarm the " + door.getTrap().getName() + " with that item.");
@@ -682,6 +683,7 @@ public class MessageParser {
             }
         }
         turnManager.nextTurn();
+        AudioManager.playNewSound(AudioSourceType.LOCAL_SOUND_EFFECT, AudioManager.getLocalPath("nextTurn.ogg"));
         sendMessage(TextConstants.inspectRoomOnTurnStart + currentQuest.currentRoom().Description());
         sendMessage("It is now " + turnManager.currentTurn().getDiscordUser().getDisplayName(server) + "'s turn.");
     }
@@ -815,6 +817,6 @@ public class MessageParser {
     }
 
     void clearAllMessages() {
-        validTextChannel.getMessages(Integer.MAX_VALUE).thenApplyAsync(messages -> messages.deleteAll());
+        validTextChannel.getMessages(Integer.MAX_VALUE).thenApplyAsync(MessageSet::deleteAll);
     }
 }
