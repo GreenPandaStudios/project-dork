@@ -1,3 +1,22 @@
+# Gradle:
+.idea/gradle.xml
+.idea/libraries
+.idea/project-dork.iml
+.idea/modules.xml
+.idea/misc.xml
+.gradle/5.2.1/executionHistory/executionHistory.bin
+.gradle/5.2.1/executionHistory/executionHistory.lock
+.gradle/5.2.1/fileContent/fileContent.lock
+.gradle/5.2.1/fileHashes/fileHashes.bin
+.gradle/5.2.1/fileHashes/fileHashes.lock
+.gradle/5.2.1/javaCompile/classAnalysis.bin
+.gradle/5.2.1/javaCompile/javaCompile.lock
+.gradle/5.2.1/javaCompile/taskHistory.bin
+.gradle/buildOutputCleanup/buildOutputCleanup.lock
+.gradle/buildOutputCleanup/outputFiles.bin
+*.xml
+
+
 # Compiled class file
 *.class
 
@@ -40,34 +59,4 @@ hs_err_pid*
 .idea/sqlDataSources.xml
 .idea/dynamic.xml
 .idea/uiDesigner.xml
-
-# Gradle:
-.idea/gradle.xml
-.idea/libraries
-.idea/workspace.xml
-.idea/project-dork.iml
-.idea/modules.xml
-.idea/misc.xml
-.gradle/5.2.1/executionHistory/executionHistory.bin
-.gradle/5.2.1/executionHistory/executionHistory.lock
-.gradle/5.2.1/fileContent/fileContent.lock
-.gradle/5.2.1/fileHashes/fileHashes.bin
-.gradle/5.2.1/fileHashes/fileHashes.lock
-.gradle/5.2.1/javaCompile/classAnalysis.bin
-.gradle/5.2.1/javaCompile/javaCompile.lock
-.gradle/5.2.1/javaCompile/taskHistory.bin
-.gradle/buildOutputCleanup/buildOutputCleanup.lock
-.gradle/buildOutputCleanup/outputFiles.bin
-.idea/workspace.xml
-.gradle/5.2.1/executionHistory/executionHistory.bin
-.gradle/5.2.1/executionHistory/executionHistory.lock
-.gradle/5.2.1/fileContent/fileContent.lock
-.gradle/5.2.1/fileHashes/fileHashes.bin
-.gradle/5.2.1/fileHashes/fileHashes.lock
-.gradle/5.2.1/fileHashes/resourceHashesCache.bin
-.gradle/5.2.1/javaCompile/classAnalysis.bin
-.gradle/5.2.1/javaCompile/jarAnalysis.bin
-.gradle/5.2.1/javaCompile/javaCompile.lock
-.gradle/5.2.1/javaCompile/taskHistory.bin
-.gradle/buildOutputCleanup/buildOutputCleanup.lock
-.gradle/buildOutputCleanup/outputFiles.bin
+/.gradle/

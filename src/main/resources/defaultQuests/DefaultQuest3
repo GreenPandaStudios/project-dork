@@ -1,0 +1,73 @@
+#forest
+#medieval
+#country
+create room scary forest
+set room scary forest description to {
+"An old forest adjacent to your village. It is full
+of many old and tall trees. There are so many that it
+casts an eerie shadow even in the middle of the day.
+You are standing next to the tallest tree in the forest."
+}
+create room safe village
+create room top of tree
+set room top of tree description to {
+"You are at the top of the tallest tree in the forest.
+Your village lies to the north, and you can see the old bear
+in the path that way. There are a few bees buzzing around a bee's nest."
+}
+
+set start room to scary forest
+set end room to safe village
+
+create doorway climb tree
+create doorway descend tree
+set scary forest direction up to top of tree via climb tree
+set top of tree direction down to scary forest via descend tree
+set climb tree locked to false
+set descend tree locked to false
+
+
+set climb tree unlocked description to{
+"a lot of sturdy branches. You think you could climb it".}
+set descend tree unlocked description to{
+"a few footholds. You think you could climb back down".}
+
+
+
+create doorway grizzly bear
+set grizzly bear unlocked description to{
+"that the old bear fell asleep".}
+set grizzly bear locked description to{
+"an old pacing bear. You wouldn't dare approach it without some honey."}
+set grizzly bear locked to true
+
+set scary forest direction north to safe village via grizzly bear
+
+create item bee's nest
+create key honey
+
+set grizzly bear key to honey
+
+create item tree
+
+add tree to scary forest
+set tree scenery to true
+set item tree description to {
+"It is a tall and sturdy tree.
+There are a lot of solid branches."
+}
+set bee's nest scenery to true
+add bee's nest to top of tree
+add honey to top of tree
+
+
+
+
+set item honey description to {
+"A glob of honey. If you're quick, you think you can take it."
+}
+set item honey weight to 1.0
+
+set item bee's nest description to {
+"A buzzing bee's nest. There is some honey dripping out from it."
+}

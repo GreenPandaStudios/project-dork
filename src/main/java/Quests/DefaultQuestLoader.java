@@ -4,10 +4,67 @@ import Items.HealthItem;
 import Items.Item;
 import Items.KeyItem;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Scanner;
+
 public class DefaultQuestLoader {
 
+    public Quest loadDefaultQuest(String questToLoad, TurnManager turnManager){
 
-    public Quest createDefaultQuest(String quest, TurnManager turnManager) {
+        String fileName = "src/main/resources/defaultQuests/";
+
+        if(questToLoad == null){
+            fileName += "DefaultQuest1";
+        } else {
+            switch (questToLoad) {
+                case ("1"):
+                case ("default"):
+                case (""):
+                    fileName += "DefaultQuest1";
+                    break;
+                case ("2"):
+                case ("maze"):
+                    fileName += "DefaultQuest2";
+                    break;
+                case ("3"):
+                case ("bear"):
+                    fileName += "DefaultQuest3";
+                    break;
+                default:
+                    fileName += "DefaultQuest1";
+                    break;
+            }
+        }
+
+        ArrayList<String> text = new ArrayList<>();
+        try{
+            File file = new File(fileName);
+            Scanner scan = new Scanner(file);
+            while (scan.hasNext()) {
+                text.add(text.size(), scan.nextLine());
+            }
+
+            MapLoader loader = new MapLoader();
+            Map m = loader.LoadMap(text);
+            System.out.println(loader.getErrorCode());
+            if (m == null) {
+                return createDefaultQuest(turnManager);
+            } else {
+                m.locateImages();
+                return new Quest(m, turnManager);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return createDefaultQuest(turnManager);
+        }
+    }
+
+
+
+    public Quest createDefaultQuest(TurnManager turnManager) {
         Room startingRoom = new Room("Starting Room").addItem(new Item("Sword",
                 "A heavy well-made sword",
                 10.5,
@@ -69,6 +126,8 @@ public class DefaultQuestLoader {
 
 
         Map m = new Map(startingRoom, endingRoom);
+        m.AddTag("dungeon");
+        m.locateImages();
 
         return new Quest(m, turnManager);
     }

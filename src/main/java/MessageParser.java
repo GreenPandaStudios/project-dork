@@ -4,19 +4,25 @@ import Items.KeyItem;
 import Items.UsableItem;
 import Players.Player;
 import Quests.*;
-import Quests.Map;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.MessageAttachment;
+import org.javacord.api.entity.message.MessageBuilder;
+import org.javacord.api.entity.message.MessageSet;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 
-import java.io.File;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
-import java.util.regex.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MessageParser {
 
@@ -24,14 +30,10 @@ public class MessageParser {
     private final TextChannel validTextChannel;
     private final TurnManager turnManager = new TurnManager();
     private final DefaultQuestLoader defaultQuestLoader = new DefaultQuestLoader();
-    DiscordApi api;
-    private Quest currentQuest = null;
+    private final Pattern inspectObjectPattern = Pattern.compile("^(look|examine|study|inspect|peek)(\\s*)(?<item>.*)$");
+    private final Pattern takePattern = Pattern.compile("^(grab|collect|store|steal|take)(\\s+)(?<item>.*)$");
 
     //////////////////////////////REGEX constants
-
-    private final Pattern inspectObjectPattern = Pattern.compile("^(look|examine|study|inspect|peek)(\\s*)(?<item>.*)$");
-
-    private final Pattern takePattern = Pattern.compile("^(grab|collect|store|steal|take)(\\s+)(?<item>.*)$");
     private final Pattern movePattern = Pattern.compile("^(run|walk|go|travel|move)(\\s+)(?<direction>.*)$");
     private final Pattern dropPattern = Pattern.compile("^(drop|throw|remove|leave)(\\s+)(?<item>.*)$");
     private final Pattern endTurnPattern = Pattern.compile("^(end|done|next|finish)(\\s+turn|my turn|move|my move|\\s)*$");
@@ -41,6 +43,8 @@ public class MessageParser {
     private final Pattern helpPattern = Pattern.compile("^(((I (need|want))?help)|(I'm)?confused|(What are the)?commands)$([?])?");
     private final Pattern givePattern = Pattern.compile("^(give)(\\s+)(?<item>.*)(?= to )( to )(?<player>.*)$");
     private final Pattern startPattern = Pattern.compile("^(start quest)(\\s+)(?<quest>.*)|(start quest)$");
+    DiscordApi api;
+    private Quest currentQuest = null;
     /////////////////////////////////////////
 
 
@@ -124,6 +128,7 @@ public class MessageParser {
             } else {
                 //assume we are talking about the room
                 sendMessage("You take in your surroundings.\n" + currentQuest.currentRoom().Description());
+                sendImage(currentQuest.currentRoom());
             }
             return;
         }
@@ -490,35 +495,41 @@ public class MessageParser {
 
     private void moveAction(String direction) {
         Directions d;
+//replaced this code with the parseDirection method
+//        switch (direction.toLowerCase()) {
+//            case "north":
+//            case "n":
+//                d = Directions.North;
+//                break;
+//            case "south":
+//            case "s":
+//                d = Directions.South;
+//                break;
+//            case "east":
+//            case "e":
+//                d = Directions.East;
+//                break;
+//            case "up":
+//            case "u":
+//                d = Directions.Up;
+//                break;
+//            case "down":
+//            case "d":
+//                d = Directions.Down;
+//                break;
+//            case "west":
+//            case "w":
+//                d = Directions.West;
+//                break;
+//            default:
+//                sendMessage(direction + " is not a valid direction.");
+//                return;
+//        }
 
-        switch (direction.toLowerCase()) {
-            case "north":
-            case "n":
-                d = Directions.North;
-                break;
-            case "south":
-            case "s":
-                d = Directions.South;
-                break;
-            case "east":
-            case "e":
-                d = Directions.East;
-                break;
-            case "up":
-            case "u":
-                d = Directions.Up;
-                break;
-            case "down":
-            case "d":
-                d = Directions.Down;
-                break;
-            case "west":
-            case "w":
-                d = Directions.West;
-                break;
-            default:
-                sendMessage(direction + " is not a valid direction.");
-                return;
+        d = parseDirection(direction);
+        if (d == null) {
+            sendMessage(direction + " is not a valid direction.");
+            return;
         }
 
         //we have a valid direction
@@ -528,13 +539,78 @@ public class MessageParser {
                 sendMessage("That way is locked.");
             } else {
                 //move the player the correct direction
-                turnManager.currentTurn().setRoom(door.getToRoom());
+
                 sendMessage("You move " + d.name() + ".");
+                if (door.getTrap() != null) {
+                    if (door.getTrap().getUsesLeft() != 0) {
+                        door.getTrap().useItem(turnManager.currentTurn());
+                        sendMessage("The doorway is trapped! " + door.getTrap().getTrapMessage());
+                    }
+                }
+                turnManager.currentTurn().setRoom(door.getToRoom());
+
 
                 endTurn();
             }
         } else {
             sendMessage("There is nothing that way.");
+        }
+    }
+
+    private void disarmAction(String direction, Item item) {
+        Directions d;
+
+        d = parseDirection(direction);
+        if (d == null) {
+            sendMessage(direction + " is not a valid direction.");
+            return;
+        }
+        //we have a valid direction
+        Doorway door = currentQuest.currentRoom().getDoorway(d);
+        if (door != null) {
+            if (currentQuest.currentRoom().getDoorway(d).getLocked()) {
+                sendMessage("That way is locked.");
+            } else {
+                //attempt to disarm the trap, will always take a turn
+                if (door.getTrap() != null) {
+                    if (door.getTrap().attemptDisarm(item.getName())) {
+                        sendMessage("It takes a while, but you successfully disarm the " + door.getTrap().getName());
+                    } else {
+                        sendMessage("You spent a while carefully trying, but you couldn't disarm the " + door.getTrap().getName() + " with that item.");
+                    }
+                } else {
+                    sendMessage("You spend a while carefully searching the doorway, but you can't find anything to disarm in the first place.");
+                }
+                endTurn();
+            }
+        } else {
+            sendMessage("There is nothing that way.");
+        }
+    }
+
+    //Gets a direction from a string input, returns null if input is not valid
+    private Directions parseDirection(String direction) {
+        switch (direction.toLowerCase()) {
+            case "north":
+            case "n":
+                return Directions.North;
+            case "south":
+            case "s":
+                return Directions.South;
+            case "east":
+            case "e":
+                return Directions.East;
+            case "up":
+            case "u":
+                return Directions.Up;
+            case "down":
+            case "d":
+                return Directions.Down;
+            case "west":
+            case "w":
+                return Directions.West;
+            default:
+                return null;
         }
     }
 
@@ -562,6 +638,27 @@ public class MessageParser {
     }
 
     /**
+     * Sends an image to Discord
+     *
+     * @param room to describe with an image
+     */
+    private void sendImage(Room room) {
+        try {
+            if (room.getImgUrl() != null) {
+                BufferedImage image = ImageIO.read(new URL(room.getImgUrl()));
+                new MessageBuilder()
+                        .addAttachment(image, "out.png")
+                        .send(validTextChannel);
+            }
+        } catch (MalformedURLException mue) {
+            System.out.println("This shouldn't happen");
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+
+    }
+
+    /**
      * Call this on a valid turn.
      * It will increment the turn index and tell all user's who's turn it is now
      */
@@ -586,6 +683,7 @@ public class MessageParser {
             }
         }
         turnManager.nextTurn();
+        AudioManager.playNewSound(AudioSourceType.LOCAL_SOUND_EFFECT, AudioManager.getLocalPath("nextTurn.ogg"));
         sendMessage(TextConstants.inspectRoomOnTurnStart + currentQuest.currentRoom().Description());
         sendMessage("It is now " + turnManager.currentTurn().getDiscordUser().getDisplayName(server) + "'s turn.");
     }
@@ -662,24 +760,20 @@ public class MessageParser {
                             }
                         }
                     }
-                }
-                else {
+                } else {
                     System.out.println(ma.group("quest"));
-                    currentQuest = defaultQuestLoader.createDefaultQuest(ma.group("quest"), turnManager);
+                    currentQuest = defaultQuestLoader.loadDefaultQuest(ma.group("quest"), turnManager);
                 }
 
                 //if there was an error loading the quest file
                 if (currentQuest != null)
                     clearAllMessages();
-                    sendMessage("Starting a new Quest with the following players:\n" + getPartyMembers());
-                    currentQuest.startQuest();
-                    sendMessage(currentQuest.getMap().getStartingRoom().Description());
-                }
-
+                sendMessage("Starting a new Quest with the following players:\n" + getPartyMembers());
+                currentQuest.startQuest();
+                sendMessage(currentQuest.getMap().getStartingRoom().Description());
             }
 
-
-         else if (messageInput.equalsIgnoreCase("join")) {
+        } else if (messageInput.equalsIgnoreCase("join")) {
             //add this user to the list of users
             if (turnManager.getByUser(discordUser) == null) {
                 turnManager.addPlayer(new Player(discordUser));
@@ -723,6 +817,6 @@ public class MessageParser {
     }
 
     void clearAllMessages() {
-        validTextChannel.getMessages(Integer.MAX_VALUE).thenApplyAsync(messages -> messages.deleteAll());
+        validTextChannel.getMessages(Integer.MAX_VALUE).thenApplyAsync(MessageSet::deleteAll);
     }
 }

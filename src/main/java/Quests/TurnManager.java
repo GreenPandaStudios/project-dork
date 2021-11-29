@@ -16,7 +16,7 @@ public class TurnManager {
     }
 
     public int nextTurn() {
-        if (players.size() == 0 ) return 0;
+        if (players.size() == 0) return 0;
 
         int turnIndexTemp = (turnIndex + 1) % players.size();
         turnIndex = turnIndexTemp;
