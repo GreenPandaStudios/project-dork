@@ -7,7 +7,7 @@ public class Main {
     // This is the only channel the bot will react in
     public static final String BotChannelName = "dork-domain";
     public static final String BotVoiceChannelName = "dork-domain-music";
-    public static final String BotToken = "";
+    public static final String BotToken = "ODk2MTA1OTE5MTcwMTA1NDE1.YWCRqw.Al8m4PF1vtCZuIPO8vgYFI7umGk";
 
     public static void main(String[] args) {
         // Log the bot in

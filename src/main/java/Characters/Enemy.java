@@ -1,4 +1,7 @@
 package Characters;
 
-public class Enemy extends Character {
+import Quests.Room;
+
+public class Enemy extends NPC {
+
 }

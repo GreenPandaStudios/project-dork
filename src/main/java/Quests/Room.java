@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Scanner;
-
+import Characters.Character;
 public class Room implements Interfaces.IDescriptable, Interfaces.IName {
 
 
@@ -18,11 +18,50 @@ public class Room implements Interfaces.IDescriptable, Interfaces.IName {
      * The items contained in this room, referenced by their unique name
      */
     HashMap<String, Item> items = new HashMap<String, Item>();
+    HashMap<String, Character> characters = new HashMap<String, Character>();
+
+    /**
+     * Adds a character to the rooms hashmap of characters
+     * @param character
+     * @return succesful
+     */
+    public boolean addCharacter(Character character){
+
+        if (characters.containsKey(character.getName())){
+            return false;
+        }
+        characters.put(character.getName(), character);
+        return  true;
+    }
+
+    /**
+     * Removes a character from the rooms hashmap of characters
+     * @param character
+     * @return succesful
+     */
+    public boolean removeCharacter(Character character){
+        if (!characters.containsKey(character.getName())){
+            return false;
+        }
+        characters.remove(character.getName());
+        return true;
+    }
+
     private Doorway[] doorways = {null, null, null, null, null, null};
     private String imgUrl = null;
     private String description = "";
     private String name = "";
     private int playerCount = 0;
+
+    public int getNpcCount() {
+        return npcCount;
+    }
+
+    public void setNpcCount(int npcCount) {
+        this.npcCount = npcCount;
+    }
+
+    private int npcCount = 0;
 
     public Room() {
         setName("");
@@ -81,7 +120,7 @@ public class Room implements Interfaces.IDescriptable, Interfaces.IName {
         }
     }
 
-    //TODO
+
     @Override
     public String Description() {
         String descr = description;

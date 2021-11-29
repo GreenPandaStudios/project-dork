@@ -2,8 +2,24 @@ package Characters;
 
 import Items.Item;
 import Players.Inventory;
+import Quests.Room;
 
-public class Merchant extends Character {
+public class Merchant extends NPC {
+
+    public Merchant(String name){
+        this.name = name;
+    }
+
+    public Merchant(String name, double gold, Item[] items){
+
+        this.name = name;
+        inventory.setGold(gold);
+
+        //add all the items to the Merchant's inventory
+        for (int i = 0; i < items.length; i++){
+            inventory.addItem(items[i]);
+        }
+    }
 
     /**
      * Sells the item in the playerInventory to the merchant,
