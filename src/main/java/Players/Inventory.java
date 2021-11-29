@@ -8,6 +8,17 @@ import java.util.HashMap;
 
 public class Inventory {
 
+    public double getGold() {
+        return gold;
+    }
+
+    public void setGold(double gold) {
+        this.gold = gold;
+    }
+
+    protected double gold = 0.0;
+
+
     public Inventory(double maxWeight) {
         setMaxWeight(maxWeight);
     }
@@ -73,23 +84,29 @@ public class Inventory {
 
     /**
      * Returns a string of the inventory's contents
+     *
      * @return A string of the inventory's content
      */
     public String displayItems() {
-        if(items.isEmpty()){
+        if (items.isEmpty()) {
             return "Your inventory is empty!\n";
         }
         String listOfItems = "Your inventory contains:\n";
         for (Item i : items.values()) {
             listOfItems += "\t-" + i.getName() + "\n"
-            + "\t\t Weight: " + i.getWeight() + ", Value: " + i.getValue() + "\n";
+                    + "\t\t Weight: " + i.getWeight() + ", Value: " + i.getValue() + "\n";
         }
+
+
+        //add the gold amount
+        listOfItems += "Current Gold: " + getGold() + "\n";
+
         return listOfItems;
     }
 
-    public String giveItem(String item, Player p, Server server){
-        if(items.containsKey(item)){
-            if(p.getInventory().addItem(items.get(item))){
+    public String giveItem(String item, Player p, Server server) {
+        if (items.containsKey(item)) {
+            if (p.getInventory().addItem(items.get(item))) {
                 removeItem(item);
                 return "You gave your " + item + " to " + p.getDiscordUser().getDisplayName(server) + "!";
             }
@@ -99,7 +116,7 @@ public class Inventory {
         return "You do not have that item in your inventory!";
     }
 
-    public String displayWeight(){
+    public String displayWeight() {
         return "Current Weight: " + getCurrentWeight() + " / " + getMaxWeight() + "\n";
     }
 
