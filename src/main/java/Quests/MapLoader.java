@@ -1,5 +1,6 @@
 package Quests;
 
+import Characters.*;
 import Items.HealthItem;
 import Items.Item;
 import Items.KeyItem;
@@ -72,12 +73,23 @@ public class MapLoader {
 
 
     //endregion
+    //region Character commands
+    private final Pattern createMerchant = Pattern.compile("^\\s*create\\s+merchant\\s+(?<merchant>.+)$");
 
+
+    private final Pattern addCharacterToRoom = Pattern.compile("^\\s*add\\s+character(?<character>.+)\\s+to\\s+(?<room>.+)$");
+    //adds an item to the characters inventory
+    private final Pattern addItemToCharacter= Pattern.compile("^\\s*add\\s+item(?<item>.+)\\s+to\\s+character\\s+(?<character>.+)$");
+    private final Pattern setCharacterGold = Pattern.compile("^\\s*set\\s+character\\s+(?<character>.+)\\s+gold\\s+to\\s+(?<gold>(-*\\d+((.|,)\\d+))$)");
+
+    //endregion
 
     /////////////////////////////////////////
     Hashtable<String, Room> declaredRooms;
     Hashtable<String, Doorway> declaredDoorways;
     Hashtable<String, Item> declaredItems;
+    Hashtable<String, Characters.Character> declaredCharacters;
+
     private String errorCode;
     private Map map;
     public MapLoader() {
@@ -85,6 +97,7 @@ public class MapLoader {
         declaredRooms = new Hashtable<>();
         declaredDoorways = new Hashtable<>();
         declaredItems = new Hashtable<>();
+        declaredCharacters = new Hashtable<>();
     }
 
     public String getErrorCode() {
@@ -108,7 +121,15 @@ public class MapLoader {
             map.AddTag(m.group("tag"));
             return 0;
         }
+        //create a new merchant
+        if ((m = createMerchant.matcher(line)).find()){
+            if (declaredCharacters.containsKey(m.group("merchant"))) {
 
+                errorCode = "The character has already been created";
+                return -1;
+            }
+            declaredCharacters.put(m.group("merchant"), new Characters.Merchant(m.group("merchant")));
+        }
         //create a new room
         if ((m = createRoomPattern.matcher(line)).find()) {
             //create a new Room
