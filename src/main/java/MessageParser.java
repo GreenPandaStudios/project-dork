@@ -124,10 +124,11 @@ public class MessageParser {
 
         //inspect object
         if ((m = inspectObjectPattern.matcher(message)).find()) {
-            if (!m.group(3).equals("")) {
+            if (!m.group().equals("")) {
                 if (m.group(3).equals("inventory")) {
                     displayInventory();
-                } else {
+                }
+                else {
                     inspectAction(m.group(3));
                 }
             } else {
@@ -462,6 +463,9 @@ public class MessageParser {
                 Item i = turnManager.currentTurn().getInventory().peekItem(inspectWhat);
 
                 sendMessage("You take a closer look at your " + i.getName() + ".\n" + i.Description() + ".");
+            } else if (currentQuest.currentRoom().getCharater(inspectWhat) != null) {
+                sendMessage(inspectWhat + " has the following items: \n");
+                sendMessage(currentQuest.currentRoom().getCharater(inspectWhat).getInventory().displayItems());
             } else {
                 sendMessage("You see no " + inspectWhat + " here.");
             }
