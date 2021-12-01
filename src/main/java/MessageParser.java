@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import Characters.*;
 public class MessageParser {
 
     private final Server server;
@@ -45,6 +45,9 @@ public class MessageParser {
     private final Pattern startPattern = Pattern.compile("^(start quest)(\\s+)(?<quest>.*)|(start quest)$");
     private final Pattern attackPattern1 = Pattern.compile("^(attack)(\\s+)(?<target>.*)(?= with)( with )(?<weapon>.*)$");
     private final Pattern attackPattern2 = Pattern.compile("^(attack)(\\s+)(?<target>.*)$");
+    private final Pattern sellPattern = Pattern.compile("^sell(\\s+)(?<item>.+)(\\s+)to(\\s+)(?<merchant>.+)");
+    private final Pattern buyPattern = Pattern.compile("^buy(\\s+)(?<item>.+)(\\s+)from(\\s+)(?<merchant>.+)");
+
     DiscordApi api;
     private Quest currentQuest = null;
     /////////////////////////////////////////
@@ -171,6 +174,75 @@ public class MessageParser {
             }
             return;
         }
+        //buyAction
+        if ((m = buyPattern.matcher(message)).find()){
+
+            //check that the merchant is in the room
+            Characters.Character merchant = currentQuest.currentRoom().getCharater(m.group("merchant"));
+            String itemName = m.group("item");
+            if (merchant == null){
+                sendMessage("There is no " + m.group("merchant") + " here.");
+                return;
+            }
+            if (merchant instanceof Merchant){
+                //check if the merchant has the item
+                if (merchant.getInventory().peekItem(itemName) == null) {
+                    sendMessage("The merchant does not have " + itemName + ".");
+                    return;
+                }
+                //check that we have enough gold to purchase it
+                if (merchant.getInventory().peekItem(itemName).getValue() > turnManager.currentTurn().getInventory().getGold()){
+                    sendMessage("You do not have enough gold to purchase " + itemName + ".");
+                    return;
+                }
+
+                //buy the item
+                ((Merchant) merchant).Buy(turnManager.currentTurn().getInventory(), itemName);
+                sendMessage("You purchased " + itemName + ".");
+                return;
+            }
+            else{
+                sendMessage(m.group("merchant") + " is not a Merchant.");
+                return;
+            }
+
+        }
+        //sellAction
+        if ((m = sellPattern.matcher(message)).find()){
+            //check that the merchant is in the room
+            Characters.Character merchant = currentQuest.currentRoom().getCharater(m.group("merchant"));
+            String itemName = m.group("item");
+            if (merchant == null){
+                sendMessage("There is no " + m.group("merchant") + " here.");
+                return;
+            }
+            if (merchant instanceof Merchant){
+                //check if we have the item
+                if (turnManager.currentTurn().getInventory().peekItem(itemName) == null) {
+                    sendMessage("You do not have " + itemName + ".");
+                    return;
+                }
+                //check that the merchant has enough gold to purchase it
+                if (turnManager.currentTurn().getInventory().peekItem(itemName).getValue()
+                        > merchant.getInventory().getGold()){
+                    sendMessage("The merchant does not have enough gold to purchase " + itemName + ".");
+                    return;
+                }
+
+                //sell the item
+                ((Merchant) merchant).Sell(turnManager.currentTurn().getInventory(), turnManager.currentTurn().getInventory().peekItem(itemName));
+                sendMessage("You sold " + itemName + " to " + merchant.getName() + ".");
+                return;
+            }
+            else{
+                sendMessage(m.group("merchant") + " is not a Merchant.");
+                return;
+            }
+
+        }
+
+
+
         //status
         if ((m = statusPattern.matcher(message)).find()) {
             statusAction();

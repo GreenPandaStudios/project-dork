@@ -1,10 +1,11 @@
 package Characters;
 
+import Interfaces.IName;
 import Players.Inventory;
 import Quests.Room;
 import org.javacord.api.entity.user.User;
 
-public abstract class Character {
+public abstract class Character  implements IName {
     // player's current and maximum health, respectively
     protected double health;
     protected double maxHealth;
@@ -20,13 +21,7 @@ public abstract class Character {
         return room;
     }
 
-    public void setRoom(Room room) {
-        if (this.room != null) {
-            this.room.setPlayerCount(this.room.getPlayerCount() - 1);
-        }
-        this.room = room;
-        this.room.setPlayerCount(this.room.getPlayerCount() + 1);
-    }
+    public abstract void setRoom(Room room) ;
 
     //the Current room the player is in
     protected Room room;

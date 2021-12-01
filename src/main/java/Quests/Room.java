@@ -21,6 +21,17 @@ public class Room implements Interfaces.IDescriptable, Interfaces.IName {
     HashMap<String, Character> characters = new HashMap<String, Character>();
 
     /**
+     *
+     * @param characterName
+     * @return the character if it is in this room or null if not
+     */
+    public Character getCharater(String characterName){
+        if (characters.containsKey(characterName)){
+            return  characters.get(characterName);
+        }
+        return  null;
+    }
+    /**
      * Adds a character to the rooms hashmap of characters
      * @param character
      * @return succesful
