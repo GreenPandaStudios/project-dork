@@ -49,7 +49,7 @@ public class DefaultQuestLoader {
 
             MapLoader loader = new MapLoader();
             Map m = loader.LoadMap(text);
-            System.out.println(loader.getErrorCode());
+            //System.out.println(loader.getErrorCode()); //For testing purposes
             if (m == null) {
                 return createDefaultQuest(turnManager);
             } else {

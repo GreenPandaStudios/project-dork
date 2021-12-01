@@ -43,6 +43,8 @@ public class MessageParser {
     private final Pattern helpPattern = Pattern.compile("^(((I (need|want))?help)|(I'm)?confused|(What are the)?commands)$([?])?");
     private final Pattern givePattern = Pattern.compile("^(give)(\\s+)(?<item>.*)(?= to )( to )(?<player>.*)$");
     private final Pattern startPattern = Pattern.compile("^(start quest)(\\s+)(?<quest>.*)|(start quest)$");
+    private final Pattern attackPattern1 = Pattern.compile("^(attack)(\\s+)(?<target>.*)(?= with)( with )(?<weapon>.*)$");
+    private final Pattern attackPattern2 = Pattern.compile("^(attack)(\\s+)(?<target>.*)$");
     DiscordApi api;
     private Quest currentQuest = null;
     /////////////////////////////////////////
@@ -180,6 +182,14 @@ public class MessageParser {
         }
         if ((m = inventoryPattern.matcher(message)).find()) {
             displayInventory();
+            return;
+        }
+        if((m = attackPattern1.matcher(message)).find()){
+            attackAction(m.group("target"), m.group("weapon"));
+            return;
+        }
+        if((m = attackPattern2.matcher(message)).find()){
+            attackAction(m.group("target"), "default");
             return;
         }
 
@@ -818,5 +828,9 @@ public class MessageParser {
 
     void clearAllMessages() {
         validTextChannel.getMessages(Integer.MAX_VALUE).thenApplyAsync(MessageSet::deleteAll);
+    }
+
+    void attackAction(String target, String weapon){
+        sendMessage("The target is: " + target+ ", the weapon is: " + weapon);
     }
 }
