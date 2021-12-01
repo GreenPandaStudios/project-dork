@@ -75,12 +75,13 @@ public class MapLoader {
     //endregion
     //region Character commands
     private final Pattern createMerchant = Pattern.compile("^\\s*create\\s+merchant\\s+(?<merchant>.+)$");
+    private final String allCharacterFunction = "(character|merchant|enemy)";
 
-
-    private final Pattern addCharacterToRoom = Pattern.compile("^\\s*add\\s+character(?<character>.+)\\s+to\\s+(?<room>.+)$");
+    private final Pattern addCharacterToRoom = Pattern.compile("^\\s*add\\s+" + allCharacterFunction+
+            "\\s+(?<character>.+)\\s+to\\s+room\\s+(?<room>.+)$");
     //adds an item to the characters inventory
-    private final Pattern addItemToCharacter= Pattern.compile("^\\s*add\\s+item(?<item>.+)\\s+to\\s+character\\s+(?<character>.+)$");
-    private final Pattern setCharacterGold = Pattern.compile("^\\s*set\\s+character\\s+(?<character>.+)\\s+gold\\s+to\\s+(?<gold>(-*\\d+((.|,)\\d+))$)");
+    private final Pattern addItemToCharacter= Pattern.compile("^\\s*give\\s+item\\s+(?<item>.+)\\s+to\\s+" + allCharacterFunction +"\\s+(?<character>.+)$");
+    private final Pattern setCharacterGold = Pattern.compile("^\\s*set\\s+" + allCharacterFunction + "\\s+(?<character>.+)\\s+gold\\s+to\\s+(?<gold>(-*\\d+((.|,)\\d+))$)");
 
     //endregion
 
@@ -129,7 +130,71 @@ public class MapLoader {
                 return -1;
             }
             declaredCharacters.put(m.group("merchant"), new Characters.Merchant(m.group("merchant")));
+            return 0;
         }
+        //add a character to a room
+        if ((m = addCharacterToRoom.matcher(line)).find()){
+            if (declaredCharacters.containsKey(m.group("character"))){
+                if (declaredRooms.containsKey(m.group("room"))){
+                    declaredRooms.get(m.group("room")).addCharacter(
+                            declaredCharacters.get(m.group("character"))
+                    );
+                    return 0;
+                }
+                else{
+                    errorCode = "The room " + m.group("room") + " does not exist!";
+                    return -1;
+                }
+            }
+            else{
+                errorCode = "The character " + m.group("character") + " does not exist!";
+                return -1;
+            }
+        }
+
+        //add an item to a character's inventory
+        if ((m = addItemToCharacter.matcher(line)).find()){
+            if (declaredCharacters.containsKey(m.group("character"))) {
+                if (declaredItems.containsKey(m.group("item"))){
+
+                    //add the item to the characters inventory
+                    declaredCharacters.get(m.group("character")).getInventory()
+                            .addItem(declaredItems.get(m.group("item")));
+                    return 0;
+                }
+                else{
+                    errorCode = "The item " + m.group("item") + " does not exist!";
+                    return -1;
+                }
+            }
+             else{
+                    errorCode = "The character " + m.group("character") + " does not exist!";
+                    return -1;
+             }
+        }
+
+        //set a characters gold
+        if ((m = setCharacterGold.matcher(line)).find()){
+            if (declaredCharacters.containsKey(m.group("character"))) {
+                try{
+                    Double gold = Double.parseDouble(m.group("gold"));
+                    //add the item to the characters inventory
+                    declaredCharacters.get(m.group("character")).getInventory()
+                            .setGold(gold);
+                    return 0;
+                }
+                catch (Exception e){
+                    errorCode = "Gold value should be a double, " + m.group("gold") + "is not a double.";
+                    return -1;
+                }
+            }
+            else{
+                errorCode = "The character " + m.group("character") + " does not exist!";
+                return -1;
+            }
+        }
+
+
         //create a new room
         if ((m = createRoomPattern.matcher(line)).find()) {
             //create a new Room
@@ -278,7 +343,7 @@ public class MapLoader {
 
             //make sure both the item and room exist
             if (!declaredItems.containsKey(m.group("itemName"))) {
-                errorCode = "The item does not exist.";
+                errorCode = "The item does" + m.group("itemName") +"  not exist.";
                 return -1;
             }
             if (!declaredRooms.containsKey(m.group("roomName"))) {

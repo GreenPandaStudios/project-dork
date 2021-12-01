@@ -127,14 +127,9 @@ public class MessageParser {
             if (!m.group().equals("")) {
                 if (m.group(3).equals("inventory")) {
                     displayInventory();
-                }
-                else {
+                } else {
                     inspectAction(m.group(3));
                 }
-            } else {
-                //assume we are talking about the room
-                sendMessage("You take in your surroundings.\n" + currentQuest.currentRoom().Description());
-                sendImage(currentQuest.currentRoom());
             }
             return;
         }
@@ -467,7 +462,9 @@ public class MessageParser {
                 sendMessage(inspectWhat + " has the following items: \n");
                 sendMessage(currentQuest.currentRoom().getCharater(inspectWhat).getInventory().displayItems());
             } else {
-                sendMessage("You see no " + inspectWhat + " here.");
+                //assume we are talking about the room
+                sendMessage("You take in your surroundings.\n" + currentQuest.currentRoom().Description());
+                sendImage(currentQuest.currentRoom());
             }
         }
     }
@@ -581,36 +578,6 @@ public class MessageParser {
 
     private void moveAction(String direction) {
         Directions d;
-//replaced this code with the parseDirection method
-//        switch (direction.toLowerCase()) {
-//            case "north":
-//            case "n":
-//                d = Directions.North;
-//                break;
-//            case "south":
-//            case "s":
-//                d = Directions.South;
-//                break;
-//            case "east":
-//            case "e":
-//                d = Directions.East;
-//                break;
-//            case "up":
-//            case "u":
-//                d = Directions.Up;
-//                break;
-//            case "down":
-//            case "d":
-//                d = Directions.Down;
-//                break;
-//            case "west":
-//            case "w":
-//                d = Directions.West;
-//                break;
-//            default:
-//                sendMessage(direction + " is not a valid direction.");
-//                return;
-//        }
 
         d = parseDirection(direction);
         if (d == null) {

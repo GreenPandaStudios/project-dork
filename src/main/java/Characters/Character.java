@@ -21,7 +21,13 @@ public abstract class Character  implements IName {
         return room;
     }
 
-    public abstract void setRoom(Room room) ;
+    public void setRoom(Room room) {
+        if (this.room != null) {
+            this.room.removeCharacter(this);
+        }
+        this.room = room;
+        this.room.addCharacter(this);
+    }
 
     //the Current room the player is in
     protected Room room;

@@ -19,20 +19,6 @@ public class Player extends Character {
         setHealth(maxHealth);
     }
 
-    /**
-     * Sets the current Players's room to this room and updates the room with that info
-     * @param room
-     */
-    @Override
-    public void setRoom(Room room) {
-        if (this.room != null) {
-            this.room.setPlayerCount(this.room.getPlayerCount() - 1);
-            this.room.removeCharacter(this);
-        }
-        this.room = room;
-        this.room.setPlayerCount(this.room.getPlayerCount() + 1);
-        this.room.addCharacter(this);
-    }
 
     public User getDiscordUser() {
         return discordUser;

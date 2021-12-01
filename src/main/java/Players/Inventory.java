@@ -88,10 +88,10 @@ public class Inventory {
      * @return A string of the inventory's content
      */
     public String displayItems() {
-        if (items.isEmpty()) {
-            return "Your inventory is empty!\n";
+        if (items.isEmpty() && getGold() == 0) {
+            return "Inventory is empty!\n";
         }
-        String listOfItems = "Your inventory contains:\n";
+        String listOfItems = "Inventory contains:\n";
         for (Item i : items.values()) {
             listOfItems += "\t-" + i.getName() + "\n"
                     + "\t\t Weight: " + i.getWeight() + ", Value: " + i.getValue() + "\n";

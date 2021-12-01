@@ -1,5 +1,6 @@
 package Quests;
 
+import Characters.NPC;
 import Items.Item;
 
 import java.io.IOException;
@@ -38,10 +39,16 @@ public class Room implements Interfaces.IDescriptable, Interfaces.IName {
      */
     public boolean addCharacter(Character character){
 
-        if (characters.containsKey(character.getName())){
+        if (characters.containsKey(character.getName().toLowerCase())){
             return false;
         }
-        characters.put(character.getName(), character);
+        if (character instanceof NPC){
+            npcCount++;
+        }
+        else{
+            playerCount++;
+        }
+        characters.put(character.getName().toLowerCase(), character);
         return  true;
     }
 
@@ -51,10 +58,16 @@ public class Room implements Interfaces.IDescriptable, Interfaces.IName {
      * @return succesful
      */
     public boolean removeCharacter(Character character){
-        if (!characters.containsKey(character.getName())){
+        if (!characters.containsKey(character.getName().toLowerCase())){
             return false;
         }
-        characters.remove(character.getName());
+        if (characters.remove(character.getName().toLowerCase()) instanceof NPC){
+            npcCount--;
+        }
+        else{
+            playerCount--;
+        }
+
         return true;
     }
 
@@ -66,10 +79,6 @@ public class Room implements Interfaces.IDescriptable, Interfaces.IName {
 
     public int getNpcCount() {
         return npcCount;
-    }
-
-    public void setNpcCount(int npcCount) {
-        this.npcCount = npcCount;
     }
 
     private int npcCount = 0;
@@ -180,16 +189,31 @@ public class Room implements Interfaces.IDescriptable, Interfaces.IName {
             }
 
         }
+        if (!characters.isEmpty()) {
+            //see if we have anything other than players
+            boolean onlyPlayers = true;
+            for (Characters.Character c : characters.values()) {
+                if (c instanceof Characters.NPC) {
+                    onlyPlayers = false;
+                    break;
+                }
+            }
+
+            if (!onlyPlayers) {
+                descr += "\n\n\nYou also see:\n";
+                for (Characters.Character c : characters.values()) {
+                    if (c instanceof NPC)
+                        descr += "\t-" + c.getName() + "\n";
+                }
+            }
+
+        }
 
         return descr;
     }
 
     public int getPlayerCount() {
         return playerCount;
-    }
-
-    public void setPlayerCount(int playerCount) {
-        this.playerCount = Math.max(playerCount, 0);
     }
 
     @Override
