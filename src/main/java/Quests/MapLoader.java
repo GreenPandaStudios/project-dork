@@ -1,10 +1,7 @@
 package Quests;
 
 import Characters.*;
-import Items.HealthItem;
-import Items.Item;
-import Items.KeyItem;
-import Items.UsableItem;
+import Items.*;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -31,11 +28,18 @@ public class MapLoader {
     //endregion
     //region Item commands
 
-    private final String allItemFunction = "(item|healthItem|key)";
+    private final String allItemFunction = "(item|healthItem|key|trap)";
 
     private final Pattern createItemPattern = Pattern.compile("\\s*create\\s+item\\s+(?<itemName>.+)\\s*");
     private final Pattern createKeyPattern = Pattern.compile("\\s*create\\s+key\\s+(?<itemName>.+)\\s*");
     private final Pattern createHealthItemPattern = Pattern.compile("\\s*create\\s+healthItem\\s+(?<itemName>.+)\\s*");
+    private final Pattern createTrapPattern = Pattern.compile("\\s*create\\s+trap\\s+(?<itemName>.+)\\s*");
+
+    private final Pattern setDamage= Pattern.compile("\\s*^set\\s+trap\\s+(?<itemName>.+)\\s+damage\\s+to\\s+(?<damage>(-*\\d+((.|,)\\d+))?)");
+    private final Pattern setChance = Pattern.compile("\\s*^set\\s+trap\\s+(?<itemName>.+)\\s+chance\\s+to\\s+(?<chance>(-*\\d+((.|,)\\d+))?)");
+    private final Pattern setTrapMessage = Pattern.compile("\\s*set\\s+trap\\s+(?<itemName>.+)\\s+" +
+            "message\\s+to\\s+\"(?<itemDescription>.+)\"");
+    private final Pattern addTrapDisarm = Pattern.compile("\\s*^add\\s+item\\s+(?<itemName>.+)\\s+to\\s+disarm\\s+(?<trap>.+)\\s*$");
 
     private final Pattern setHealth = Pattern.compile("\\s*^set\\s+healthItem\\s+(?<itemName>.+)\\s+health\\s+to\\s+(?<health>(-*\\d+((.|,)\\d+))?)");
     private final Pattern setUses = Pattern.compile("\\s*^set\\s+(?<itemName>.+)\\s+uses\\s+to\\s+(?<uses>(\\d+))");
@@ -57,7 +61,7 @@ public class MapLoader {
 
     //region Doorway commands
     private final Pattern setDoorwayLocked = Pattern.compile("^\\s*set\\s+(?<doorway>.+)\\s+locked\\s+to\\s+(?<bool>true|false)$");
-
+    private final Pattern setDoorwayTrap= Pattern.compile("^\\s*set\\s+(?<doorway>.+)\\s+trap\\s+to\\s+(?<trap>.+)$");
 
     private final Pattern createDoorwayPattern = Pattern.compile("\\s*create\\s+doorway\\s+(?<doorwayName>.+)\\s*");
 
@@ -239,6 +243,16 @@ public class MapLoader {
             declaredItems.put(m.group("itemName"), new HealthItem(m.group("itemName")));
             return 0;
         }
+        if ((m = createTrapPattern.matcher(line)).find()) {
+            //create a new trap
+            if (declaredItems.containsKey(m.group("itemName"))) {
+
+                errorCode = "The trap has already been created";
+                return -1;
+            }
+            declaredItems.put(m.group("itemName"), new TrapItem(m.group("itemName")));
+            return 0;
+        }
         if ((m = setHealth.matcher(line)).find()) {
             //create a new item
             if (!declaredItems.containsKey(m.group("itemName"))) {
@@ -258,6 +272,72 @@ public class MapLoader {
 
             } else {
                 errorCode = "The item is not a health item.";
+                return -1;
+            }
+        }
+        if ((m = setDamage.matcher(line)).find()) {
+            //create a new item
+            if (!declaredItems.containsKey(m.group("itemName"))) {
+
+                errorCode = "The trap does not exist";
+                return -1;
+            }
+
+            if (declaredItems.get(m.group("itemName")) instanceof TrapItem) {
+                try {
+                    ((TrapItem) declaredItems.get(m.group("itemName"))).setDamage(Double.parseDouble(m.group("damage")));
+                    return 0;
+                } catch (Exception e) {
+                    errorCode = "Expected damage as double.";
+                    return -1;
+                }
+
+            } else {
+                errorCode = "The item is not a trap.";
+                return -1;
+            }
+        }
+        if ((m = setChance.matcher(line)).find()) {
+            //create a new item
+            if (!declaredItems.containsKey(m.group("itemName"))) {
+
+                errorCode = "The trap does not exist";
+                return -1;
+            }
+
+            if (declaredItems.get(m.group("itemName")) instanceof TrapItem) {
+                try {
+                    ((TrapItem) declaredItems.get(m.group("itemName"))).setChance(Double.parseDouble(m.group("chance")));
+                    return 0;
+                } catch (Exception e) {
+                    errorCode = "Expected chance as double out of 100.0.";
+                    return -1;
+                }
+
+            } else {
+                errorCode = "The item is not a trap.";
+                return -1;
+            }
+        }
+        if ((m = addTrapDisarm.matcher(line)).find()) {
+            //create a new item
+            if (!declaredItems.containsKey(m.group("trap"))) {
+
+                errorCode = "The trap does not exist";
+                return -1;
+            }
+
+            if (declaredItems.get(m.group("trap")) instanceof TrapItem) {
+                try {
+                    ((TrapItem) declaredItems.get(m.group("trap"))).addDisarmItemName(m.group("itemName"));
+                    return 0;
+                } catch (Exception e) {
+                    errorCode = e.getMessage();
+                    return -1;
+                }
+
+            } else {
+                errorCode = "The item is not a trap.";
                 return -1;
             }
         }
@@ -427,6 +507,23 @@ public class MapLoader {
             declaredItems.get(m.group("itemName")).setDescription(m.group("itemDescription"));
             return 0;
         }
+        if ((m = setTrapMessage.matcher(line)).find()) {
+            if (declaredItems.containsKey(m.group("itemName"))) {
+
+                if (declaredItems.get(m.group("itemName")) instanceof TrapItem){
+                    ((TrapItem) declaredItems.get(m.group("itemName"))).setTrapMessage(m.group("itemDescription"));
+                    return 0;
+                }
+                else{
+                    errorCode = "The item is not a trap.";
+                    return -1;
+                }
+
+            }
+            errorCode = "The item doesn't exist.";
+            return -1;
+
+        }
         if ((m = setRoomDescription.matcher(line)).find()) {
             if (!declaredRooms.containsKey(m.group("roomName"))) {
                 errorCode = "The room doesn't exist.";
@@ -484,6 +581,30 @@ public class MapLoader {
 
 
             return 0;
+
+        }
+        if ((m = setDoorwayTrap.matcher(line)).find()) {
+            if (!declaredDoorways.containsKey(m.group("doorway"))) {
+                errorCode = "Doorway \"" + m.group("doorway") + "\" does not exist.";
+                return -1;
+            }
+
+            if (declaredItems.containsKey(m.group("trap"))){
+                if (declaredItems.get("trap") instanceof TrapItem){
+                    declaredDoorways.get("doorway").setTrap(
+                            (TrapItem) declaredItems.get("trap")
+                    );
+                    return 0;
+                }
+                else{
+                    errorCode = m.group("trap") + " is not a trap.";
+                    return -1;
+                }
+            }
+
+
+            errorCode = "The trap does not exist.";
+            return -1;
 
         }
         if ((m = setlockedDescr.matcher(line)).find()) {

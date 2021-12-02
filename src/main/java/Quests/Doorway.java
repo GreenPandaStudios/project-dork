@@ -27,6 +27,10 @@ public class Doorway implements IDescriptable {
 
     ;
 
+    public boolean isLocked() {
+        return locked;
+    }
+
     TrapItem trap = null;
 
     private Room toRoom;
