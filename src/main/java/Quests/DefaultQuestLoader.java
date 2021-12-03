@@ -3,6 +3,7 @@ package Quests;
 import Items.HealthItem;
 import Items.Item;
 import Items.KeyItem;
+import Items.WeaponItem;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,10 +66,10 @@ public class DefaultQuestLoader {
 
 
     public Quest createDefaultQuest(TurnManager turnManager) {
-        Room startingRoom = new Room("Starting Room").addItem(new Item("Sword",
+        Room startingRoom = new Room("Starting Room").addItem(new WeaponItem("Sword",
                 "A heavy well-made sword",
                 10.5,
-                10, false))
+                10, false, 4))
                 .addItem(new HealthItem("Amulet",
                         "A scary looking amulet",
                         2,

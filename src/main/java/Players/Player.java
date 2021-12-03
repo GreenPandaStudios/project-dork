@@ -3,6 +3,7 @@ package Players;
 import Characters.Character;
 import Interfaces.IName;
 import Quests.Room;
+import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
 public class Player extends Character {
@@ -36,4 +37,6 @@ public class Player extends Character {
     public String getName() {
         return discordUser.getIdAsString();
     }
+
+    public String getUserName(Server server) { return discordUser.getDisplayName(server); }
 }

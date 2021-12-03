@@ -1,7 +1,5 @@
-import Items.HealthItem;
-import Items.Item;
-import Items.KeyItem;
-import Items.UsableItem;
+import Characters.Character;
+import Items.*;
 import Players.Player;
 import Quests.*;
 import org.javacord.api.DiscordApi;
@@ -874,6 +872,31 @@ public class MessageParser {
     }
 
     void attackAction(String target, String weapon){
-        sendMessage("The target is: " + target+ ", the weapon is: " + weapon);
+        Character targetChar = null;
+        for(Player p : turnManager.getPlayers()){
+            if(target.compareToIgnoreCase(p.getDiscordUser().getDisplayName(server))==0){
+                targetChar=currentQuest.currentRoom().getCharater(p.getDiscordUser().getIdAsString());
+            }
+        }
+        if(targetChar==null){
+            sendMessage(target+" is not in this room.");
+        }else if(targetChar.getHealth()<=0){
+            sendMessage(target+" is already incapacitated.");
+        } else {
+            WeaponItem weaponItem = null;
+            Item item = turnManager.currentTurn().getInventory().peekItem(weapon);
+            if(item instanceof WeaponItem) {
+                weaponItem = (WeaponItem) turnManager.currentTurn().getInventory().peekItem(weapon);
+            } else {
+                sendMessage(weapon+" is not a weapon.");
+                return;
+            }
+            if(weaponItem==null){
+                sendMessage("You do not have a(n) "+weapon);
+            } else {
+                sendMessage("You attack " +target+ " with your " + weapon + ", dealing " + weaponItem.attack(targetChar) + " damage.");
+            }
+
+        }
     }
 }
