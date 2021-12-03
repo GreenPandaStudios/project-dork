@@ -1,2 +1,2 @@
 # project-dork
- Disocrd bot dungeon master of turn-based quests
+ Discord bot dungeon master of turn-based quests
