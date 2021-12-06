@@ -59,5 +59,13 @@ public abstract class Character  implements IName {
         return maxHealth;
     }
 
+    //returns true if this character is killed by the damage, false if it is still alive
+    public boolean takeDamage(double damage) {
+        health -= damage;
+        if(health <= 0) {
+            return true;
+        }
+        return false;
+    }
 
 }

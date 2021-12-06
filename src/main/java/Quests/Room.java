@@ -1,5 +1,6 @@
 package Quests;
 
+import Characters.Enemy;
 import Characters.NPC;
 import Items.Item;
 
@@ -44,6 +45,9 @@ public class Room implements Interfaces.IDescriptable, Interfaces.IName {
         }
         if (character instanceof NPC){
             npcCount++;
+            if(character instanceof Enemy) {
+                enemyNames.add(character.getName());
+            }
         }
         else{
             playerCount++;
@@ -82,6 +86,8 @@ public class Room implements Interfaces.IDescriptable, Interfaces.IName {
     }
 
     private int npcCount = 0;
+
+    private ArrayList<String> enemyNames = new ArrayList<>();
 
     public Room() {
         setName("");
