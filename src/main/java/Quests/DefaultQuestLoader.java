@@ -1,5 +1,8 @@
 package Quests;
 
+import Characters.Character;
+import Characters.Enemy;
+import Characters.Merchant;
 import Items.HealthItem;
 import Items.Item;
 import Items.KeyItem;
@@ -50,7 +53,7 @@ public class DefaultQuestLoader {
 
             MapLoader loader = new MapLoader();
             Map m = loader.LoadMap(text);
-            //System.out.println(loader.getErrorCode()); //For testing purposes
+            System.out.println(loader.getErrorCode()); //For testing purposes
             if (m == null) {
                 return createDefaultQuest(turnManager);
             } else {
@@ -122,6 +125,9 @@ public class DefaultQuestLoader {
         startingRoom.setDoorway(d1, Directions.Down);
         endingRoom.setDoorway(backUp, Directions.North);
 
+
+        Character merchant = new Merchant("Test Merchant");
+        startingRoom.addCharacter(merchant);
 
         startingRoom.setDescription(/*"DEBUG NOTE FOR SEAN: Quest title is: " + quest + "\n" + */"You are standing in a dark stone chamber. There is a single torch on the wall beside you.");
 

@@ -1,5 +1,5 @@
 #dungeon
-create room startingRoom
+*create room startingRoom
 set room startingRoom description to {
 "You are standing in a dark stone chamber.
 There is a single torch on the wall beside you."
@@ -124,3 +124,6 @@ set hallway direction north to startingRoom via hallDoorway2
 set startingRoom direction south to hallway via d
 set startingRoom direction down to hallway via d1
 set hallway direction north to startingRoom via backUp
+
+create merchant Test Merchant
+add character Test Merchant to room startingRoom

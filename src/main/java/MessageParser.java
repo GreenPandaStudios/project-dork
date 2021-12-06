@@ -880,6 +880,9 @@ public class MessageParser {
             }
         }
         if(targetChar==null){
+            targetChar = turnManager.currentTurn().getRoom().getCharater(target);
+        }
+        if(targetChar==null){
             sendMessage(target+" is not in this room.");
         }else if(targetChar.getHealth()<=0){
             sendMessage(target+" is already incapacitated.");
