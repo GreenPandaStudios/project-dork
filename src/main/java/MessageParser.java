@@ -768,6 +768,7 @@ public class MessageParser {
 
 
         if (/*messageInput.equalsIgnoreCase("start quest")*/ (ma = startPattern.matcher(messageInput)).find()) {
+            sendMessage("Loading quest!");
 
             //check if anyone has joined to play
             if (turnManager.numberOfPlayers() == 0) {
