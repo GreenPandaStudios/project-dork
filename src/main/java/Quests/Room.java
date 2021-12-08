@@ -1,5 +1,6 @@
 package Quests;
 
+import Characters.Character;
 import Characters.Enemy;
 import Characters.NPC;
 import Items.Item;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Scanner;
-import Characters.Character;
+
 public class Room implements Interfaces.IDescriptable, Interfaces.IName {
 
 
@@ -21,80 +22,76 @@ public class Room implements Interfaces.IDescriptable, Interfaces.IName {
      */
     HashMap<String, Item> items = new HashMap<String, Item>();
     HashMap<String, Character> characters = new HashMap<String, Character>();
-
-    /**
-     *
-     * @param characterName
-     * @return the character if it is in this room or null if not
-     */
-    public Character getCharater(String characterName){
-        if (characters.containsKey(characterName)){
-            return  characters.get(characterName);
-        }
-        return  null;
-    }
-    /**
-     * Adds a character to the rooms hashmap of characters
-     * @param character
-     * @return succesful
-     */
-    public boolean addCharacter(Character character){
-
-        if (characters.containsKey(character.getName().toLowerCase())){
-            return false;
-        }
-        if (character instanceof NPC){
-            npcCount++;
-            if(character instanceof Enemy) {
-                enemyNames.add(character.getName());
-            }
-        }
-        else{
-            playerCount++;
-        }
-        characters.put(character.getName().toLowerCase(), character);
-        return  true;
-    }
-
-    /**
-     * Removes a character from the rooms hashmap of characters
-     * @param character
-     * @return succesful
-     */
-    public boolean removeCharacter(Character character){
-        if (!characters.containsKey(character.getName().toLowerCase())){
-            return false;
-        }
-        if (characters.remove(character.getName().toLowerCase()) instanceof NPC){
-            npcCount--;
-        }
-        else{
-            playerCount--;
-        }
-
-        return true;
-    }
-
     private Doorway[] doorways = {null, null, null, null, null, null};
     private String imgUrl = null;
     private String description = "";
     private String name = "";
     private int playerCount = 0;
-
-    public int getNpcCount() {
-        return npcCount;
-    }
-
     private int npcCount = 0;
-
     private ArrayList<String> enemyNames = new ArrayList<>();
-
     public Room() {
         setName("");
     }
 
     public Room(String name) {
         setName(name);
+    }
+
+    /**
+     * @param characterName
+     * @return the character if it is in this room or null if not
+     */
+    public Character getCharater(String characterName) {
+        if (characters.containsKey(characterName)) {
+            return characters.get(characterName);
+        }
+        return null;
+    }
+
+    /**
+     * Adds a character to the rooms hashmap of characters
+     *
+     * @param character
+     * @return succesful
+     */
+    public boolean addCharacter(Character character) {
+
+        if (characters.containsKey(character.getName().toLowerCase())) {
+            return false;
+        }
+        if (character instanceof NPC) {
+            npcCount++;
+            if (character instanceof Enemy) {
+                enemyNames.add(character.getName());
+            }
+        } else {
+            playerCount++;
+        }
+        characters.put(character.getName().toLowerCase(), character);
+        return true;
+    }
+
+    /**
+     * Removes a character from the rooms hashmap of characters
+     *
+     * @param character
+     * @return succesful
+     */
+    public boolean removeCharacter(Character character) {
+        if (!characters.containsKey(character.getName().toLowerCase())) {
+            return false;
+        }
+        if (characters.remove(character.getName().toLowerCase()) instanceof NPC) {
+            npcCount--;
+        } else {
+            playerCount--;
+        }
+
+        return true;
+    }
+
+    public int getNpcCount() {
+        return npcCount;
     }
 
     /**

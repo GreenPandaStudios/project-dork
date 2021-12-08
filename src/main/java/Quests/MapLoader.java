@@ -1,6 +1,5 @@
 package Quests;
 
-import Characters.*;
 import Items.*;
 
 import java.util.ArrayList;

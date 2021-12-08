@@ -1,27 +1,24 @@
 package Quests;
 
 import Characters.Character;
-import Characters.Enemy;
 import Characters.Merchant;
 import Items.HealthItem;
 import Items.Item;
 import Items.KeyItem;
 import Items.WeaponItem;
-import Players.Inventory;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class DefaultQuestLoader {
 
-    public Quest loadDefaultQuest(String questToLoad, TurnManager turnManager){
+    public Quest loadDefaultQuest(String questToLoad, TurnManager turnManager) {
 
         String fileName = "src/main/resources/defaultQuests/";
 
-        if(questToLoad == null){
+        if (questToLoad == null) {
             fileName += "DefaultQuest1";
         } else {
             switch (questToLoad) {
@@ -45,7 +42,7 @@ public class DefaultQuestLoader {
         }
 
         ArrayList<String> text = new ArrayList<>();
-        try{
+        try {
             File file = new File(fileName);
             Scanner scan = new Scanner(file);
             while (scan.hasNext()) {
@@ -68,12 +65,11 @@ public class DefaultQuestLoader {
     }
 
 
-
     public Quest createDefaultQuest(TurnManager turnManager) {
         Room startingRoom = new Room("Starting Room").addItem(new WeaponItem("Sword",
-                "A heavy well-made sword",
-                10.5,
-                10, false, 4))
+                        "A heavy well-made sword",
+                        10.5,
+                        10, false, 4))
                 .addItem(new HealthItem("Amulet",
                         "A scary looking amulet",
                         2,

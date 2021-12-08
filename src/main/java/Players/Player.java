@@ -1,12 +1,13 @@
 package Players;
 
 import Characters.Character;
-import Interfaces.IName;
-import Quests.Room;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
 public class Player extends Character {
+
+    //The Discord user associated with this player
+    private User discordUser;
 
     public Player(User user) {
         setDiscordUser(user);
@@ -14,12 +15,12 @@ public class Player extends Character {
         setHealth(maxHealth);
     }
 
+
     // testing constructor that doesn't require a discord user
     public Player() {
         this.maxHealth = 20;
         setHealth(maxHealth);
     }
-
 
     public User getDiscordUser() {
         return discordUser;
@@ -29,14 +30,12 @@ public class Player extends Character {
         this.discordUser = discordUser;
     }
 
-    //The Discord user associated with this player
-    private User discordUser;
-
-
     @Override
     public String getName() {
         return discordUser.getIdAsString();
     }
 
-    public String getUserName(Server server) { return discordUser.getDisplayName(server); }
+    public String getUserName(Server server) {
+        return discordUser.getDisplayName(server);
+    }
 }

@@ -2,9 +2,7 @@ package Characters;
 
 import Items.Item;
 import Players.Player;
-import Quests.Room;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 public class Enemy extends NPC {
@@ -34,7 +32,7 @@ public class Enemy extends NPC {
 
     //attacks given player, returns true if attack hits successfully, false if not
     public boolean attack(Player player) {
-        if(rng.nextInt(100) < accuracy) {
+        if (rng.nextInt(100) < accuracy) {
             player.setHealth(player.getHealth() - damage);
             return true;
         }
@@ -61,24 +59,14 @@ public class Enemy extends NPC {
         return description;
     }
 
-    //returns a description of the enemy attacking and hitting
-    public String getHitDescription() {
-        return hitDescription;
-    }
-
-    //returns a description of the enemy attacking and missing
-    public String getMissDescription() {
-        return missDescription;
-    }
-
-    //returns a description of the enemy dying
-    public String getDeathDescription() {
-        return deathDescription;
-    }
-
     //sets the description of this enemy
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    //returns a description of the enemy attacking and hitting
+    public String getHitDescription() {
+        return hitDescription;
     }
 
     //sets the description of this enemy attacking and hitting
@@ -86,9 +74,19 @@ public class Enemy extends NPC {
         this.hitDescription = hitDescription;
     }
 
+    //returns a description of the enemy attacking and missing
+    public String getMissDescription() {
+        return missDescription;
+    }
+
     //sets the description of this enemy attacking and missing
     public void setMissDescription(String missDescription) {
         this.missDescription = missDescription;
+    }
+
+    //returns a description of the enemy dying
+    public String getDeathDescription() {
+        return deathDescription;
     }
 
     //sets the description of this enemy dying

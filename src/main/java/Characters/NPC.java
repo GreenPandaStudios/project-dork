@@ -1,7 +1,5 @@
 package Characters;
 
-import Quests.Room;
-
 public class NPC extends Character {
 
 
@@ -9,6 +7,7 @@ public class NPC extends Character {
 
     /**
      * Gets the UNIQUE name of the NPC
+     *
      * @return
      */
     @Override
