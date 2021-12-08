@@ -7,6 +7,7 @@ import Items.HealthItem;
 import Items.Item;
 import Items.KeyItem;
 import Items.WeaponItem;
+import Players.Inventory;
 
 import java.io.File;
 import java.io.IOException;
@@ -125,8 +126,9 @@ public class DefaultQuestLoader {
         startingRoom.setDoorway(d1, Directions.Down);
         endingRoom.setDoorway(backUp, Directions.North);
 
-
-        Character merchant = new Merchant("Test Merchant");
+        Item[] items = new Item[1];
+        items[0] = new Item("Merchant Apple", "A curious golden apple.", 50, 1000, false);
+        Character merchant = new Merchant("Test Merchant", 200, items);
         startingRoom.addCharacter(merchant);
 
         startingRoom.setDescription(/*"DEBUG NOTE FOR SEAN: Quest title is: " + quest + "\n" + */"You are standing in a dark stone chamber. There is a single torch on the wall beside you.");

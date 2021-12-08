@@ -20,7 +20,7 @@ public class WeaponItem extends EquippableItem {
 
     public double attack(Character character) {
         double dealt = Math.min(damage, character.getHealth());
-        character.setHealth(character.getHealth()-dealt);
+        character.takeDamage(dealt);
         return dealt;
     }
 }

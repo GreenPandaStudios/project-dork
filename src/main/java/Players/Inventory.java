@@ -39,6 +39,9 @@ public class Inventory {
 
     private double currentWeight;
     private HashMap<String, Item> items = new HashMap<>();
+    public HashMap<String, Item> getItems(){
+        return items;
+    }
 
     /**
      * Try to add the item to the inventory
