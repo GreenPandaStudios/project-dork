@@ -47,6 +47,7 @@ public class MessageParser {
     private final Pattern sellPattern = Pattern.compile("^sell(\\s+)(?<item>.+)(\\s+)to(\\s+)(?<merchant>.+)");
     private final Pattern buyPattern = Pattern.compile("^buy(\\s+)(?<item>.+)(\\s+)from(\\s+)(?<merchant>.+)");
 
+
     DiscordApi api;
     private Quest currentQuest = null;
     /////////////////////////////////////////
