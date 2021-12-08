@@ -1,5 +1,6 @@
 import Characters.Character;
 import Items.*;
+import Players.Inventory;
 import Players.Player;
 import Quests.*;
 import org.javacord.api.DiscordApi;
@@ -42,7 +43,7 @@ public class MessageParser {
     private final Pattern givePattern = Pattern.compile("^(give)(\\s+)(?<item>.*)(?= to )( to )(?<player>.*)$");
     private final Pattern startPattern = Pattern.compile("^(start quest)(\\s+)(?<quest>.*)|(start quest)$");
     private final Pattern attackPattern1 = Pattern.compile("^(attack)(\\s+)(?<target>.*)(?= with)( with )(?<weapon>.*)$");
-    private final Pattern attackPattern2 = Pattern.compile("^(attack)(\\s+)(?<target>.*)$");
+    //private final Pattern attackPattern2 = Pattern.compile("^(attack)(\\s+)(?<target>.*)$");
     private final Pattern sellPattern = Pattern.compile("^sell(\\s+)(?<item>.+)(\\s+)to(\\s+)(?<merchant>.+)");
     private final Pattern buyPattern = Pattern.compile("^buy(\\s+)(?<item>.+)(\\s+)from(\\s+)(?<merchant>.+)");
 
@@ -254,10 +255,10 @@ public class MessageParser {
             attackAction(m.group("target"), m.group("weapon"));
             return;
         }
-        if((m = attackPattern2.matcher(message)).find()){
+        /*if((m = attackPattern2.matcher(message)).find()){
             attackAction(m.group("target"), "default");
             return;
-        }
+        }*/
 
         sendMessage("I don't understand " + "\"" + message + "\"");
     }
@@ -714,7 +715,7 @@ public class MessageParser {
      * It will increment the turn index and tell all user's who's turn it is now
      */
     private void endTurn() {
-        clearAllMessages();
+        //clearAllMessages();
         if (turnManager.canAct(turnManager.currentTurn())) {
             sendMessage(turnManager.currentTurn().getDiscordUser().getDisplayName(server) + " ends their turn.");
         } else {
@@ -823,6 +824,7 @@ public class MessageParser {
                 sendMessage("Starting a new Quest with the following players:\n" + getPartyMembers());
                 currentQuest.startQuest();
                 sendMessage(currentQuest.getMap().getStartingRoom().Description());
+                sendMessage("It is now " + turnManager.currentTurn().getDiscordUser().getDisplayName(server) + "'s turn.");
             }
 
         } else if (messageInput.equalsIgnoreCase("join")) {
@@ -899,6 +901,14 @@ public class MessageParser {
                 sendMessage("You do not have a(n) "+weapon);
             } else {
                 sendMessage("You attack " +target+ " with your " + weapon + ", dealing " + weaponItem.attack(targetChar) + " damage.");
+                if(targetChar.getHealth()==0){
+                    sendMessage(target+" is now incapacitated!");
+                    Inventory i = targetChar.getInventory();
+                    for(Item it : i.getItems().values()){
+                        currentQuest.currentRoom().addItem(it);
+                        i.removeItem(it.getName());
+                    }
+                }
             }
 
         }
