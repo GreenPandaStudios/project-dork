@@ -3,10 +3,8 @@ package Quests;
 import Characters.Character;
 import Characters.Enemy;
 import Characters.Merchant;
-import Items.HealthItem;
-import Items.Item;
-import Items.KeyItem;
-import Items.WeaponItem;
+import Items.*;
+import Players.Inventory;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +14,11 @@ import java.util.Scanner;
 public class DefaultQuestLoader {
 
     public Quest loadDefaultQuest(String questToLoad, TurnManager turnManager) {
+        //TODO: Remove
+        //TEMPORARY
+        return creatFinalDemoQuest(turnManager);
+
+
 
         String fileName = "src/main/resources/defaultQuests/";
 
@@ -81,6 +84,7 @@ public class DefaultQuestLoader {
                         3,
                         15, false,
                         1, 5));
+
         Room endingRoom = new Room(
                 "Ending Room"
         );
@@ -139,4 +143,120 @@ public class DefaultQuestLoader {
 
         return new Quest(m, turnManager);
     }
+    public Quest creatFinalDemoQuest(TurnManager turnManager){
+        Room startingRoom = new Room("Starting Room");
+        Room armory = new Room("Armory");
+        startingRoom.setDescription("A cold cellar with a strange man standing inside.");
+
+
+        WeaponItem sword = new WeaponItem("Sword",
+                "A large heavy sword, perfectly balanced at the hilt.",
+                10.5,
+                10, false, 50);
+        WeaponItem dagger = new WeaponItem("Dagger",
+                "A small but dangerous looking jagged dagger.",
+                2.5,
+                10, false, 50);
+
+
+
+        armory.setDescription("It appears to be a long-abandoned armory. There are piles of rusted armor and weapons." +
+                " While most of the items are too rotted to be much use, a few look as though" +
+                "they could still be useful");
+
+        HealthItem potion = new HealthItem("Potion",
+                "A small inscription reads:\n'Restores 5 health'",
+                3,
+                15, false,
+                1, 5);
+
+
+
+        KeyItem skeletonKey = new KeyItem("skeleton key");
+        skeletonKey.setDescription("An old key made of darkened bone.");
+        skeletonKey.setValue(500.0);
+        skeletonKey.setWeight(1.0);
+
+        Merchant merchant = new Merchant("old traveller");
+        merchant.setHealth(100.0);
+        merchant.getInventory().setMaxWeight(500000.0);
+        merchant.getInventory().addItem(skeletonKey);
+        merchant.getInventory().setGold(500.0);
+        merchant.getInventory().addItem(potion);
+        merchant.setRoom(startingRoom);
+
+        Item goldenApple = new Item("Golden Apple");
+        goldenApple.setValue(1000.0);
+        goldenApple.setWeight(1.0);
+
+
+        armory.addItem(dagger).addItem(sword).addItem(goldenApple);
+
+
+
+        Room endingRoom = new Room(
+                "Ending Room"
+        );
+
+        Doorway toArmory = new Doorway();
+        TrapItem poisonDart = new TrapItem("darts");
+        poisonDart.setTrapMessage("The trap appears broken");
+        poisonDart.setChance(100.0);
+        poisonDart.setUsesLeft(1);
+        poisonDart.setDescription("Darts quickly shoot from the wall.");
+        poisonDart.setDamage(1.0);
+
+        toArmory.setTrap(poisonDart);
+        toArmory.setUnlockedDesc("an old wooden door frame. The door has long been rotted away.");
+        toArmory.setLocked(false);
+        toArmory.setToRoom(armory);
+        startingRoom.setDoorway(toArmory, Directions.North);
+
+
+        Doorway fromArmory = new Doorway();
+        toArmory.setUnlockedDesc("an old wooden door frame. The door has long been rotted away.");
+        toArmory.setLocked(false);
+        toArmory.setToRoom(startingRoom);
+        armory.setDoorway(fromArmory, Directions.South);
+
+
+        Room hallway = new Room("Hallway");
+        hallway.setDescription("A long expanding hallway covered in paintings");
+        Item paintings = new Item();
+        paintings.setName("paintings");
+        hallway.addItem(paintings);
+        paintings.setScenery(true);
+        paintings.setDescription("They are paintings of people. Their eyes seem to follow you as you move.");
+
+
+
+        Doorway hallDoorway1 = new Doorway();
+        hallDoorway1.setUnlockedDesc("it is open.");
+        hallDoorway1.setToRoom(endingRoom);
+
+        Doorway hallDoorway2 = new Doorway();
+        hallDoorway2.setUnlockedDesc("the heavy door is leaning open.");
+        hallDoorway2.setLockedDesc("an old and heavy-looking door is locked shut. You try opening it, but it will not move.");
+        hallDoorway2.setLocked(true);
+        hallDoorway2.setKeyName("skeleton key");
+
+        startingRoom.setDoorway(hallDoorway2, Directions.East);
+
+        hallway.setDoorway(hallDoorway1, Directions.East);
+        ////////NICK, ADD ENEMIES HERE
+        Enemy enemy1 = new Enemy("enemy", 10.0, 1.0, 1.0);
+
+
+
+        enemy1.setRoom(hallway);
+        //////////////////
+
+        Map m = new Map(startingRoom, endingRoom);
+        m.AddTag("dungeon");
+        m.AddTag("cellar");
+        m.locateImages();
+
+        return new Quest(m, turnManager);
+    }
+
 }
