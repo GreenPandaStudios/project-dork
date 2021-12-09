@@ -226,22 +226,21 @@ public class DefaultQuestLoader {
         paintings.setScenery(true);
         paintings.setDescription("They are paintings of people. Their eyes seem to follow you as you move.");
 
+
+
         Doorway hallDoorway1 = new Doorway();
         hallDoorway1.setUnlockedDesc("it is open.");
         hallDoorway1.setToRoom(endingRoom);
 
         Doorway hallDoorway2 = new Doorway();
-        hallDoorway2.setToRoom(startingRoom);
         hallDoorway2.setUnlockedDesc("the heavy door is leaning open.");
         hallDoorway2.setLockedDesc("an old and heavy-looking door is locked shut. You try opening it, but it will not move.");
         hallDoorway2.setLocked(true);
         hallDoorway2.setKeyName("skeleton key");
 
+        startingRoom.setDoorway(hallDoorway2, Directions.East);
 
-        hallway.setDoorway(hallDoorway1, Directions.South);
-        hallway.setDoorway(hallDoorway2, Directions.North);
-
-
+        hallway.setDoorway(hallDoorway1, Directions.East);
         ////////NICK, ADD ENEMIES HERE
         Enemy enemy1 = new Enemy("enemy", 10.0, 1.0, 1.0);
 
@@ -252,6 +251,7 @@ public class DefaultQuestLoader {
 
         Map m = new Map(startingRoom, endingRoom);
         m.AddTag("dungeon");
+        m.AddTag("cellar");
         m.locateImages();
 
         return new Quest(m, turnManager);
