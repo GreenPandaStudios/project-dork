@@ -11,6 +11,7 @@ public class TurnManager {
     ArrayList<Player> players = new ArrayList<>();
     private int turnIndex = 0;
 
+
     public ArrayList<Player> getPlayers() {
         return players;
     }

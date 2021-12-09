@@ -28,7 +28,7 @@ public class Room implements Interfaces.IDescriptable, Interfaces.IName {
     private String name = "";
     private int playerCount = 0;
     private int npcCount = 0;
-    private ArrayList<String> enemyNames = new ArrayList<>();
+    public ArrayList<String> enemyNames = new ArrayList<>();
     public Room() {
         setName("");
     }
@@ -41,7 +41,7 @@ public class Room implements Interfaces.IDescriptable, Interfaces.IName {
      * @param characterName
      * @return the character if it is in this room or null if not
      */
-    public Character getCharater(String characterName) {
+    public Character getCharacter(String characterName) {
         if (characters.containsKey(characterName)) {
             return characters.get(characterName);
         }
@@ -52,7 +52,7 @@ public class Room implements Interfaces.IDescriptable, Interfaces.IName {
      * Adds a character to the rooms hashmap of characters
      *
      * @param character
-     * @return succesful
+     * @return successful
      */
     public boolean addCharacter(Character character) {
 
@@ -62,7 +62,7 @@ public class Room implements Interfaces.IDescriptable, Interfaces.IName {
         if (character instanceof NPC) {
             npcCount++;
             if (character instanceof Enemy) {
-                enemyNames.add(character.getName());
+                enemyNames.add(character.getName().toLowerCase());
             }
         } else {
             playerCount++;

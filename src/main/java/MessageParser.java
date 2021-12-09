@@ -1,4 +1,5 @@
 import Characters.Character;
+import Characters.Enemy;
 import Characters.Merchant;
 import Items.*;
 import Players.Inventory;
@@ -43,8 +44,7 @@ public class MessageParser {
     private final Pattern helpPattern = Pattern.compile("^(((I (need|want))?help)|(I'm)?confused|(What are the)?commands)$([?])?");
     private final Pattern givePattern = Pattern.compile("^(give)(\\s+)(?<item>.*)(?= to )( to )(?<player>.*)$");
     private final Pattern startPattern = Pattern.compile("^(start quest)(\\s+)(?<quest>.*)|(start quest)$");
-    private final Pattern attackPattern1 = Pattern.compile("^(attack)(\\s+)(?<target>.*)(?= with)( with )(?<weapon>.*)$");
-    //private final Pattern attackPattern2 = Pattern.compile("^(attack)(\\s+)(?<target>.*)$");
+    private final Pattern attackPatern = Pattern.compile("^(attack)(\\s+)(?<target>.*)(?= with)( with )(?<weapon>.*)$");
     private final Pattern sellPattern = Pattern.compile("^sell(\\s+)(?<item>.+)(\\s+)to(\\s+)(?<merchant>.+)");
     private final Pattern buyPattern = Pattern.compile("^buy(\\s+)(?<item>.+)(\\s+)from(\\s+)(?<merchant>.+)");
 
@@ -175,7 +175,7 @@ public class MessageParser {
         if ((m = buyPattern.matcher(message)).find()) {
 
             //check that the merchant is in the room
-            Characters.Character merchant = currentQuest.currentRoom().getCharater(m.group("merchant"));
+            Characters.Character merchant = currentQuest.currentRoom().getCharacter(m.group("merchant"));
             String itemName = m.group("item");
             if (merchant == null) {
                 sendMessage("There is no " + m.group("merchant") + " here.");
@@ -206,7 +206,7 @@ public class MessageParser {
         //sellAction
         if ((m = sellPattern.matcher(message)).find()) {
             //check that the merchant is in the room
-            Characters.Character merchant = currentQuest.currentRoom().getCharater(m.group("merchant"));
+            Characters.Character merchant = currentQuest.currentRoom().getCharacter(m.group("merchant"));
             String itemName = m.group("item");
             if (merchant == null) {
                 sendMessage("There is no " + m.group("merchant") + " here.");
@@ -250,15 +250,10 @@ public class MessageParser {
             displayInventory();
             return;
         }
-        if ((m = attackPattern1.matcher(message)).find()) {
+        if ((m = attackPatern.matcher(message)).find()) {
             attackAction(m.group("target"), m.group("weapon"));
             return;
         }
-        /*if((m = attackPattern2.matcher(message)).find()){
-            attackAction(m.group("target"), "default");
-            return;
-        }*/
-
         sendMessage("I don't understand " + "\"" + message + "\"");
     }
 
@@ -456,9 +451,9 @@ public class MessageParser {
                 Item i = turnManager.currentTurn().getInventory().peekItem(inspectWhat);
 
                 sendMessage("You take a closer look at your " + i.getName() + ".\n" + i.Description() + ".");
-            } else if (currentQuest.currentRoom().getCharater(inspectWhat) != null) {
+            } else if (currentQuest.currentRoom().getCharacter(inspectWhat) != null) {
                 sendMessage(inspectWhat + " has the following items: \n");
-                sendMessage(currentQuest.currentRoom().getCharater(inspectWhat).getInventory().displayItems());
+                sendMessage(currentQuest.currentRoom().getCharacter(inspectWhat).getInventory().displayItems());
             } else {
                 //assume we are talking about the room
                 sendMessage("You take in your surroundings.\n" + currentQuest.currentRoom().Description());
@@ -737,6 +732,7 @@ public class MessageParser {
         AudioManager.playNewSound(AudioSourceType.LOCAL_SOUND_EFFECT, AudioManager.getLocalPath("nextTurn.ogg"));
         sendMessage(TextConstants.inspectRoomOnTurnStart + currentQuest.currentRoom().Description());
         sendMessage("It is now " + turnManager.currentTurn().getDiscordUser().getDisplayName(server) + "'s turn.");
+        newTurnEnemyAttack();
     }
 
     /**
@@ -824,6 +820,7 @@ public class MessageParser {
                 currentQuest.startQuest();
                 sendMessage(currentQuest.getMap().getStartingRoom().Description());
                 sendMessage("It is now " + turnManager.currentTurn().getDiscordUser().getDisplayName(server) + "'s turn.");
+                newTurnEnemyAttack();
             }
 
         } else if (messageInput.equalsIgnoreCase("join")) {
@@ -873,21 +870,62 @@ public class MessageParser {
         validTextChannel.getMessages(Integer.MAX_VALUE).thenApplyAsync(MessageSet::deleteAll);
     }
 
+    private void newTurnEnemyAttack() {
+        // Check to see if current user has a weapon they can attack with
+        if (turnManager.currentTurn().getInventory().hasWeapon()) {
+            if (!currentQuest.currentRoom().enemyNames.isEmpty()) {
+                sendMessage("\n\nEnemies are now attacking!\n");
+            }
+            currentQuest.currentRoom().enemyNames.forEach((enemyName) -> {
+                Enemy enemy = (Enemy) turnManager.currentTurn().getRoom().getCharacter(enemyName);
+                Player currentPlayer = turnManager.currentTurn();
+                if (enemy == null) {
+                    System.out.println("enemy null");
+                }
+                if (currentPlayer == null) {
+                    System.out.println("current player null");
+                }
+                assert enemy != null;
+                boolean didAttack = enemy.attack(currentPlayer);
+                if (didAttack) {
+                    sendMessage("\n" + enemy.getName() + " attacked " + turnManager.currentTurn().getUserName(server) + " for " + enemy.getDamage() + " damage.\n");
+                    assert currentPlayer != null;
+                    if (currentPlayer.getHealth() == 0) {
+                        sendMessage(turnManager.currentTurn().getUserName(server) + " is now incapacitated!");
+                        Inventory inv = currentPlayer.getInventory();
+                        for (Item it : inv.getItems().values()) {
+                            currentQuest.currentRoom().addItem(it);
+                            inv.removeItem(it.getName());
+                        }
+                    }
+                } else {
+                    sendMessage("\n" + enemy.getName() + " failed to attack.\n");
+                }
+
+            });
+        }
+
+    }
+
     void attackAction(String target, String weapon) {
         Character targetChar = null;
+
         for (Player p : turnManager.getPlayers()) {
             if (target.compareToIgnoreCase(p.getDiscordUser().getDisplayName(server)) == 0) {
-                targetChar = currentQuest.currentRoom().getCharater(p.getDiscordUser().getIdAsString());
+                targetChar = currentQuest.currentRoom().getCharacter(p.getDiscordUser().getIdAsString());
             }
         }
         if (targetChar == null) {
-            targetChar = turnManager.currentTurn().getRoom().getCharater(target);
+            targetChar = turnManager.currentTurn().getRoom().getCharacter(target);
         }
         if (targetChar == null) {
             sendMessage(target + " is not in this room.");
         } else if (targetChar.getHealth() <= 0) {
-            sendMessage(target + " is already incapacitated.");
-        } else {
+            sendMessage(target + " is already incapacitated.");}
+            else if (targetChar instanceof Merchant) {
+            sendMessage(target + " is a friendly merchant!");
+            }
+         else {
             WeaponItem weaponItem = null;
             Item item = turnManager.currentTurn().getInventory().peekItem(weapon);
             if (item instanceof WeaponItem) {
@@ -909,7 +947,6 @@ public class MessageParser {
                     }
                 }
             }
-
         }
     }
 }

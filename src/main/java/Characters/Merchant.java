@@ -26,7 +26,7 @@ public class Merchant extends NPC {
      *
      * @param playerInventory
      * @param item
-     * @return if the sale was succesful
+     * @return if the sale was successful
      */
     public boolean Sell(Inventory playerInventory, Item item) {
 

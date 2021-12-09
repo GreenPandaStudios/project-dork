@@ -1,6 +1,7 @@
 package Quests;
 
 import Characters.Character;
+import Characters.Enemy;
 import Characters.Merchant;
 import Items.HealthItem;
 import Items.Item;
@@ -104,7 +105,6 @@ public class DefaultQuestLoader {
         hallway.setDoorway(hallDoorway1, Directions.South);
         hallway.setDoorway(hallDoorway2, Directions.North);
 
-
         startingRoom.addItem(new Item("torch", "A flickering torch cemented firmly into the wall.", 0, 0, true));
 
         hallway.addItem(new Item("Golden Apple", "A curious golden apple.", 50, 1000, false));
@@ -126,6 +126,9 @@ public class DefaultQuestLoader {
         items[0] = new Item("Merchant Apple", "A curious golden apple.", 50, 1000, false);
         Character merchant = new Merchant("Test Merchant", 200, items);
         startingRoom.addCharacter(merchant);
+
+        Character enemy = new Enemy("Test Enemy", 100, 10, 90);
+        startingRoom.addCharacter(enemy);
 
         startingRoom.setDescription(/*"DEBUG NOTE FOR SEAN: Quest title is: " + quest + "\n" + */"You are standing in a dark stone chamber. There is a single torch on the wall beside you.");
 

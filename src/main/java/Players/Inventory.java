@@ -1,12 +1,22 @@
 package Players;
 
 import Items.Item;
+import Items.WeaponItem;
 import org.javacord.api.entity.server.Server;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Inventory {
+
+    protected double gold = 0.0;
+    private double maxWeight;
+    private double currentWeight;
+    private HashMap<String, Item> items = new HashMap<>();
+
+    public Inventory(double maxWeight) {
+        setMaxWeight(maxWeight);
+    }
 
     public double getGold() {
         return gold;
@@ -14,13 +24,6 @@ public class Inventory {
 
     public void setGold(double gold) {
         this.gold = gold;
-    }
-
-    protected double gold = 0.0;
-
-
-    public Inventory(double maxWeight) {
-        setMaxWeight(maxWeight);
     }
 
     public double getMaxWeight() {
@@ -31,15 +34,11 @@ public class Inventory {
         this.maxWeight = maxWeight;
     }
 
-    private double maxWeight;
-
     public double getCurrentWeight() {
         return currentWeight;
     }
 
-    private double currentWeight;
-    private HashMap<String, Item> items = new HashMap<>();
-    public HashMap<String, Item> getItems(){
+    public HashMap<String, Item> getItems() {
         return items;
     }
 
@@ -128,6 +127,19 @@ public class Inventory {
             return items.get(itemName.toLowerCase());
         }
         return null;
+    }
+
+    public boolean hasWeapon() {
+        boolean hasWeapon = false;
+        for (Map.Entry<String, Item> entry : items.entrySet()) {
+            Item item = entry.getValue();
+
+            if (item instanceof WeaponItem) {
+                hasWeapon = true;
+                break;
+            }
+        }
+        return hasWeapon;
     }
 
 }

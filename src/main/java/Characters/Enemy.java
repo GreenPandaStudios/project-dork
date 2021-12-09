@@ -30,7 +30,7 @@ public class Enemy extends NPC {
         deathDescription = name + " has been slain!";
     }
 
-    //attacks given player, returns true if attack hits successfully, false if not
+    // attacks given player, returns true if attack hits successfully, false if not
     public boolean attack(Player player) {
         if (rng.nextInt(100) < accuracy) {
             player.setHealth(player.getHealth() - damage);
@@ -39,57 +39,62 @@ public class Enemy extends NPC {
         return false;
     }
 
-    //set the amount of gold this enemy drops
+    // set the amount of gold this enemy drops
     public void setGold(double gold) {
         getInventory().setGold(gold);
     }
 
-    //add an item to be dropped when this enemy is killed
+    // add an item to be dropped when this enemy is killed
     public void addDrop(Item item) {
         getInventory().addItem(item);
     }
 
-    //returns a description of this enemy with its name, current HP and attack damage
+    // returns a description of this enemy with its name, current HP and attack damage
     public String getStatDescription() {
         return "Enemy: " + name + " - Current HP: " + health + " - Damage: " + damage;
     }
 
-    //returns a description of this enemy
+    // return the amount of damage this enemy deals
+    public double getDamage() {
+        return this.damage;
+    }
+
+    // returns a description of this enemy
     public String getDescription() {
         return description;
     }
 
-    //sets the description of this enemy
+    // sets the description of this enemy
     public void setDescription(String description) {
         this.description = description;
     }
 
-    //returns a description of the enemy attacking and hitting
+    // returns a description of the enemy attacking and hitting
     public String getHitDescription() {
         return hitDescription;
     }
 
-    //sets the description of this enemy attacking and hitting
+    // sets the description of this enemy attacking and hitting
     public void setHitDescription(String hitDescription) {
         this.hitDescription = hitDescription;
     }
 
-    //returns a description of the enemy attacking and missing
+    // returns a description of the enemy attacking and missing
     public String getMissDescription() {
         return missDescription;
     }
 
-    //sets the description of this enemy attacking and missing
+    // sets the description of this enemy attacking and missing
     public void setMissDescription(String missDescription) {
         this.missDescription = missDescription;
     }
 
-    //returns a description of the enemy dying
+    // returns a description of the enemy dying
     public String getDeathDescription() {
         return deathDescription;
     }
 
-    //sets the description of this enemy dying
+    // sets the description of this enemy dying
     public void setDeathDescription(String deathDescription) {
         this.deathDescription = deathDescription;
     }
