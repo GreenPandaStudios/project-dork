@@ -158,7 +158,7 @@ public class DefaultQuestLoader {
 
         armory.setDescription("It appears to be a long-abandoned armory. There are piles of rusted armor and weapons." +
                 " While most of the items are too rotted to be much use, a few look as though" +
-                "they could still be useful");
+                " they could still be useful");
 
         HealthItem potion = new HealthItem("Potion",
                 "A small inscription reads:\n'Restores 5 health'",
@@ -222,10 +222,9 @@ public class DefaultQuestLoader {
         hallDoorway1.setUnlockedDesc("it is open.");
         hallDoorway1.setToRoom(endingRoom);
 
-        Doorway hallDoorway2 = new Doorway();
+        Doorway hallDoorway2 = new Doorway(hallway, true);
         hallDoorway2.setUnlockedDesc("the heavy door is leaning open.");
         hallDoorway2.setLockedDesc("an old and heavy-looking door that is locked shut. You try opening it, but it will not move.");
-        hallDoorway2.setLocked(true);
         hallDoorway2.setKeyName("Skeleton Key");
 
         startingRoom.setDoorway(hallDoorway2, Directions.East);
@@ -233,8 +232,8 @@ public class DefaultQuestLoader {
         hallway.setDoorway(hallDoorway1, Directions.East);
 
 
-        Enemy bandit = new Enemy("Bandit", 10.0, 1.0, 1.0);
-        Enemy goblin = new Enemy("Goblin", 10.0, 1.0, 1.0);
+        Enemy bandit = new Enemy("Bandit", 10.0, 1.0, 5.0);
+        Enemy goblin = new Enemy("Goblin", 10.0, 1.0, 100.0);
 
         bandit.setRoom(hallway);
         goblin.setRoom(hallway);

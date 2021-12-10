@@ -75,6 +75,8 @@ public abstract class Character implements IName {
     public boolean takeDamage(double damage) {
         health -= damage;
         if (health <= 0) {
+
+            //remove from room if dead enemy
             return true;
         }
         return false;

@@ -44,9 +44,9 @@ public class MessageParser {
     private final Pattern helpPattern = Pattern.compile("^(((I (need|want))?help)|(I'm)?confused|(What are the)?commands)$([?])?");
     private final Pattern givePattern = Pattern.compile("^(give)(\\s+)(?<item>.*)(?= to )( to )(?<player>.*)$");
     private final Pattern startPattern = Pattern.compile("^(start quest)(\\s+)(?<quest>.*)|(start quest)$");
-    private final Pattern attackPattern = Pattern.compile("^(attack)(\\s+)(?<target>.*)(?= with)( with )(?<weapon>.*)$");
-    private final Pattern sellPattern = Pattern.compile("^sell(\\s+)(?<item>.+)(\\s+)to(\\s+)(?<merchant>.+)");
-    private final Pattern buyPattern = Pattern.compile("^buy(\\s+)(?<item>.+)(\\s+)from(\\s+)(?<merchant>.+)");
+    private final Pattern attackPattern = Pattern.compile("^(attack|kill|hit)(\\s+)(?<target>.*)(?= with)( with )(?<weapon>.*)$");
+    private final Pattern sellPattern = Pattern.compile("^(sell|trade)(\\s+)(?<item>.+)(\\s+)to(\\s+)(?<merchant>.+)");
+    private final Pattern buyPattern = Pattern.compile("^(buy|purchase)(\\s+)(?<item>.+)(\\s+)from(\\s+)(?<merchant>.+)");
 
 
     DiscordApi api;
@@ -873,11 +873,9 @@ public class MessageParser {
     private void newTurnEnemyAttack() {
         // Check to see if current user has a weapon they can attack with
         if (turnManager.currentTurn().getInventory().hasWeapon()) {
-            if (!currentQuest.currentRoom().enemyNames.isEmpty()) {
-                sendMessage("\n\nEnemies are now attacking!\n");
-            }
             currentQuest.currentRoom().enemyNames.forEach((enemyName) -> {
                 Enemy enemy = (Enemy) turnManager.currentTurn().getRoom().getCharacter(enemyName);
+                if (enemy.getHealth() <= 0.0) return;
                 Player currentPlayer = turnManager.currentTurn();
                 if (enemy == null) {
                     System.out.println("enemy null");
@@ -946,6 +944,8 @@ public class MessageParser {
                         i.removeItem(it.getName());
                     }
                 }
+                //end the player's turn
+                endTurn();
             }
         }
     }

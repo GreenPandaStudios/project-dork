@@ -130,16 +130,13 @@ public class Inventory {
     }
 
     public boolean hasWeapon() {
-        boolean hasWeapon = false;
         for (Map.Entry<String, Item> entry : items.entrySet()) {
             Item item = entry.getValue();
-
             if (item instanceof WeaponItem) {
-                hasWeapon = true;
-                break;
+                return true;
             }
         }
-        return hasWeapon;
+        return false;
     }
 
 }
