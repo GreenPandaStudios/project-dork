@@ -757,7 +757,7 @@ public class MessageParser {
      */
     public void preQuestPartyManagement(MessageCreateEvent event) {
 
-        String messageInput = event.getMessageContent();
+        String messageInput = event.getMessageContent().toLowerCase();
         User discordUser = event.getMessageAuthor().asUser().get();
 
         Matcher ma;
