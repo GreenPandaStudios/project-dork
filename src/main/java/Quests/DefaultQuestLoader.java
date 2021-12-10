@@ -4,12 +4,6 @@ import Characters.Character;
 import Characters.Enemy;
 import Characters.Merchant;
 import Items.*;
-import Players.Inventory;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Scanner;
 
 public class DefaultQuestLoader {
 
@@ -145,7 +139,8 @@ public class DefaultQuestLoader {
 
         return new Quest(m, turnManager);
     }
-    public Quest creatFinalDemoQuest(TurnManager turnManager){
+
+    public Quest creatFinalDemoQuest(TurnManager turnManager) {
         Room startingRoom = new Room("Starting Room");
         Room armory = new Room("Armory");
         startingRoom.setDescription("A cold cellar with a strange man standing inside.");
@@ -161,7 +156,6 @@ public class DefaultQuestLoader {
                 10, false, 50);
 
 
-
         armory.setDescription("It appears to be a long-abandoned armory. There are piles of rusted armor and weapons." +
                 " While most of the items are too rotted to be much use, a few look as though" +
                 "they could still be useful");
@@ -173,17 +167,16 @@ public class DefaultQuestLoader {
                 1, 5);
 
 
-
-        KeyItem skeletonKey = new KeyItem("skeleton key");
+        KeyItem skeletonKey = new KeyItem("Skeleton Key");
         skeletonKey.setDescription("An old key made of darkened bone.");
         skeletonKey.setValue(500.0);
         skeletonKey.setWeight(1.0);
 
-        Merchant merchant = new Merchant("old traveller");
+        Merchant merchant = new Merchant("Old Traveller");
         merchant.setHealth(100.0);
         merchant.getInventory().setMaxWeight(500000.0);
         merchant.getInventory().addItem(skeletonKey);
-        merchant.getInventory().setGold(500.0);
+        merchant.getInventory().setGold(5000.0);
         merchant.getInventory().addItem(potion);
         merchant.setRoom(startingRoom);
 
@@ -195,10 +188,7 @@ public class DefaultQuestLoader {
         armory.addItem(dagger).addItem(sword).addItem(goldenApple);
 
 
-
-        Room endingRoom = new Room(
-                "Ending Room"
-        );
+        Room endingRoom = new Room("Ending Room");
 
         Doorway toArmory = new Doorway(armory, false);
         TrapItem poisonDart = new TrapItem("darts");
@@ -228,7 +218,6 @@ public class DefaultQuestLoader {
         paintings.setDescription("They are paintings of people. Their eyes seem to follow you as you move.");
 
 
-
         Doorway hallDoorway1 = new Doorway();
         hallDoorway1.setUnlockedDesc("it is open.");
         hallDoorway1.setToRoom(endingRoom);
@@ -237,18 +226,18 @@ public class DefaultQuestLoader {
         hallDoorway2.setUnlockedDesc("the heavy door is leaning open.");
         hallDoorway2.setLockedDesc("an old and heavy-looking door that is locked shut. You try opening it, but it will not move.");
         hallDoorway2.setLocked(true);
-        hallDoorway2.setKeyName("skeleton key");
+        hallDoorway2.setKeyName("Skeleton Key");
 
         startingRoom.setDoorway(hallDoorway2, Directions.East);
 
         hallway.setDoorway(hallDoorway1, Directions.East);
-        ////////NICK, ADD ENEMIES HERE
-        Enemy enemy1 = new Enemy("enemy", 10.0, 1.0, 1.0);
 
 
+        Enemy bandit = new Enemy("Bandit", 10.0, 1.0, 1.0);
+        Enemy goblin = new Enemy("Goblin", 10.0, 1.0, 1.0);
 
-        enemy1.setRoom(hallway);
-        //////////////////
+        bandit.setRoom(hallway);
+        goblin.setRoom(hallway);
 
         Map m = new Map(startingRoom, endingRoom);
         m.AddTag("dungeon");

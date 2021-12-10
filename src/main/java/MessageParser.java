@@ -44,7 +44,7 @@ public class MessageParser {
     private final Pattern helpPattern = Pattern.compile("^(((I (need|want))?help)|(I'm)?confused|(What are the)?commands)$([?])?");
     private final Pattern givePattern = Pattern.compile("^(give)(\\s+)(?<item>.*)(?= to )( to )(?<player>.*)$");
     private final Pattern startPattern = Pattern.compile("^(start quest)(\\s+)(?<quest>.*)|(start quest)$");
-    private final Pattern attackPatern = Pattern.compile("^(attack)(\\s+)(?<target>.*)(?= with)( with )(?<weapon>.*)$");
+    private final Pattern attackPattern = Pattern.compile("^(attack)(\\s+)(?<target>.*)(?= with)( with )(?<weapon>.*)$");
     private final Pattern sellPattern = Pattern.compile("^sell(\\s+)(?<item>.+)(\\s+)to(\\s+)(?<merchant>.+)");
     private final Pattern buyPattern = Pattern.compile("^buy(\\s+)(?<item>.+)(\\s+)from(\\s+)(?<merchant>.+)");
 
@@ -250,7 +250,7 @@ public class MessageParser {
             displayInventory();
             return;
         }
-        if ((m = attackPatern.matcher(message)).find()) {
+        if ((m = attackPattern.matcher(message)).find()) {
             attackAction(m.group("target"), m.group("weapon"));
             return;
         }
