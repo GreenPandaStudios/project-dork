@@ -17,10 +17,10 @@ public class DefaultQuestLoader {
         //TODO: Remove
         //TEMPORARY
         return creatFinalDemoQuest(turnManager);
+/*
 
 
-
-        String fileName = "src/main/resources/defaultQuests/";
+       String fileName = "src/main/resources/defaultQuests/";
 
         if (questToLoad == null) {
             fileName += "DefaultQuest1";
@@ -66,6 +66,8 @@ public class DefaultQuestLoader {
             e.printStackTrace();
             return createDefaultQuest(turnManager);
         }
+
+*/
     }
 
 
@@ -198,25 +200,22 @@ public class DefaultQuestLoader {
                 "Ending Room"
         );
 
-        Doorway toArmory = new Doorway();
+        Doorway toArmory = new Doorway(armory, false);
         TrapItem poisonDart = new TrapItem("darts");
-        poisonDart.setTrapMessage("The trap appears broken");
+        poisonDart.setTrapMessage("Darts quickly shoot from the wall.");
         poisonDart.setChance(100.0);
         poisonDart.setUsesLeft(1);
-        poisonDart.setDescription("Darts quickly shoot from the wall.");
+        poisonDart.setDescription("A dart trap.");
         poisonDart.setDamage(1.0);
 
         toArmory.setTrap(poisonDart);
         toArmory.setUnlockedDesc("an old wooden door frame. The door has long been rotted away.");
-        toArmory.setLocked(false);
-        toArmory.setToRoom(armory);
+
         startingRoom.setDoorway(toArmory, Directions.North);
 
 
-        Doorway fromArmory = new Doorway();
+        Doorway fromArmory = new Doorway(startingRoom, false);
         toArmory.setUnlockedDesc("an old wooden door frame. The door has long been rotted away.");
-        toArmory.setLocked(false);
-        toArmory.setToRoom(startingRoom);
         armory.setDoorway(fromArmory, Directions.South);
 
 
@@ -236,7 +235,7 @@ public class DefaultQuestLoader {
 
         Doorway hallDoorway2 = new Doorway();
         hallDoorway2.setUnlockedDesc("the heavy door is leaning open.");
-        hallDoorway2.setLockedDesc("an old and heavy-looking door is locked shut. You try opening it, but it will not move.");
+        hallDoorway2.setLockedDesc("an old and heavy-looking door that is locked shut. You try opening it, but it will not move.");
         hallDoorway2.setLocked(true);
         hallDoorway2.setKeyName("skeleton key");
 

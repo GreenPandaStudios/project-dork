@@ -83,6 +83,9 @@ public class Room implements Interfaces.IDescriptable, Interfaces.IName {
         }
         if (characters.remove(character.getName().toLowerCase()) instanceof NPC) {
             npcCount--;
+            if (character instanceof Enemy) {
+                enemyNames.remove(character.getName().toLowerCase());
+            }
         } else {
             playerCount--;
         }
